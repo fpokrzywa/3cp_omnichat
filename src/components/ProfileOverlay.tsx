@@ -225,10 +225,14 @@ const ProfileOverlay: React.FC<ProfileOverlayProps> = ({ isOpen, onClose }) => {
               >
                 <option>OmniChat</option>
                 <option>IT Support</option>
-                <option>Advance Policies</option>
-                <option>Law Assistant</option>
-                <option>Deviation Draft</option>
+                <option>HR Support</option>
+                <option>Advance Policies Assitant</option>
+                <option>Redact Assistant</option>
                 <option>DocRedact</option>
+                <option>ADEPT Assistant</option>
+                <option>RFP Assistant</option>
+                <option>RFP Assistantt</option>
+                <option>Resume Assistant</option>
               </select>
             </div>
           </div>
