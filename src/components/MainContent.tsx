@@ -56,6 +56,7 @@ const MainContent: React.FC<MainContentProps> = ({
       handleSend();
     }
   };
+
   const actionButtons = [
     { icon: '✏️', label: 'Create a plan' },
     { icon: '💡', label: 'Brainstorm ideas' },
@@ -97,57 +98,57 @@ const MainContent: React.FC<MainContentProps> = ({
         </div>
       </div>
       
-      <div className="flex-1 flex flex-col items-center justify-center p-8">
-        <div className="max-w-2xl w-full text-center">
-          <h2 className="text-xl font-medium text-gray-800 mb-12">
+      <div className="flex-1 flex flex-col justify-center px-4 sm:px-6 lg:px-8 py-6">
+        <div className="max-w-4xl w-full mx-auto">
+          <h2 className="text-lg sm:text-xl font-medium text-gray-800 mb-6 sm:mb-8 text-center">
             Please ask {selectedAssistant} your questions
           </h2>
           
-          <div className="flex flex-wrap justify-center gap-3 mb-12">
+          {/* Action Buttons - Responsive Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2 sm:gap-3 mb-6 sm:mb-8">
             {actionButtons.map((button, index) => (
               <button
                 key={index}
-                className="px-3 py-1.5 rounded-full border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 transition-all duration-200 flex items-center space-x-2 text-sm"
+                className="p-2 sm:p-3 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 transition-all duration-200 flex flex-col items-center space-y-1 sm:space-y-2 min-h-[70px] sm:min-h-[80px] justify-center"
               >
-                <span className="text-xs">{button.icon}</span>
-                <span className="font-medium">{button.label}</span>
+                <span className="text-sm sm:text-base">{button.icon}</span>
+                <span className="text-xs font-medium text-center leading-tight">{button.label}</span>
               </button>
             ))}
           </div>
           
-          <p className="text-gray-500 text-sm mb-8">
+          <p className="text-gray-500 text-sm mb-6 text-center">
             Select a category from above or ask a question, add files to the conversation using the paperclip icon.
           </p>
           
-          <div className="mb-8">
-            <div className="max-w-2xl mx-auto">
-              <div className="relative">
-                <div className="flex items-center space-x-3 bg-gray-50 rounded-lg p-3 border border-gray-200">
-                  <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
-                    <span className="text-lg">📎</span>
-                  </button>
-                  <input
-                    type="text"
-                    placeholder="Ask a question..."
-                    value={inputValue}
-                    onChange={handleInputChange}
-                    onKeyPress={handleKeyPress}
-                    className="flex-1 bg-transparent border-none outline-none text-gray-700 placeholder-gray-400"
-                  />
-                  <button className="p-2 text-gray-400 hover:text-pink-600 transition-colors">
-                    <Mic className="w-5 h-5" />
-                  </button>
-                  <button 
-                    onClick={handleSend}
-                    className="p-2 text-gray-400 hover:text-pink-600 transition-colors"
-                  >
-                    <Send className="w-5 h-5" />
-                  </button>
-                </div>
+          {/* Input Section */}
+          <div className="mb-4">
+            <div className="relative">
+              <div className="flex items-center space-x-3 bg-gray-50 rounded-lg p-3 border border-gray-200">
+                <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
+                  <span className="text-lg">📎</span>
+                </button>
+                <input
+                  type="text"
+                  placeholder="Ask a question..."
+                  value={inputValue}
+                  onChange={handleInputChange}
+                  onKeyPress={handleKeyPress}
+                  className="flex-1 bg-transparent border-none outline-none text-gray-700 placeholder-gray-400"
+                />
+                <button className="p-2 text-gray-400 hover:text-pink-600 transition-colors">
+                  <Mic className="w-5 h-5" />
+                </button>
+                <button 
+                  onClick={handleSend}
+                  className="p-2 text-gray-400 hover:text-pink-600 transition-colors"
+                >
+                  <Send className="w-5 h-5" />
+                </button>
               </div>
               
-              {/* Web Search Buttons - Small and Left Aligned */}
-              <div className="flex gap-2 mt-3">
+              {/* Web Search Buttons - Responsive Layout */}
+              <div className="flex flex-wrap gap-2 mt-3 justify-start">
                 <button className="flex items-center space-x-1 px-3 py-1 border border-gray-200 rounded-full text-gray-600 hover:bg-gray-50 transition-colors text-xs">
                   <Search className="w-3 h-3 text-gray-400" />
                   <span>Web Search</span>
@@ -165,7 +166,6 @@ const MainContent: React.FC<MainContentProps> = ({
           </div>
         </div>
       </div>
-      
     </div>
   );
 };
