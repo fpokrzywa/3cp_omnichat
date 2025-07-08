@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import MainContent from './components/MainContent';
@@ -19,6 +20,38 @@ function App() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [acknowledgmentOpen, setAcknowledgmentOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [userProfile, setUserProfile] = useState<any>(null);
+
+  // Load user profile on component mount
+  useEffect(() => {
+    const savedProfile = localStorage.getItem('userProfile');
+    if (savedProfile) {
+      const parsedProfile = JSON.parse(savedProfile);
+      setUserProfile(parsedProfile);
+      // Set the preferred assistant as the default selected assistant
+      if (parsedProfile.preferredAssistant) {
+        setSelectedAssistant(parsedProfile.preferredAssistant);
+      }
+    }
+  }, []);
+
+  // Listen for profile changes
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const savedProfile = localStorage.getItem('userProfile');
+      if (savedProfile) {
+        const parsedProfile = JSON.parse(savedProfile);
+        setUserProfile(parsedProfile);
+        // Update selected assistant if preferred assistant changed
+        if (parsedProfile.preferredAssistant && parsedProfile.preferredAssistant !== selectedAssistant) {
+          setSelectedAssistant(parsedProfile.preferredAssistant);
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, [selectedAssistant]);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -26,6 +59,14 @@ function App() {
 
   const handleAssistantSelect = (assistantName: string) => {
     setSelectedAssistant(assistantName);
+    setCurrentPage('chat');
+  };
+
+  const handleNavigateToChat = () => {
+    // When navigating to chat, use the user's preferred assistant if available
+    if (userProfile?.preferredAssistant) {
+      setSelectedAssistant(userProfile.preferredAssistant);
+    }
     setCurrentPage('chat');
   };
 
@@ -44,7 +85,13 @@ function App() {
   return (
     <div className="h-screen flex flex-col bg-gray-50">
       <Header 
-        onNavigate={setCurrentPage} 
+        onNavigate={(page) => {
+          if (page === 'chat') {
+            handleNavigateToChat();
+          } else {
+            setCurrentPage(page);
+          }
+        }}
         currentPage={currentPage}
         onOpenPromptCatalog={() => setPromptCatalogOpen(true)}
         onOpenSettings={() => setSettingsOpen(true)}
