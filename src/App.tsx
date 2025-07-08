@@ -1,0 +1,95 @@
+import React, { useState } from 'react';
+import Header from './components/Header';
+import Sidebar from './components/Sidebar';
+import MainContent from './components/MainContent';
+import AssistantsPage from './components/AssistantsPage';
+import PromptCatalog from './components/PromptCatalog';
+import PromptCatalogPage from './components/PromptCatalogPage';
+import ResourcesPage from './components/ResourcesPage';
+import SettingsOverlay from './components/SettingsOverlay';
+import AcknowledgmentOverlay from './components/AcknowledgmentOverlay';
+import ProfileOverlay from './components/ProfileOverlay';
+
+function App() {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [currentPage, setCurrentPage] = useState<'chat' | 'assistants' | 'prompt-catalog' | 'resources'>('assistants');
+  const [selectedAssistant, setSelectedAssistant] = useState<string>('OmniChat');
+  const [promptCatalogOpen, setPromptCatalogOpen] = useState(false);
+  const [selectedPrompt, setSelectedPrompt] = useState<string>('');
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [acknowledgmentOpen, setAcknowledgmentOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
+  const handleAssistantSelect = (assistantName: string) => {
+    setSelectedAssistant(assistantName);
+    setCurrentPage('chat');
+  };
+
+  const handlePromptSelect = (promptText: string, assistantName: string) => {
+    setSelectedPrompt(promptText);
+    setSelectedAssistant(assistantName);
+    setCurrentPage('chat');
+    setPromptCatalogOpen(false);
+  };
+
+  const handleOpenFullPromptCatalog = () => {
+    setCurrentPage('prompt-catalog');
+    setPromptCatalogOpen(false);
+  };
+
+  return (
+    <div className="h-screen flex flex-col bg-gray-50">
+      <Header 
+        onNavigate={setCurrentPage} 
+        currentPage={currentPage}
+        onOpenPromptCatalog={() => setPromptCatalogOpen(true)}
+        onOpenSettings={() => setSettingsOpen(true)}
+        onOpenAcknowledgment={() => setAcknowledgmentOpen(true)}
+        onOpenProfile={() => setProfileOpen(true)}
+      />
+      <div className="flex-1 flex overflow-hidden">
+        {currentPage === 'chat' && (
+          <>
+            <Sidebar isOpen={sidebarOpen} onToggle={toggleSidebar} />
+            <MainContent 
+              selectedAssistant={selectedAssistant} 
+              selectedPrompt={selectedPrompt}
+              onPromptUsed={() => setSelectedPrompt('')}
+              onOpenPromptCatalog={() => setPromptCatalogOpen(true)}
+            />
+          </>
+        )}
+        {currentPage === 'assistants' && <AssistantsPage onAssistantSelect={handleAssistantSelect} />}
+        {currentPage === 'prompt-catalog' && (
+          <PromptCatalogPage onPromptSelect={handlePromptSelect} />
+        )}
+        {currentPage === 'resources' && <ResourcesPage />}
+      </div>
+      <PromptCatalog 
+        isOpen={promptCatalogOpen} 
+        onClose={() => setPromptCatalogOpen(false)} 
+        onPromptSelect={handlePromptSelect}
+        onOpenFullCatalog={handleOpenFullPromptCatalog}
+        selectedAssistant={selectedAssistant}
+      />
+      <SettingsOverlay 
+        isOpen={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+      />
+      <AcknowledgmentOverlay 
+        isOpen={acknowledgmentOpen}
+        onClose={() => setAcknowledgmentOpen(false)}
+      />
+      <ProfileOverlay 
+        isOpen={profileOpen}
+        onClose={() => setProfileOpen(false)}
+      />
+    </div>
+  );
+}
+
+export default App;
