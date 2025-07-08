@@ -105,14 +105,14 @@ const MainContent: React.FC<MainContentProps> = ({
           </h2>
           
           {/* Action Buttons - Responsive Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2 sm:gap-3 mb-6 sm:mb-8">
+          <div className="flex flex-wrap justify-center gap-2 mb-6 sm:mb-8">
             {actionButtons.map((button, index) => (
               <button
                 key={index}
-                className="p-2 sm:p-3 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 transition-all duration-200 flex flex-col items-center space-y-1 sm:space-y-2 min-h-[70px] sm:min-h-[80px] justify-center"
+                className="flex items-center space-x-1 px-3 py-1 border border-gray-200 rounded-full text-gray-600 hover:bg-gray-50 transition-colors text-xs"
               >
-                <span className="text-sm sm:text-base">{button.icon}</span>
-                <span className="text-xs font-medium text-center leading-tight">{button.label}</span>
+                <span className="text-sm">{button.icon}</span>
+                <span>{button.label}</span>
               </button>
             ))}
           </div>
