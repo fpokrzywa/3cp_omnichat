@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Heart, ChevronDown, Settings, RefreshCw, AlertCircle, ExternalLink } from 'lucide-react';
+import { Search, Heart, ChevronDown, Settings, RefreshCw, AlertCircle, ExternalLink, Key } from 'lucide-react';
 import { openaiService, type Assistant } from '../services/openaiService';
 import OpenAISetup from './OpenAISetup';
 
