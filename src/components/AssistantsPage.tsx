@@ -141,21 +141,6 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
             
             {/* OpenAI Integration Status */}
             <div className="flex items-center space-x-3">
-              {hasApiKey ? (
-                <div className="flex items-center space-x-2">
-                  <div className="flex items-center space-x-2 text-green-600 bg-green-50 px-3 py-2 rounded-lg">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span className="text-sm font-medium">OpenAI Connected</span>
-                    <span className="text-xs text-green-500">({assistants.length} assistants)</span>
-                  </div>
-                </div>
-              ) : (
-                <div className="flex items-center space-x-2 text-gray-500 bg-gray-50 px-3 py-2 rounded-lg">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
-                  <span className="text-sm">OpenAI Not Connected</span>
-                </div>
-              )}
-              
               {hasApiKey && (
                 <button
                   onClick={handleRefresh}
