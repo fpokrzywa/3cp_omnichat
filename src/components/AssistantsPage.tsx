@@ -148,16 +148,6 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
                     <span className="text-sm font-medium">OpenAI Connected</span>
                     <span className="text-xs text-green-500">({assistants.length} assistants)</span>
                   </div>
-                  {lastUpdated && (
-                    <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                      Updated {lastUpdated.toLocaleTimeString()}
-                    </span>
-                  )}
-                  {import.meta.env.VITE_OPENAI_API_KEY && (
-                    <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                      Environment
-                    </span>
-                  )}
                 </div>
               ) : (
                 <div className="flex items-center space-x-2 text-gray-500 bg-gray-50 px-3 py-2 rounded-lg">
