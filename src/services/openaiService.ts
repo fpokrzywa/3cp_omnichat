@@ -54,22 +54,30 @@ class OpenAIService {
       throw new Error('OpenAI API key not configured');
     }
 
-    const response = await fetch(`${this.baseURL}${endpoint}`, {
-      ...options,
-      headers: {
-        'Authorization': `Bearer ${currentApiKey}`,
-        'Content-Type': 'application/json',
-        'OpenAI-Beta': 'assistants=v2',
-        ...options.headers,
-      },
-    });
+    try {
+      const response = await fetch(`${this.baseURL}${endpoint}`, {
+        ...options,
+        headers: {
+          'Authorization': `Bearer ${currentApiKey}`,
+          'Content-Type': 'application/json',
+          'OpenAI-Beta': 'assistants=v2',
+          ...options.headers,
+        },
+      });
 
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ error: { message: 'Unknown error' } }));
-      throw new Error(error.error?.message || `HTTP ${response.status}: ${response.statusText}`);
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({ error: { message: 'Unknown error' } }));
+        throw new Error(error.error?.message || `HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      return response.json();
+    } catch (error) {
+      // Handle CORS and network errors specifically
+      if (error instanceof TypeError && error.message === 'Failed to fetch') {
+        throw new Error('Cannot connect to OpenAI API directly from browser. This is a CORS limitation. Please use a backend server or proxy to access OpenAI assistants.');
+      }
+      throw error;
     }
-
-    return response.json();
   }
 
   async listAssistants(): Promise<OpenAIAssistant[]> {

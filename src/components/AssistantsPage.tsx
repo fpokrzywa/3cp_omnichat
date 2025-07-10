@@ -241,18 +241,22 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
 
           {/* Error Message */}
           {error && (
-            <div className="flex items-center space-x-2 text-red-600 bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
               <AlertCircle className="w-5 h-5 flex-shrink-0" />
               <div className="flex-1">
-                <p className="text-sm font-medium">Failed to load OpenAI assistants</p>
-                <p className="text-xs">{error}</p>
+                <h3 className="text-sm font-medium text-amber-800 mb-1">Cannot Load Custom Assistants</h3>
+                <p className="text-sm text-amber-700 mb-2">{error}</p>
+                {error.includes('CORS') && (
+                  <div className="text-sm text-amber-700">
+                    <p className="mb-2">This is a browser security limitation. To use your OpenAI assistants:</p>
+                    <ul className="list-disc list-inside space-y-1 text-xs">
+                      <li>Use the OpenAI website directly for custom assistants</li>
+                      <li>Set up a backend server to proxy OpenAI API requests</li>
+                      <li>Use our default assistants which work without API calls</li>
+                    </ul>
+                  </div>
+                )}
               </div>
-              <button
-                onClick={() => setShowOpenAISetup(true)}
-                className="text-sm underline hover:no-underline"
-              >
-                Check Settings
-              </button>
             </div>
           )}
 
