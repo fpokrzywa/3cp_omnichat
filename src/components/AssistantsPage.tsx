@@ -1,14 +1,7 @@
-import React, { useState } from 'react';
-import { Search, Heart, ChevronDown } from 'lucide-react';
-
-interface Assistant {
-  id: string;
-  name: string;
-  description: string;
-  icon: string;
-  color: string;
-  isFavorite?: boolean;
-}
+import React, { useState, useEffect } from 'react';
+import { Search, Heart, ChevronDown, Settings, RefreshCw, AlertCircle, ExternalLink } from 'lucide-react';
+import { openaiService, type Assistant } from '../services/openaiService';
+import OpenAISetup from './OpenAISetup';
 
 interface AssistantsPageProps {
   onAssistantSelect: (assistantName: string) => void;
@@ -17,73 +10,133 @@ interface AssistantsPageProps {
 const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('Sort');
-  const [assistants, setAssistants] = useState<Assistant[]>([
+  const [assistants, setAssistants] = useState<Assistant[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [showOpenAISetup, setShowOpenAISetup] = useState(false);
+  const [hasApiKey, setHasApiKey] = useState(false);
 
-      {
-    "id": "bms-chatgpt",
-    "name": "OmniChat",
-    "description": "Ask questions, explore new ideas, create content, and experiment with new models.",
-    "icon": "💬",
-    "color": "bg-pink-100 text-pink-600",
-    "isFavorite": false
-  },
-  {
-    "id": "it-support",
-    "name": "IT Support",
-    "description": "Get help with common IT problems like email, devices, passwords, and more.",
-    "icon": "🔧",
-    "color": "bg-red-100 text-red-600",
-    "isFavorite": false
-  },
-  {
-    "id": "hr-support",
-    "name": "HR Support",
-    "description": "Find answers to your HR questions, from benefits to company policies and more.",
-    "icon": "🧑‍🤝‍🧑",
-    "color": "bg-green-100 text-green-600",
-    "isFavorite": false
-  },
-  {
-    "id": "advance-policies-assistant",
-    "name": "Advance Policies Assistant",
-    "description": "Get answers and summaries for your policy-related questions.",
-    "icon": "📋",
-    "color": "bg-purple-100 text-purple-600",
-    "isFavorite": false
-  },
-  {
-    "id": "redact-assistant",
-    "name": "Redact Assistant",
-    "description": "Efficiently identify and redact sensitive information from documents.",
-    "icon": "✂️",
-    "color": "bg-yellow-100 text-yellow-600",
-    "isFavorite": false
-  },
-  {
-    "id": "adept-assistant",
-    "name": "ADEPT Assistant",
-    "description": "Simplify and accelerate your data entry and processing tasks.",
-    "icon": "⚡",
-    "color": "bg-blue-100 text-blue-600",
-    "isFavorite": false
-  },
-  {
-    "id": "rfp-assistant",
-    "name": "RFP Assistant",
-    "description": "Streamline your Request for Proposal (RFP) response process.",
-    "icon": "✍️",
-    "color": "bg-indigo-100 text-indigo-600",
-    "isFavorite": false
-  },
-  {
-    "id": "resume-assistant",
-    "name": "Resume Assistant",
-    "description": "Craft compelling resumes tailored to specific job opportunities.",
-    "icon": "📄",
-    "color": "bg-teal-100 text-teal-600",
-    "isFavorite": false
-  }
-  ]);
+  // Default assistants that are always available
+  const defaultAssistants: Assistant[] = [
+    {
+      "id": "bms-chatgpt",
+      "name": "OmniChat",
+      "description": "Ask questions, explore new ideas, create content, and experiment with new models.",
+      "icon": "💬",
+      "color": "bg-pink-100 text-pink-600",
+      "isFavorite": false,
+      "isCustom": false
+    },
+    {
+      "id": "it-support",
+      "name": "IT Support",
+      "description": "Get help with common IT problems like email, devices, passwords, and more.",
+      "icon": "🔧",
+      "color": "bg-red-100 text-red-600",
+      "isFavorite": false,
+      "isCustom": false
+    },
+    {
+      "id": "hr-support",
+      "name": "HR Support",
+      "description": "Find answers to your HR questions, from benefits to company policies and more.",
+      "icon": "🧑‍🤝‍🧑",
+      "color": "bg-green-100 text-green-600",
+      "isFavorite": false,
+      "isCustom": false
+    },
+    {
+      "id": "advance-policies-assistant",
+      "name": "Advance Policies Assistant",
+      "description": "Get answers and summaries for your policy-related questions.",
+      "icon": "📋",
+      "color": "bg-purple-100 text-purple-600",
+      "isFavorite": false,
+      "isCustom": false
+    },
+    {
+      "id": "redact-assistant",
+      "name": "Redact Assistant",
+      "description": "Efficiently identify and redact sensitive information from documents.",
+      "icon": "✂️",
+      "color": "bg-yellow-100 text-yellow-600",
+      "isFavorite": false,
+      "isCustom": false
+    },
+    {
+      "id": "adept-assistant",
+      "name": "ADEPT Assistant",
+      "description": "Simplify and accelerate your data entry and processing tasks.",
+      "icon": "⚡",
+      "color": "bg-blue-100 text-blue-600",
+      "isFavorite": false,
+      "isCustom": false
+    },
+    {
+      "id": "rfp-assistant",
+      "name": "RFP Assistant",
+      "description": "Streamline your Request for Proposal (RFP) response process.",
+      "icon": "✍️",
+      "color": "bg-indigo-100 text-indigo-600",
+      "isFavorite": false,
+      "isCustom": false
+    },
+    {
+      "id": "resume-assistant",
+      "name": "Resume Assistant",
+      "description": "Craft compelling resumes tailored to specific job opportunities.",
+      "icon": "📄",
+      "color": "bg-teal-100 text-teal-600",
+      "isFavorite": false,
+      "isCustom": false
+    }
+  ];
+
+  // Check for API key on component mount
+  useEffect(() => {
+    const apiKey = openaiService.getApiKey();
+    setHasApiKey(!!apiKey);
+    
+    // Load default assistants
+    setAssistants(defaultAssistants);
+    
+    // If API key exists, try to load OpenAI assistants
+    if (apiKey) {
+      loadOpenAIAssistants();
+    }
+  }, []);
+
+  const loadOpenAIAssistants = async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const openaiAssistants = await openaiService.listAssistants();
+      const convertedAssistants = openaiAssistants.map(assistant => 
+        openaiService.convertToInternalFormat(assistant)
+      );
+
+      // Combine default assistants with OpenAI assistants
+      setAssistants([...defaultAssistants, ...convertedAssistants]);
+    } catch (err) {
+      console.error('Error loading OpenAI assistants:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load OpenAI assistants');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleApiKeySet = (apiKey: string) => {
+    if (apiKey) {
+      openaiService.setApiKey(apiKey);
+      setHasApiKey(true);
+      loadOpenAIAssistants();
+    } else {
+      openaiService.clearApiKey();
+      setHasApiKey(false);
+      setAssistants(defaultAssistants);
+    }
+  };
 
   const toggleFavorite = (assistantId: string, event: React.MouseEvent) => {
     event.stopPropagation();
@@ -106,6 +159,10 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
         return [...assistantsList].reverse();
       case 'Favorites':
         return [...assistantsList].filter(assistant => assistant.isFavorite);
+      case 'Custom Only':
+        return [...assistantsList].filter(assistant => assistant.isCustom);
+      case 'Default Only':
+        return [...assistantsList].filter(assistant => !assistant.isCustom);
       default:
         return assistantsList;
     }
@@ -118,19 +175,98 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
     )
   );
 
-  // Show special message when Favorites is selected but no favorites exist
   const showNoFavoritesMessage = sortBy === 'Favorites' && filteredAndSortedAssistants.length === 0 && searchQuery === '';
+  const customAssistantsCount = assistants.filter(a => a.isCustom).length;
+
   return (
     <div className="flex-1 bg-gray-50 overflow-y-auto">
       {/* Header Section */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6 py-8">
-          <h1 className="text-2xl font-semibold text-gray-800 mb-2">
-            Welcome to the Advance AI Store
-          </h1>
-          <p className="text-gray-600">
-            Each Assistant is created to help you do a specific set of tasks. Get answers to your questions, brainstorm ideas, create new content, and more!
-          </p>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-2xl font-semibold text-gray-800 mb-2">
+                Welcome to the Advance AI Store
+              </h1>
+              <p className="text-gray-600">
+                Each Assistant is created to help you do a specific set of tasks. Get answers to your questions, brainstorm ideas, create new content, and more!
+              </p>
+            </div>
+            
+            {/* OpenAI Integration Status */}
+            <div className="flex items-center space-x-3">
+              {hasApiKey ? (
+                <div className="flex items-center space-x-2 text-green-600 bg-green-50 px-3 py-2 rounded-lg">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="text-sm font-medium">OpenAI Connected</span>
+                  <span className="text-xs text-green-500">({customAssistantsCount} custom)</span>
+                </div>
+              ) : (
+                <div className="flex items-center space-x-2 text-gray-500 bg-gray-50 px-3 py-2 rounded-lg">
+                  <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+                  <span className="text-sm">OpenAI Not Connected</span>
+                </div>
+              )}
+              
+              <button
+                onClick={() => setShowOpenAISetup(true)}
+                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <Settings className="w-4 h-4" />
+                <span className="text-sm">{hasApiKey ? 'Manage' : 'Connect'} OpenAI</span>
+              </button>
+              
+              {hasApiKey && (
+                <button
+                  onClick={loadOpenAIAssistants}
+                  disabled={isLoading}
+                  className="flex items-center space-x-2 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+                >
+                  <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+                  <span className="text-sm">Refresh</span>
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="flex items-center space-x-2 text-red-600 bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
+              <AlertCircle className="w-5 h-5 flex-shrink-0" />
+              <div className="flex-1">
+                <p className="text-sm font-medium">Failed to load OpenAI assistants</p>
+                <p className="text-xs">{error}</p>
+              </div>
+              <button
+                onClick={() => setShowOpenAISetup(true)}
+                className="text-sm underline hover:no-underline"
+              >
+                Check Settings
+              </button>
+            </div>
+          )}
+
+          {/* Info Banner for non-connected users */}
+          {!hasApiKey && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+              <div className="flex items-start space-x-3">
+                <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                <div className="flex-1">
+                  <h3 className="text-sm font-medium text-blue-800 mb-1">Connect Your OpenAI Account</h3>
+                  <p className="text-sm text-blue-700 mb-2">
+                    Connect your OpenAI account to see and use your custom assistants alongside our default ones.
+                  </p>
+                  <button
+                    onClick={() => setShowOpenAISetup(true)}
+                    className="inline-flex items-center space-x-1 text-sm text-blue-600 hover:text-blue-700 font-medium"
+                  >
+                    <span>Connect Now</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -148,6 +284,8 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
               <option>Name Z-A</option>
               <option>Recently Added</option>
               <option>Favorites</option>
+              {hasApiKey && <option>Custom Only</option>}
+              <option>Default Only</option>
             </select>
             <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
           </div>
@@ -164,67 +302,110 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
           </div>
           
           <span className="text-sm text-gray-500">
-            Search for an Assistant
+            {filteredAndSortedAssistants.length} assistant{filteredAndSortedAssistants.length !== 1 ? 's' : ''}
           </span>
         </div>
 
-        {/* Assistants Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredAndSortedAssistants.map((assistant) => (
-            <div
-              key={assistant.id}
-              onClick={() => onAssistantSelect(assistant.name)}
-              className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200 cursor-pointer group"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center space-x-3">
-                  <div className={`w-8 h-8 rounded flex items-center justify-center ${assistant.color}`}>
-                    <span className="text-lg">{assistant.icon}</span>
-                  </div>
-                  <h3 className="font-medium text-gray-900 group-hover:text-pink-600 transition-colors">
-                    {assistant.name}
-                  </h3>
-                </div>
-                <button 
-                  onClick={(e) => toggleFavorite(assistant.id, e)}
-                  className={`transition-colors ${
-                    assistant.isFavorite 
-                      ? 'text-pink-500 hover:text-pink-600' 
-                      : 'text-gray-300 hover:text-pink-500'
-                  }`}
-                >
-                  <Heart 
-                    className={`w-5 h-5 ${assistant.isFavorite ? 'fill-current' : ''}`} 
-                  />
-                </button>
-              </div>
-              
-              <p className="text-sm text-gray-600 leading-relaxed">
-                {assistant.description}
-              </p>
+        {/* Loading State */}
+        {isLoading && (
+          <div className="flex items-center justify-center py-12">
+            <div className="flex items-center space-x-3">
+              <RefreshCw className="w-5 h-5 animate-spin text-blue-600" />
+              <span className="text-gray-600">Loading your OpenAI assistants...</span>
             </div>
-          ))}
-        </div>
+          </div>
+        )}
 
-        {showNoFavoritesMessage ? (
+        {/* Assistants Grid */}
+        {!isLoading && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredAndSortedAssistants.map((assistant) => (
+              <div
+                key={assistant.id}
+                onClick={() => onAssistantSelect(assistant.name)}
+                className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200 cursor-pointer group relative"
+              >
+                {/* Custom Assistant Badge */}
+                {assistant.isCustom && (
+                  <div className="absolute top-3 right-3">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      Custom
+                    </span>
+                  </div>
+                )}
+
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center space-x-3 flex-1 min-w-0">
+                    <div className={`w-8 h-8 rounded flex items-center justify-center ${assistant.color} flex-shrink-0`}>
+                      <span className="text-lg">{assistant.icon}</span>
+                    </div>
+                    <h3 className="font-medium text-gray-900 group-hover:text-pink-600 transition-colors truncate">
+                      {assistant.name}
+                    </h3>
+                  </div>
+                  <button 
+                    onClick={(e) => toggleFavorite(assistant.id, e)}
+                    className={`transition-colors flex-shrink-0 ml-2 ${
+                      assistant.isFavorite 
+                        ? 'text-pink-500 hover:text-pink-600' 
+                        : 'text-gray-300 hover:text-pink-500'
+                    }`}
+                  >
+                    <Heart 
+                      className={`w-5 h-5 ${assistant.isFavorite ? 'fill-current' : ''}`} 
+                    />
+                  </button>
+                </div>
+                
+                <p className="text-sm text-gray-600 leading-relaxed mb-3">
+                  {assistant.description}
+                </p>
+
+                {/* Model info for custom assistants */}
+                {assistant.isCustom && assistant.model && (
+                  <div className="flex items-center space-x-2 text-xs text-gray-500">
+                    <span className="px-2 py-1 bg-gray-100 rounded-full">
+                      {assistant.model}
+                    </span>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Empty States */}
+        {!isLoading && showNoFavoritesMessage && (
           <div className="text-center py-12">
             <Heart className="w-12 h-12 text-gray-300 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">No favorite assistants yet</h3>
             <p className="text-gray-500">Click the heart icon on any assistant to add it to your favorites</p>
           </div>
-        ) : filteredAndSortedAssistants.length === 0 && (
+        )}
+
+        {!isLoading && filteredAndSortedAssistants.length === 0 && !showNoFavoritesMessage && (
           <div className="text-center py-12">
             <Search className="w-12 h-12 text-gray-300 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">No assistants found</h3>
             <p className="text-gray-500">
               {sortBy === 'Favorites' 
                 ? 'No favorite assistants match your search' 
+                : sortBy === 'Custom Only'
+                ? 'No custom assistants found. Connect your OpenAI account to see your assistants.'
                 : 'Try adjusting your search terms'
               }
             </p>
           </div>
         )}
       </div>
+
+      {/* OpenAI Setup Modal */}
+      <OpenAISetup
+        isOpen={showOpenAISetup}
+        onClose={() => setShowOpenAISetup(false)}
+        onApiKeySet={handleApiKeySet}
+        currentApiKey={openaiService.getApiKey()}
+      />
     </div>
   );
 };
