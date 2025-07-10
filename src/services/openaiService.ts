@@ -26,8 +26,8 @@ class OpenAIService {
   private baseURL = 'https://api.openai.com/v1';
 
   constructor() {
-    // Try to get API key from localStorage or environment
-    this.apiKey = localStorage.getItem('openai_api_key') || null;
+    // Try to get API key from environment first, then localStorage
+    this.apiKey = import.meta.env.VITE_OPENAI_API_KEY || localStorage.getItem('openai_api_key') || null;
   }
 
   setApiKey(apiKey: string) {
@@ -36,23 +36,28 @@ class OpenAIService {
   }
 
   getApiKey(): string | null {
-    return this.apiKey;
+    // Always check environment first
+    return import.meta.env.VITE_OPENAI_API_KEY || this.apiKey;
   }
 
   clearApiKey() {
-    this.apiKey = null;
-    localStorage.removeItem('openai_api_key');
+    // Only clear localStorage key, not environment
+    if (!import.meta.env.VITE_OPENAI_API_KEY) {
+      this.apiKey = null;
+      localStorage.removeItem('openai_api_key');
+    }
   }
 
   private async makeRequest(endpoint: string, options: RequestInit = {}) {
-    if (!this.apiKey) {
+    const currentApiKey = this.getApiKey();
+    if (!currentApiKey) {
       throw new Error('OpenAI API key not configured');
     }
 
     const response = await fetch(`${this.baseURL}${endpoint}`, {
       ...options,
       headers: {
-        'Authorization': `Bearer ${this.apiKey}`,
+        'Authorization': `Bearer ${currentApiKey}`,
         'Content-Type': 'application/json',
         'OpenAI-Beta': 'assistants=v2',
         ...options.headers,

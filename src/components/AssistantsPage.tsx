@@ -196,10 +196,17 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
             {/* OpenAI Integration Status */}
             <div className="flex items-center space-x-3">
               {hasApiKey ? (
-                <div className="flex items-center space-x-2 text-green-600 bg-green-50 px-3 py-2 rounded-lg">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span className="text-sm font-medium">OpenAI Connected</span>
-                  <span className="text-xs text-green-500">({customAssistantsCount} custom)</span>
+                <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 text-green-600 bg-green-50 px-3 py-2 rounded-lg">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span className="text-sm font-medium">OpenAI Connected</span>
+                    <span className="text-xs text-green-500">({customAssistantsCount} custom)</span>
+                  </div>
+                  {import.meta.env.VITE_OPENAI_API_KEY && (
+                    <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                      Environment
+                    </span>
+                  )}
                 </div>
               ) : (
                 <div className="flex items-center space-x-2 text-gray-500 bg-gray-50 px-3 py-2 rounded-lg">
@@ -210,10 +217,13 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
               
               <button
                 onClick={() => setShowOpenAISetup(true)}
+                disabled={!!import.meta.env.VITE_OPENAI_API_KEY}
                 className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
                 <Settings className="w-4 h-4" />
-                <span className="text-sm">{hasApiKey ? 'Manage' : 'Connect'} OpenAI</span>
+                <span className="text-sm">
+                  {import.meta.env.VITE_OPENAI_API_KEY ? 'Environment Key' : hasApiKey ? 'Manage' : 'Connect'} OpenAI
+                </span>
               </button>
               
               {hasApiKey && (

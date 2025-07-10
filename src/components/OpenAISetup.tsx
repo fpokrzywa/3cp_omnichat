@@ -18,8 +18,14 @@ const OpenAISetup: React.FC<OpenAISetupProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const hasEnvKey = !!import.meta.env.VITE_OPENAI_API_KEY;
 
   const handleSave = async () => {
+    if (hasEnvKey) {
+      onClose();
+      return;
+    }
+
     if (!apiKey.trim()) {
       setError('Please enter your OpenAI API key');
       return;
@@ -55,6 +61,10 @@ const OpenAISetup: React.FC<OpenAISetupProps> = ({
   };
 
   const handleRemove = () => {
+    if (hasEnvKey) {
+      onClose();
+      return;
+    }
     setApiKey('');
     onApiKeySet('');
     onClose();
@@ -86,6 +96,18 @@ const OpenAISetup: React.FC<OpenAISetupProps> = ({
 
         {/* Content */}
         <div className="p-6 space-y-4">
+          {hasEnvKey ? (
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <div className="flex items-start space-x-3">
+                <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                <div className="text-sm text-green-800">
+                  <p className="font-medium mb-1">Environment API Key Detected</p>
+                  <p>Your OpenAI API key is configured in the environment variables. This is the most secure way to store your API key.</p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <>
           <div>
             <p className="text-sm text-gray-600 mb-4">
               To load your custom assistants from OpenAI, please provide your API key. 
@@ -118,6 +140,8 @@ const OpenAISetup: React.FC<OpenAISetupProps> = ({
               disabled={isLoading}
             />
           </div>
+            </>
+          )}
 
           {error && (
             <div className="flex items-center space-x-2 text-red-600 text-sm">
@@ -133,6 +157,7 @@ const OpenAISetup: React.FC<OpenAISetupProps> = ({
             </div>
           )}
 
+          {!hasEnvKey && (
           <div className="bg-gray-50 rounded-lg p-4">
             <h4 className="text-sm font-medium text-gray-800 mb-2">Privacy & Security</h4>
             <ul className="text-xs text-gray-600 space-y-1">
@@ -142,12 +167,13 @@ const OpenAISetup: React.FC<OpenAISetupProps> = ({
               <li>• Only used to fetch your OpenAI assistants</li>
             </ul>
           </div>
+          )}
         </div>
 
         {/* Footer */}
         <div className="flex items-center justify-between p-6 border-t border-gray-200">
           <div>
-            {currentApiKey && (
+            {currentApiKey && !hasEnvKey && (
               <button
                 onClick={handleRemove}
                 className="text-sm text-red-600 hover:text-red-700 transition-colors"
@@ -162,8 +188,9 @@ const OpenAISetup: React.FC<OpenAISetupProps> = ({
               className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
               disabled={isLoading}
             >
-              Cancel
+              {hasEnvKey ? 'Close' : 'Cancel'}
             </button>
+            {!hasEnvKey && (
             <button
               onClick={handleSave}
               disabled={isLoading || !apiKey.trim()}
@@ -174,6 +201,7 @@ const OpenAISetup: React.FC<OpenAISetupProps> = ({
               )}
               <span>{isLoading ? 'Testing...' : 'Save & Test'}</span>
             </button>
+            )}
           </div>
         </div>
       </div>
