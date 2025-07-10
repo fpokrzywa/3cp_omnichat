@@ -24,15 +24,68 @@ interface Assistant {
 class OpenAIService {
   private apiKey: string | null = null;
   private baseURL = 'https://api.openai.com/v1';
+  private cacheKey = 'openai_assistants_cache';
+  private cacheTimestampKey = 'openai_assistants_cache_timestamp';
+  private cacheExpiryMs = 5 * 60 * 1000; // 5 minutes
 
   constructor() {
     // Try to get API key from environment first, then localStorage
     this.apiKey = import.meta.env.VITE_OPENAI_API_KEY || localStorage.getItem('openai_api_key') || null;
   }
 
+  // Cache management methods
+  private getCachedAssistants(): OpenAIAssistant[] | null {
+    try {
+      const cached = localStorage.getItem(this.cacheKey);
+      const timestamp = localStorage.getItem(this.cacheTimestampKey);
+      
+      if (!cached || !timestamp) {
+        return null;
+      }
+
+      const cacheAge = Date.now() - parseInt(timestamp);
+      if (cacheAge > this.cacheExpiryMs) {
+        // Cache expired, remove it
+        this.clearCache();
+        return null;
+      }
+
+      return JSON.parse(cached);
+    } catch (error) {
+      console.warn('Error reading assistants cache:', error);
+      this.clearCache();
+      return null;
+    }
+  }
+
+  private setCachedAssistants(assistants: OpenAIAssistant[]): void {
+    try {
+      localStorage.setItem(this.cacheKey, JSON.stringify(assistants));
+      localStorage.setItem(this.cacheTimestampKey, Date.now().toString());
+    } catch (error) {
+      console.warn('Error saving assistants to cache:', error);
+    }
+  }
+
+  private clearCache(): void {
+    localStorage.removeItem(this.cacheKey);
+    localStorage.removeItem(this.cacheTimestampKey);
+  }
+
+  // Check if cache is fresh (less than 1 minute old)
+  private isCacheFresh(): boolean {
+    const timestamp = localStorage.getItem(this.cacheTimestampKey);
+    if (!timestamp) return false;
+    
+    const cacheAge = Date.now() - parseInt(timestamp);
+    return cacheAge < 60 * 1000; // 1 minute
+  }
+
   setApiKey(apiKey: string) {
     this.apiKey = apiKey;
     localStorage.setItem('openai_api_key', apiKey);
+    // Clear cache when API key changes
+    this.clearCache();
   }
 
   getApiKey(): string | null {
@@ -45,6 +98,8 @@ class OpenAIService {
     if (!import.meta.env.VITE_OPENAI_API_KEY) {
       this.apiKey = null;
       localStorage.removeItem('openai_api_key');
+      // Clear cache when API key is removed
+      this.clearCache();
     }
   }
 
@@ -80,14 +135,65 @@ class OpenAIService {
     }
   }
 
-  async listAssistants(): Promise<OpenAIAssistant[]> {
+  // Get cached assistants immediately, then optionally fetch fresh data
+  getCachedAssistantsSync(): OpenAIAssistant[] {
+    return this.getCachedAssistants() || [];
+  }
+
+  // Main method that returns cached data immediately and optionally fetches fresh data
+  async listAssistants(forceRefresh: boolean = false): Promise<{
+    assistants: OpenAIAssistant[];
+    fromCache: boolean;
+    hasUpdate?: boolean;
+  }> {
+    const cachedAssistants = this.getCachedAssistants();
+    
+    // If we have fresh cache and not forcing refresh, return cached data
+    if (!forceRefresh && cachedAssistants && this.isCacheFresh()) {
+      return {
+        assistants: cachedAssistants,
+        fromCache: true
+      };
+    }
+
+    // If we have cache but it's not fresh, return cache first then fetch updates
+    if (!forceRefresh && cachedAssistants) {
+      // Return cached data immediately
+      const result = {
+        assistants: cachedAssistants,
+        fromCache: true
+      };
+
+      // Fetch fresh data in background
+      this.fetchFreshAssistants().catch(console.error);
+      
+      return result;
+    }
+
+    // No cache or forcing refresh - fetch fresh data
     try {
-      const response = await this.makeRequest('/assistants?limit=100');
-      return response.data || [];
+      return await this.fetchFreshAssistants();
     } catch (error) {
       console.error('Error fetching assistants:', error);
       throw error;
     }
+  }
+
+  private async fetchFreshAssistants(): Promise<{
+    assistants: OpenAIAssistant[];
+    fromCache: boolean;
+    hasUpdate?: boolean;
+  }> {
+    const response = await this.makeRequest('/assistants?limit=100');
+    const freshAssistants = response.data || [];
+    
+    // Cache the fresh data
+    this.setCachedAssistants(freshAssistants);
+    
+    return {
+      assistants: freshAssistants,
+      fromCache: false
+    };
   }
 
   async getAssistant(assistantId: string): Promise<OpenAIAssistant> {
