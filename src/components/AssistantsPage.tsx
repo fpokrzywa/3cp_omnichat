@@ -156,17 +156,6 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
                 </div>
               )}
               
-              <button
-                onClick={() => setShowOpenAISetup(true)}
-                disabled={!!import.meta.env.VITE_OPENAI_API_KEY}
-                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                <Settings className="w-4 h-4" />
-                <span className="text-sm">
-                  {import.meta.env.VITE_OPENAI_API_KEY ? 'Environment Key' : hasApiKey ? 'Manage' : 'Connect'} OpenAI
-                </span>
-              </button>
-              
               {hasApiKey && (
                 <button
                   onClick={handleRefresh}
