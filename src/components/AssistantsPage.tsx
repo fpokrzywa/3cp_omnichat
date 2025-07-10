@@ -16,93 +16,18 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
   const [showOpenAISetup, setShowOpenAISetup] = useState(false);
   const [hasApiKey, setHasApiKey] = useState(false);
 
-  // Default assistants that are always available
-  const defaultAssistants: Assistant[] = [
-    {
-      "id": "bms-chatgpt",
-      "name": "OmniChat",
-      "description": "Ask questions, explore new ideas, create content, and experiment with new models.",
-      "icon": "💬",
-      "color": "bg-pink-100 text-pink-600",
-      "isFavorite": false,
-      "isCustom": false
-    },
-    {
-      "id": "it-support",
-      "name": "IT Support",
-      "description": "Get help with common IT problems like email, devices, passwords, and more.",
-      "icon": "🔧",
-      "color": "bg-red-100 text-red-600",
-      "isFavorite": false,
-      "isCustom": false
-    },
-    {
-      "id": "hr-support",
-      "name": "HR Support",
-      "description": "Find answers to your HR questions, from benefits to company policies and more.",
-      "icon": "🧑‍🤝‍🧑",
-      "color": "bg-green-100 text-green-600",
-      "isFavorite": false,
-      "isCustom": false
-    },
-    {
-      "id": "advance-policies-assistant",
-      "name": "Advance Policies Assistant",
-      "description": "Get answers and summaries for your policy-related questions.",
-      "icon": "📋",
-      "color": "bg-purple-100 text-purple-600",
-      "isFavorite": false,
-      "isCustom": false
-    },
-    {
-      "id": "redact-assistant",
-      "name": "Redact Assistant",
-      "description": "Efficiently identify and redact sensitive information from documents.",
-      "icon": "✂️",
-      "color": "bg-yellow-100 text-yellow-600",
-      "isFavorite": false,
-      "isCustom": false
-    },
-    {
-      "id": "adept-assistant",
-      "name": "ADEPT Assistant",
-      "description": "Simplify and accelerate your data entry and processing tasks.",
-      "icon": "⚡",
-      "color": "bg-blue-100 text-blue-600",
-      "isFavorite": false,
-      "isCustom": false
-    },
-    {
-      "id": "rfp-assistant",
-      "name": "RFP Assistant",
-      "description": "Streamline your Request for Proposal (RFP) response process.",
-      "icon": "✍️",
-      "color": "bg-indigo-100 text-indigo-600",
-      "isFavorite": false,
-      "isCustom": false
-    },
-    {
-      "id": "resume-assistant",
-      "name": "Resume Assistant",
-      "description": "Craft compelling resumes tailored to specific job opportunities.",
-      "icon": "📄",
-      "color": "bg-teal-100 text-teal-600",
-      "isFavorite": false,
-      "isCustom": false
-    }
-  ];
 
   // Check for API key on component mount
   useEffect(() => {
     const apiKey = openaiService.getApiKey();
     setHasApiKey(!!apiKey);
     
-    // Load default assistants
-    setAssistants(defaultAssistants);
-    
-    // If API key exists, try to load OpenAI assistants
+    // If API key exists, load OpenAI assistants
     if (apiKey) {
       loadOpenAIAssistants();
+    } else {
+      // Clear assistants if no API key
+      setAssistants([]);
     }
   }, []);
 
@@ -116,8 +41,8 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
         openaiService.convertToInternalFormat(assistant)
       );
 
-      // Combine default assistants with OpenAI assistants
-      setAssistants([...defaultAssistants, ...convertedAssistants]);
+      // Set only OpenAI assistants
+      setAssistants(convertedAssistants);
     } catch (err) {
       console.error('Error loading OpenAI assistants:', err);
       setError(err instanceof Error ? err.message : 'Failed to load OpenAI assistants');
@@ -134,7 +59,7 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
     } else {
       openaiService.clearApiKey();
       setHasApiKey(false);
-      setAssistants(defaultAssistants);
+      setAssistants([]);
     }
   };
 
@@ -159,10 +84,6 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
         return [...assistantsList].reverse();
       case 'Favorites':
         return [...assistantsList].filter(assistant => assistant.isFavorite);
-      case 'Custom Only':
-        return [...assistantsList].filter(assistant => assistant.isCustom);
-      case 'Default Only':
-        return [...assistantsList].filter(assistant => !assistant.isCustom);
       default:
         return assistantsList;
     }
@@ -176,7 +97,6 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
   );
 
   const showNoFavoritesMessage = sortBy === 'Favorites' && filteredAndSortedAssistants.length === 0 && searchQuery === '';
-  const customAssistantsCount = assistants.filter(a => a.isCustom).length;
 
   return (
     <div className="flex-1 bg-gray-50 overflow-y-auto">
@@ -200,7 +120,7 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
                   <div className="flex items-center space-x-2 text-green-600 bg-green-50 px-3 py-2 rounded-lg">
                     <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                     <span className="text-sm font-medium">OpenAI Connected</span>
-                    <span className="text-xs text-green-500">({customAssistantsCount} custom)</span>
+                    <span className="text-xs text-green-500">({assistants.length} assistants)</span>
                   </div>
                   {import.meta.env.VITE_OPENAI_API_KEY && (
                     <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
@@ -266,9 +186,9 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
               <div className="flex items-start space-x-3">
                 <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                 <div className="flex-1">
-                  <h3 className="text-sm font-medium text-blue-800 mb-1">Connect Your OpenAI Account</h3>
+                  <h3 className="text-sm font-medium text-blue-800 mb-1">OpenAI API Key Required</h3>
                   <p className="text-sm text-blue-700 mb-2">
-                    Connect your OpenAI account to see and use your custom assistants alongside our default ones.
+                    Please connect your OpenAI account to load and use your assistants.
                   </p>
                   <button
                     onClick={() => setShowOpenAISetup(true)}
@@ -298,8 +218,6 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
               <option>Name Z-A</option>
               <option>Recently Added</option>
               <option>Favorites</option>
-              {hasApiKey && <option>Custom Only</option>}
-              <option>Default Only</option>
             </select>
             <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
           </div>
@@ -331,7 +249,7 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
         )}
 
         {/* Assistants Grid */}
-        {!isLoading && (
+        {!isLoading && assistants.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredAndSortedAssistants.map((assistant) => (
               <div
@@ -339,14 +257,6 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
                 onClick={() => onAssistantSelect(assistant.name)}
                 className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200 cursor-pointer group relative"
               >
-                {/* Custom Assistant Badge */}
-                {assistant.isCustom && (
-                  <div className="absolute top-3 right-3">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                      Custom
-                    </span>
-                  </div>
-                )}
 
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center space-x-3 flex-1 min-w-0">
@@ -375,8 +285,8 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
                   {assistant.description}
                 </p>
 
-                {/* Model info for custom assistants */}
-                {assistant.isCustom && assistant.model && (
+                {/* Model info */}
+                {assistant.model && (
                   <div className="flex items-center space-x-2 text-xs text-gray-500">
                     <span className="px-2 py-1 bg-gray-100 rounded-full">
                       {assistant.model}
@@ -385,6 +295,42 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
                 )}
               </div>
             ))}
+          </div>
+        )}
+        {/* No API Key State */}
+        {!isLoading && !hasApiKey && (
+          <div className="text-center py-16">
+            <Key className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">OpenAI API Key Required</h3>
+            <p className="text-gray-500 mb-6">Connect your OpenAI account to load your assistants</p>
+            <button
+              onClick={() => setShowOpenAISetup(true)}
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Connect OpenAI Account
+            </button>
+          </div>
+        )}
+
+        {/* No Assistants State */}
+        {!isLoading && hasApiKey && assistants.length === 0 && !error && (
+          <div className="text-center py-16">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-2xl">🤖</span>
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">No Assistants Found</h3>
+            <p className="text-gray-500 mb-6">
+              You don't have any assistants in your OpenAI account yet.
+            </p>
+            <a
+              href="https://platform.openai.com/assistants"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center space-x-2 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+            >
+              <span>Create Assistant on OpenAI</span>
+              <ExternalLink className="w-4 h-4" />
+            </a>
           </div>
         )}
 
@@ -404,8 +350,6 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
             <p className="text-gray-500">
               {sortBy === 'Favorites' 
                 ? 'No favorite assistants match your search' 
-                : sortBy === 'Custom Only'
-                ? 'No custom assistants found. Connect your OpenAI account to see your assistants.'
                 : 'Try adjusting your search terms'
               }
             </p>

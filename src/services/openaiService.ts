@@ -112,7 +112,6 @@ class OpenAIService {
       color,
       model: openaiAssistant.model,
       instructions: openaiAssistant.instructions,
-      isCustom: true,
       isFavorite: false
     };
   }
