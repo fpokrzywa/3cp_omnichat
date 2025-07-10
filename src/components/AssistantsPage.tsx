@@ -15,6 +15,8 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
   const [error, setError] = useState<string | null>(null);
   const [showOpenAISetup, setShowOpenAISetup] = useState(false);
   const [hasApiKey, setHasApiKey] = useState(false);
+  const [isLoadingFresh, setIsLoadingFresh] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
 
   // Check for API key on component mount
@@ -24,31 +26,54 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
     
     // If API key exists, load OpenAI assistants
     if (apiKey) {
+      // First load cached assistants immediately
+      const cachedAssistants = openaiService.getCachedAssistantsSync();
+      if (cachedAssistants.length > 0) {
+        const convertedAssistants = cachedAssistants.map(assistant => 
+          openaiService.convertToInternalFormat(assistant)
+        );
+        setAssistants(convertedAssistants);
+        setLastUpdated(new Date());
+      }
+      
+      // Then load fresh data
       loadOpenAIAssistants();
     } else {
       // Clear assistants if no API key
       setAssistants([]);
+      setLastUpdated(null);
     }
   }, []);
 
-  const loadOpenAIAssistants = async () => {
+  const loadOpenAIAssistants = async (forceRefresh: boolean = false) => {
     setIsLoading(true);
+    setIsLoadingFresh(forceRefresh);
     setError(null);
 
     try {
-      const openaiAssistants = await openaiService.listAssistants();
-      const convertedAssistants = openaiAssistants.map(assistant => 
+      const result = await openaiService.listAssistants(forceRefresh);
+      const convertedAssistants = result.assistants.map(assistant => 
         openaiService.convertToInternalFormat(assistant)
       );
 
-      // Set only OpenAI assistants
       setAssistants(convertedAssistants);
+      setLastUpdated(new Date());
+      
+      if (!result.fromCache) {
+        // Show a subtle notification that data was refreshed
+        console.log('Assistants updated from OpenAI API');
+      }
     } catch (err) {
       console.error('Error loading OpenAI assistants:', err);
       setError(err instanceof Error ? err.message : 'Failed to load OpenAI assistants');
     } finally {
       setIsLoading(false);
+      setIsLoadingFresh(false);
     }
+  };
+
+  const handleRefresh = () => {
+    loadOpenAIAssistants(true);
   };
 
   const handleApiKeySet = (apiKey: string) => {
@@ -60,6 +85,7 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
       openaiService.clearApiKey();
       setHasApiKey(false);
       setAssistants([]);
+      setLastUpdated(null);
     }
   };
 
@@ -122,6 +148,11 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
                     <span className="text-sm font-medium">OpenAI Connected</span>
                     <span className="text-xs text-green-500">({assistants.length} assistants)</span>
                   </div>
+                  {lastUpdated && (
+                    <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                      Updated {lastUpdated.toLocaleTimeString()}
+                    </span>
+                  )}
                   {import.meta.env.VITE_OPENAI_API_KEY && (
                     <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
                       Environment
@@ -148,11 +179,11 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
               
               {hasApiKey && (
                 <button
-                  onClick={loadOpenAIAssistants}
-                  disabled={isLoading}
+                  onClick={handleRefresh}
+                  disabled={isLoadingFresh}
                   className="flex items-center space-x-2 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
                 >
-                  <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+                  <RefreshCw className={`w-4 h-4 ${isLoadingFresh ? 'animate-spin' : ''}`} />
                   <span className="text-sm">Refresh</span>
                 </button>
               )}
@@ -243,7 +274,7 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
           <div className="flex items-center justify-center py-12">
             <div className="flex items-center space-x-3">
               <RefreshCw className="w-5 h-5 animate-spin text-blue-600" />
-              <span className="text-gray-600">Loading your OpenAI assistants...</span>
+              <span className="text-gray-600">{assistants.length > 0 ? 'Refreshing assistants...' : 'Loading your OpenAI assistants...'}</span>
             </div>
           </div>
         )}
