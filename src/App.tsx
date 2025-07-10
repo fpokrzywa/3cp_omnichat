@@ -21,6 +21,28 @@ function App() {
   const [profileOpen, setProfileOpen] = useState(false);
   const [userProfile, setUserProfile] = useState<any>(null);
 
+  // Auto-close sidebar on mobile devices
+  useEffect(() => {
+    const handleResize = () => {
+      // Close sidebar on mobile (screens smaller than 768px)
+      if (window.innerWidth < 768) {
+        setSidebarOpen(false);
+      } else {
+        // Auto-open sidebar on desktop if on chat page
+        if (currentPage === 'chat') {
+          setSidebarOpen(true);
+        }
+      }
+    };
+
+    // Check on initial load
+    handleResize();
+
+    // Listen for window resize
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [currentPage]);
+
   // Load user profile on component mount
   useEffect(() => {
     const savedProfile = localStorage.getItem('userProfile');
