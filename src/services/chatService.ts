@@ -104,6 +104,7 @@ class ChatService {
   }
 
   createThread(assistantName: string, displayName: string): string {
+  }
   createThread(assistantId: string, displayName: string): string {
     const threadId = `thread_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const thread: ChatThread = {
