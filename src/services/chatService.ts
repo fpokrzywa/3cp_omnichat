@@ -285,7 +285,7 @@ class ChatService {
       onChunk(currentText);
       
       // Add a small delay to simulate streaming
-      await new Promise(resolve => setTimeout(resolve, 50 + Math.random() * 100));
+      await new Promise(resolve => setTimeout(resolve, 15 + Math.random() * 25));
     }
     
     this.abortController = null;
