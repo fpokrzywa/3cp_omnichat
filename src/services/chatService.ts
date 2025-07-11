@@ -295,14 +295,14 @@ class ChatService {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
 
-    // Generate contextual responses based on assistant type
-    const responses = this.getContextualResponses(assistantName, userMessage);
-    return responses[Math.floor(Math.random() * responses.length)];
+    // Generate contextual responses based on assistant type and user input
+    return this.generateContextualResponse(assistantName, userMessage);
   }
 
-  private getContextualResponses(assistantName: string, userMessage: string): string[] {
+  private generateContextualResponse(assistantName: string, userMessage: string): string {
     const message = userMessage.toLowerCase();
 
+    // For Coding Assistant, provide specific code solutions based on user request
     if (assistantName === 'IT Support') {
       if (message.includes('password') || message.includes('login')) {
         return [
@@ -342,30 +342,256 @@ class ChatService {
     }
 
     if (assistantName === 'Coding Assistant') {
-      if (message.includes('business rule') || message.includes('incident') || message.includes('urgent')) {
-        return [
-          "I can definitely help you create a business rule for setting incident priorities. Here's a comprehensive approach:\n\n**Business Rule Structure:**\n```javascript\nfunction setIncidentPriority(incident) {\n  // Priority levels: Critical, High, Medium, Low\n  \n  // Critical Priority Conditions\n  if (incident.description.toLowerCase().includes('urgent') ||\n      incident.impact === 'system-wide' ||\n      incident.affectedUsers > 1000) {\n    return 'Critical';\n  }\n  \n  // High Priority Conditions\n  if (incident.severity === 'high' ||\n      incident.businessImpact === 'revenue-affecting' ||\n      incident.affectedUsers > 100) {\n    return 'High';\n  }\n  \n  // Medium Priority (default for most cases)\n  if (incident.affectedUsers > 10 ||\n      incident.category === 'functionality') {\n    return 'Medium';\n  }\n  \n  // Low Priority\n  return 'Low';\n}\n```\n\n**Implementation Options:**\n\n1. **Database Trigger Approach:**\n```sql\nCREATE TRIGGER set_incident_priority\nBEFORE INSERT ON incidents\nFOR EACH ROW\nBEGIN\n  IF NEW.description LIKE '%urgent%' THEN\n    SET NEW.priority = 'Critical';\n  ELSEIF NEW.affected_users > 100 THEN\n    SET NEW.priority = 'High';\n  ELSE\n    SET NEW.priority = 'Medium';\n  END IF;\nEND;\n```\n\n2. **Application Logic (Node.js/Express):**\n```javascript\nconst priorityRules = {\n  keywords: {\n    critical: ['urgent', 'emergency', 'outage', 'down'],\n    high: ['important', 'asap', 'priority'],\n    medium: ['issue', 'problem', 'bug']\n  },\n  \n  evaluatePriority(description, metadata) {\n    const desc = description.toLowerCase();\n    \n    if (this.keywords.critical.some(word => desc.includes(word))) {\n      return 'Critical';\n    }\n    \n    if (metadata.affectedUsers > 500) {\n      return 'Critical';\n    }\n    \n    if (this.keywords.high.some(word => desc.includes(word))) {\n      return 'High';\n    }\n    \n    return 'Medium';\n  }\n};\n```\n\n**Configuration Options:**\n- Make keywords configurable through admin panel\n- Add time-based rules (after-hours = higher priority)\n- Include customer tier considerations (VIP customers)\n- Add escalation rules for unresolved incidents\n\nWould you like me to elaborate on any specific implementation approach or add additional criteria to the business rule?",
-          "Absolutely! Creating an automated business rule for incident priority assignment is a great way to ensure consistency. Let me provide you with a comprehensive solution:\n\n**Priority Matrix Framework:**\n\n```javascript\nclass IncidentPriorityEngine {\n  constructor() {\n    this.rules = {\n      // Keyword-based rules\n      urgentKeywords: ['urgent', 'emergency', 'critical', 'outage', 'down', 'broken'],\n      highKeywords: ['important', 'asap', 'priority', 'blocking'],\n      \n      // Impact-based rules\n      impactLevels: {\n        critical: { userThreshold: 1000, revenueImpact: true },\n        high: { userThreshold: 100, functionalityImpact: true },\n        medium: { userThreshold: 10, minorImpact: true }\n      }\n    };\n  }\n  \n  calculatePriority(incident) {\n    let score = 0;\n    const description = incident.description.toLowerCase();\n    \n    // Keyword analysis\n    if (this.containsUrgentKeywords(description)) {\n      score += 100;\n    } else if (this.containsHighKeywords(description)) {\n      score += 75;\n    }\n    \n    // Impact analysis\n    score += this.calculateImpactScore(incident);\n    \n    // Time sensitivity\n    score += this.calculateTimeScore(incident);\n    \n    // Customer tier\n    score += this.calculateCustomerScore(incident);\n    \n    return this.scoreToPriority(score);\n  }\n  \n  containsUrgentKeywords(text) {\n    return this.rules.urgentKeywords.some(keyword => text.includes(keyword));\n  }\n  \n  containsHighKeywords(text) {\n    return this.rules.highKeywords.some(keyword => text.includes(keyword));\n  }\n  \n  calculateImpactScore(incident) {\n    if (incident.affectedUsers > 1000) return 80;\n    if (incident.affectedUsers > 100) return 60;\n    if (incident.affectedUsers > 10) return 40;\n    return 20;\n  }\n  \n  calculateTimeScore(incident) {\n    const hour = new Date().getHours();\n    // Business hours (9 AM - 5 PM) get higher priority\n    if (hour >= 9 && hour <= 17) return 20;\n    return 10;\n  }\n  \n  calculateCustomerScore(incident) {\n    if (incident.customerTier === 'enterprise') return 30;\n    if (incident.customerTier === 'premium') return 20;\n    return 10;\n  }\n  \n  scoreToPriority(score) {\n    if (score >= 150) return 'Critical';\n    if (score >= 100) return 'High';\n    if (score >= 60) return 'Medium';\n    return 'Low';\n  }\n}\n```\n\n**Database Implementation:**\n\n```sql\n-- Create priority rules table\nCREATE TABLE priority_rules (\n  id INT PRIMARY KEY AUTO_INCREMENT,\n  rule_type VARCHAR(50),\n  condition_field VARCHAR(100),\n  condition_operator VARCHAR(20),\n  condition_value VARCHAR(255),\n  priority_score INT,\n  is_active BOOLEAN DEFAULT TRUE\n);\n\n-- Insert sample rules\nINSERT INTO priority_rules VALUES\n(1, 'keyword', 'description', 'contains', 'urgent', 100, TRUE),\n(2, 'impact', 'affected_users', '>', '1000', 80, TRUE),\n(3, 'customer', 'customer_tier', '=', 'enterprise', 30, TRUE);\n\n-- Stored procedure for priority calculation\nDELIMITER //\nCREATE PROCEDURE CalculateIncidentPriority(\n  IN incident_id INT,\n  OUT calculated_priority VARCHAR(20)\n)\nBEGIN\n  DECLARE total_score INT DEFAULT 0;\n  DECLARE done INT DEFAULT FALSE;\n  DECLARE rule_score INT;\n  \n  -- Calculate total score based on active rules\n  -- (Implementation would iterate through rules)\n  \n  -- Convert score to priority\n  IF total_score >= 150 THEN\n    SET calculated_priority = 'Critical';\n  ELSEIF total_score >= 100 THEN\n    SET calculated_priority = 'High';\n  ELSEIF total_score >= 60 THEN\n    SET calculated_priority = 'Medium';\n  ELSE\n    SET calculated_priority = 'Low';\n  END IF;\nEND //\nDELIMITER ;\n```\n\n**Integration Example:**\n\n```javascript\n// Express.js endpoint\napp.post('/api/incidents', async (req, res) => {\n  try {\n    const incident = req.body;\n    \n    // Initialize priority engine\n    const priorityEngine = new IncidentPriorityEngine();\n    \n    // Calculate priority\n    incident.priority = priorityEngine.calculatePriority(incident);\n    incident.priorityScore = priorityEngine.getLastScore();\n    \n    // Save to database\n    const savedIncident = await Incident.create(incident);\n    \n    // Send notifications based on priority\n    if (incident.priority === 'Critical') {\n      await notificationService.sendUrgentAlert(savedIncident);\n    }\n    \n    res.json(savedIncident);\n  } catch (error) {\n    res.status(500).json({ error: error.message });\n  }\n});\n```\n\n**Configuration Dashboard:**\nYou could also create an admin interface to manage these rules dynamically without code changes.\n\nWould you like me to show you how to implement the admin interface or focus on any specific part of this solution?"
-        ];
+      // Handle specific requests for business rules with error messages
+      if (message.includes('business rule') && message.includes('hello world') && message.includes('error')) {
+        return `I'll help you create a business rule that presents "Hello World" as an error message. Here's a comprehensive solution:
+
+**Simple Error Display Rule:**
+
+\`\`\`javascript
+// Basic business rule function
+function displayHelloWorldError() {
+  throw new Error("Hello World");
+}
+
+// Or for user-friendly display
+function showHelloWorldErrorMessage() {
+  return {
+    success: false,
+    error: "Hello World",
+    message: "Hello World",
+    type: "error"
+  };
+}
+\`\`\`
+
+**Frontend Implementation:**
+
+\`\`\`javascript
+// React component example
+function ErrorDisplay() {
+  const [error, setError] = useState(null);
+  
+  const triggerHelloWorldError = () => {
+    setError("Hello World");
+  };
+  
+  return (
+    <div>
+      <button onClick={triggerHelloWorldError}>
+        Trigger Error
+      </button>
+      {error && (
+        <div className="error-message" style={{
+          color: 'red',
+          padding: '10px',
+          border: '1px solid red',
+          borderRadius: '4px',
+          backgroundColor: '#ffebee'
+        }}>
+          Error: {error}
+        </div>
+      )}
+    </div>
+  );
+}
+\`\`\`
+
+**Backend API Rule:**
+
+\`\`\`javascript
+// Express.js endpoint
+app.post('/api/trigger-hello-world-error', (req, res) => {
+  // Business rule: Always return "Hello World" as error
+  res.status(400).json({
+    success: false,
+    error: "Hello World",
+    timestamp: new Date().toISOString()
+  });
+});
+\`\`\`
+
+**Database Trigger Example:**
+
+\`\`\`sql
+-- SQL trigger that creates "Hello World" error log
+CREATE TRIGGER hello_world_error_trigger
+BEFORE INSERT ON user_actions
+FOR EACH ROW
+BEGIN
+  INSERT INTO error_logs (message, severity, created_at)
+  VALUES ('Hello World', 'ERROR', NOW());
+END;
+\`\`\`
+
+**Validation Rule:**
+
+\`\`\`javascript
+// Form validation that shows "Hello World" error
+function validateForm(data) {
+  const errors = {};
+  
+  // Business rule: Always show "Hello World" error
+  errors.general = "Hello World";
+  
+  return {
+    isValid: false,
+    errors: errors
+  };
+}
+\`\`\`
+
+Would you like me to elaborate on any specific implementation or add additional error handling features?`;
+      }
+      
+      // Handle other business rule requests
+      if (message.includes('business rule')) {
+        return `I can help you create a business rule! Based on your request: "${userMessage}"
+
+Here's a general business rule structure:
+
+\`\`\`javascript
+function businessRule(input) {
+  // Define your conditions
+  if (/* your condition */) {
+    return /* your result */;
+  }
+  
+  // Default case
+  return /* default result */;
+}
+\`\`\`
+
+Could you provide more specific details about:
+1. What conditions should trigger the rule?
+2. What actions should be taken?
+3. What data you're working with?
+
+This will help me create a more targeted solution for your needs.`;
       }
       
       if (message.includes('code') || message.includes('function') || message.includes('programming')) {
-        return [
-          "I'd be happy to help you with coding! As a Coding Assistant, I can assist with various programming languages and development tasks.\n\n**Programming Languages I Support:**\n- JavaScript/TypeScript (Node.js, React, Vue, Angular)\n- Python (Django, Flask, FastAPI, data science)\n- Java (Spring Boot, Android development)\n- C# (.NET, ASP.NET Core)\n- PHP (Laravel, Symfony)\n- Go, Rust, C++\n- SQL (MySQL, PostgreSQL, MongoDB)\n\n**What I Can Help With:**\n\n**🔧 Code Development:**\n- Writing functions and classes\n- API development and integration\n- Database design and queries\n- Algorithm implementation\n- Code optimization\n\n**🐛 Debugging & Troubleshooting:**\n- Error analysis and fixes\n- Performance optimization\n- Code review and best practices\n- Testing strategies\n\n**🏗️ Architecture & Design:**\n- System design patterns\n- Database schema design\n- API architecture\n- Microservices design\n- Security implementations\n\n**📚 Learning & Best Practices:**\n- Code explanations\n- Best practice recommendations\n- Design pattern implementations\n- Performance optimization tips\n\n**Example Code Structure:**\n```javascript\n// I can help you write clean, well-documented code\nclass ExampleService {\n  constructor(config) {\n    this.config = config;\n  }\n  \n  async processData(input) {\n    try {\n      // Implementation with error handling\n      const result = await this.validateAndProcess(input);\n      return this.formatResponse(result);\n    } catch (error) {\n      this.handleError(error);\n      throw error;\n    }\n  }\n}\n```\n\nWhat specific coding challenge or project are you working on? Please share:\n- Programming language you're using\n- What you're trying to accomplish\n- Any specific requirements or constraints\n- Current code (if you have any)\n\nI'll provide detailed, working solutions with explanations!",
-          "Great! I'm here to help with all your coding needs. Let me know what you're working on and I'll provide comprehensive assistance.\n\n**My Coding Expertise:**\n\n**Frontend Development:**\n- React, Vue.js, Angular\n- HTML5, CSS3, JavaScript/TypeScript\n- Responsive design and UI/UX\n- State management (Redux, Vuex, NgRx)\n- Build tools (Webpack, Vite, Parcel)\n\n**Backend Development:**\n- Node.js, Express.js, Fastify\n- Python (Django, Flask, FastAPI)\n- Java Spring Boot\n- C# .NET Core\n- RESTful APIs and GraphQL\n\n**Database & Data:**\n- SQL (MySQL, PostgreSQL, SQL Server)\n- NoSQL (MongoDB, Redis, DynamoDB)\n- Database design and optimization\n- Data modeling and migrations\n- Query optimization\n\n**DevOps & Tools:**\n- Docker containerization\n- CI/CD pipelines\n- Cloud platforms (AWS, Azure, GCP)\n- Version control (Git)\n- Testing frameworks\n\n**Code Quality & Best Practices:**\n```javascript\n// Example of clean, maintainable code structure\nclass UserService {\n  constructor(database, logger) {\n    this.db = database;\n    this.logger = logger;\n  }\n  \n  async createUser(userData) {\n    try {\n      // Validation\n      this.validateUserData(userData);\n      \n      // Business logic\n      const hashedPassword = await this.hashPassword(userData.password);\n      const user = {\n        ...userData,\n        password: hashedPassword,\n        createdAt: new Date(),\n        isActive: true\n      };\n      \n      // Database operation\n      const savedUser = await this.db.users.create(user);\n      \n      // Logging\n      this.logger.info(`User created: ${savedUser.id}`);\n      \n      // Return sanitized data\n      return this.sanitizeUser(savedUser);\n      \n    } catch (error) {\n      this.logger.error('User creation failed:', error);\n      throw new UserCreationError(error.message);\n    }\n  }\n  \n  validateUserData(data) {\n    const required = ['email', 'password', 'firstName', 'lastName'];\n    const missing = required.filter(field => !data[field]);\n    \n    if (missing.length > 0) {\n      throw new ValidationError(`Missing required fields: ${missing.join(', ')}`);\n    }\n    \n    if (!this.isValidEmail(data.email)) {\n      throw new ValidationError('Invalid email format');\n    }\n  }\n}\n```\n\n**How to Get the Best Help:**\n1. **Describe your goal**: What are you trying to build or solve?\n2. **Share your code**: Current implementation (if any)\n3. **Specify constraints**: Performance, security, or platform requirements\n4. **Include error messages**: Exact error text helps with debugging\n5. **Mention your experience level**: So I can adjust explanations accordingly\n\n**Common Tasks I Excel At:**\n- Writing complete, working code solutions\n- Debugging and fixing errors\n- Code reviews and optimization\n- Architecture and design recommendations\n- Testing strategies and implementation\n- Documentation and code comments\n\nWhat coding challenge can I help you tackle today?"
-        ];
-      }
+        return `I'd be happy to help you with coding! You mentioned: "${userMessage}"
+
+Let me provide assistance based on your specific request. Could you share more details about:
+- What programming language you're using
+- What you're trying to accomplish
+- Any specific requirements or constraints
+    // Handle IT Support requests
+- Current code (if you have any)
+
+        return `I can help you with password issues. You mentioned: "${userMessage}"
+
+Here's what you can do:
+
+1. **Self-Service Reset**: Use our password reset portal at portal.company.com/reset
+2. **Verify Identity**: You'll need your employee ID and registered email
+3. **Security Questions**: Answer the security questions you set up during onboarding
+4. **Contact IT**: If self-service doesn't work, call IT at ext. 4357
+
+For future reference, passwords must be at least 12 characters with uppercase, lowercase, numbers, and special characters. They expire every 90 days.
+
+Is there a specific password issue you're experiencing?`;
+- Best practices and architecture
+- Testing strategies
+        return `Let me help you troubleshoot your printer issues. You mentioned: "${userMessage}"
+
+Here's a comprehensive step-by-step guide:
+
+**Basic Checks:**
+1. Verify the printer is powered on and all cables are securely connected
+2. Check if there are any error lights or messages on the printer display
+3. Ensure there's paper in the tray and toner/ink cartridges aren't empty
+
+**Software Troubleshooting:**
+4. Restart the Print Spooler service:
+   - Press Win+R, type 'services.msc'
+   - Find 'Print Spooler', right-click and restart
+5. Clear the print queue of any stuck jobs
+6. Update or reinstall printer drivers from the manufacturer's website
+
+**Network Printer Issues:**
+7. Check if other users can print to the same printer
+8. Verify the printer's IP address hasn't changed
+9. Try printing a test page directly from the printer
+
+What specific printer issue are you experiencing?`;
+      // Default coding assistant response
       
-      return [
-        "Hello! I'm your Coding Assistant, ready to help with all your programming and development needs.\n\n**What I Can Do For You:**\n\n**💻 Code Development:**\n- Write complete functions, classes, and applications\n- Implement algorithms and data structures\n- Create APIs and web services\n- Build database schemas and queries\n- Develop user interfaces and components\n\n**🔍 Code Analysis & Debugging:**\n- Debug errors and fix issues\n- Optimize performance bottlenecks\n- Review code for best practices\n- Suggest improvements and refactoring\n- Identify security vulnerabilities\n\n**🏗️ Architecture & Design:**\n- Design system architecture\n- Choose appropriate design patterns\n- Plan database structures\n- Create API specifications\n- Design scalable solutions\n\n**📖 Learning & Explanation:**\n- Explain complex programming concepts\n- Provide step-by-step tutorials\n- Recommend learning resources\n- Share industry best practices\n- Help with code documentation\n\n**Technologies I Work With:**\n- **Languages**: JavaScript, Python, Java, C#, PHP, Go, Rust, C++\n- **Frontend**: React, Vue, Angular, HTML/CSS, TypeScript\n- **Backend**: Node.js, Django, Spring Boot, .NET, Express\n- **Databases**: MySQL, PostgreSQL, MongoDB, Redis\n- **Cloud**: AWS, Azure, Google Cloud\n- **Tools**: Docker, Git, CI/CD, Testing frameworks\n\n**Getting Started:**\nTo provide the most helpful assistance, please share:\n1. What programming language you're using\n2. What you're trying to accomplish\n3. Any existing code you're working with\n4. Specific challenges or errors you're facing\n5. Your experience level with the technology\n\n**Example of How I Help:**\n```javascript\n// Instead of just giving you a snippet, I provide:\n// 1. Complete, working code\n// 2. Clear explanations\n// 3. Best practices\n// 4. Error handling\n// 5. Testing suggestions\n\nclass DataProcessor {\n  constructor(options = {}) {\n    this.options = {\n      timeout: 5000,\n      retries: 3,\n      ...options\n    };\n  }\n  \n  async processData(data) {\n    // Implementation with proper error handling\n    // and clear documentation\n  }\n}\n```\n\nWhat coding project or challenge can I help you with today?",
-        "Welcome! I'm here to provide comprehensive coding assistance for developers of all skill levels.\n\n**My Specialties:**\n\n**🚀 Full-Stack Development:**\n- Frontend frameworks (React, Vue, Angular)\n- Backend services (Node.js, Python, Java)\n- Database design and optimization\n- API development and integration\n- Real-time applications (WebSockets, Socket.io)\n\n**🛠️ Problem Solving:**\n- Algorithm design and implementation\n- Data structure optimization\n- Performance tuning and profiling\n- Memory management and efficiency\n- Scalability planning\n\n**🔒 Security & Best Practices:**\n- Secure coding practices\n- Authentication and authorization\n- Input validation and sanitization\n- SQL injection prevention\n- XSS and CSRF protection\n\n**🧪 Testing & Quality Assurance:**\n- Unit testing strategies\n- Integration testing\n- Test-driven development (TDD)\n- Code coverage analysis\n- Automated testing pipelines\n\n**📊 Data & Analytics:**\n- Data processing and ETL\n- Database query optimization\n- Data visualization\n- Machine learning integration\n- Big data solutions\n\n**Development Workflow:**\n```mermaid\ngraph LR\n    A[Requirements] --> B[Design]\n    B --> C[Implementation]\n    C --> D[Testing]\n    D --> E[Deployment]\n    E --> F[Monitoring]\n```\n\n**Code Quality Standards I Follow:**\n- Clean, readable, and maintainable code\n- Comprehensive error handling\n- Proper documentation and comments\n- Following language-specific conventions\n- Security-first approach\n- Performance optimization\n\n**How I Structure My Help:**\n1. **Understanding**: I'll ask clarifying questions to fully understand your needs\n2. **Solution Design**: I'll explain the approach before coding\n3. **Implementation**: Complete, working code with explanations\n4. **Testing**: Suggestions for testing your solution\n5. **Optimization**: Tips for improving performance and maintainability\n\n**Ready to Code?**\nShare your project details, and I'll provide:\n- Complete, production-ready code\n- Detailed explanations of the solution\n- Best practices and optimization tips\n- Testing strategies\n- Documentation and comments\n\nWhat would you like to build or improve today?"
-      ];
+      return `Hello! I'm here to help with your IT support needs. You said: "${userMessage}"
+
+I can assist with a wide range of technical issues including:
+- Password resets and account lockouts
+- Printer and hardware troubleshooting
+- Software installation and updates
+- Network connectivity problems
+- Email configuration and sync issues
+- VPN setup and connection problems
+
+What specific technical issue can I help you with today?`;
+**💻 Code Development:**
+- Writing functions, classes, and applications
+    // Handle HR Support requests
+- Implementing algorithms and data structures
+- Creating APIs and web services
+        return `I'd be happy to help you with PTO information. You mentioned: "${userMessage}"
+
+**PTO Request Process:**
+1. **Advance Notice**: Submit requests at least 2 weeks in advance (4 weeks for extended leave)
+2. **HR Portal**: Log into the employee portal at hr.company.com
+3. **Manager Approval**: Your direct manager must approve all PTO requests
+4. **Blackout Periods**: Some departments have blackout periods during busy seasons
+
+**PTO Accrual Rates:**
+- 0-2 years: 15 days annually (1.25 days/month)
+- 3-5 years: 20 days annually (1.67 days/month)
+- 6+ years: 25 days annually (2.08 days/month)
+
+Do you have specific questions about requesting time off or your current balance?`;
+- Code optimization
+- Best practices review
+        return `I'm happy to provide information about our benefits package. You asked: "${userMessage}"
+
+**Health Insurance Options:**
+- **PPO Plan**: Higher premiums, more flexibility in choosing providers
+- **HMO Plan**: Lower premiums, requires primary care physician referrals
+- **High Deductible Health Plan (HDHP)**: Lower premiums, paired with HSA
+
+**Additional Insurance:**
+- **Dental**: Two plan options (Basic and Premium)
+- **Vision**: Coverage for exams, glasses, and contacts
+- **Life Insurance**: Basic coverage provided, additional coverage available
+- **Disability**: Short-term and long-term disability insurance
+
+**Retirement Benefits:**
+- **401(k) Plan**: Company matches 50% of contributions up to 6% of salary
+
+Would you like detailed information about any specific benefit?`;
+- Database schema design
+      
+      return `Welcome to HR Support! You said: "${userMessage}"
+
+I'm here to assist you with all human resources related questions and concerns.
+
+**Areas I Can Help With:**
+- Benefits & Compensation
+- Time Off & Leave
+- Policies & Procedures
+- Career Development
+- Workplace Issues
+- Administrative Support
+
+What specific HR topic can I help you with today?`;
     }
-    // Default responses for other assistants
-    return [
-      `Hello! I'm ${assistantName}, and I'm here to provide you with comprehensive assistance tailored to your specific needs.\n\n**How I Can Help:**\nAs ${assistantName}, I'm designed to understand complex questions and provide detailed, actionable responses. I can help you with:\n\n- **Analysis and Research**: Breaking down complex topics and providing thorough explanations\n- **Problem Solving**: Working through challenges step-by-step with practical solutions\n- **Planning and Strategy**: Helping you develop comprehensive plans and approaches\n- **Creative Solutions**: Offering innovative ideas and alternative perspectives\n- **Detailed Guidance**: Providing step-by-step instructions and best practices\n\n**My Approach:**\n1. **Listen Carefully**: I pay attention to the specific details of your request\n2. **Ask Clarifying Questions**: If needed, I'll ask for more information to provide better help\n3. **Provide Comprehensive Answers**: I give thorough responses with examples and explanations\n4. **Offer Multiple Perspectives**: I consider different angles and approaches to your question\n5. **Follow Up**: I'm ready to dive deeper into any aspect that needs more exploration\n\n**Getting the Most from Our Conversation:**\n- Be specific about what you're trying to accomplish\n- Share any relevant context or background information\n- Let me know if you need examples, step-by-step guidance, or high-level overview\n- Feel free to ask follow-up questions for clarification\n\n**What I Excel At:**\n- Providing detailed, well-structured responses\n- Breaking down complex topics into understandable parts\n- Offering practical, actionable advice\n- Adapting my communication style to your needs\n- Maintaining context throughout our conversation\n\nWhat specific topic or challenge would you like to explore together? I'm ready to provide you with the detailed assistance you need!`,
-      `Welcome! I'm ${assistantName}, your dedicated assistant ready to help you tackle any challenge or question you might have.\n\n**My Capabilities:**\n\n**🎯 Focused Expertise**: As ${assistantName}, I bring specialized knowledge and a systematic approach to problem-solving that's tailored to deliver exactly what you need.\n\n**📋 Comprehensive Analysis**: I don't just give quick answers - I provide thorough analysis that considers multiple angles, potential challenges, and various solutions.\n\n**🔍 Detail-Oriented Responses**: Whether you need a high-level overview or deep technical details, I adjust my responses to match your specific requirements and expertise level.\n\n**💡 Creative Problem Solving**: I combine analytical thinking with creative approaches to help you find innovative solutions to complex challenges.\n\n**🎯 Actionable Guidance**: My responses include practical steps, real-world examples, and actionable recommendations you can implement immediately.\n\n**How I Work:**\n\n**Step 1: Understanding**\n- I carefully analyze your question or request\n- I consider the context and any specific requirements\n- I identify the key objectives you're trying to achieve\n\n**Step 2: Research & Analysis**\n- I draw from comprehensive knowledge across multiple domains\n- I consider best practices and industry standards\n- I evaluate different approaches and their trade-offs\n\n**Step 3: Solution Development**\n- I craft detailed, well-structured responses\n- I provide examples and practical applications\n- I include implementation guidance and next steps\n\n**Step 4: Continuous Support**\n- I'm ready to clarify any points that need more explanation\n- I can dive deeper into specific aspects of the solution\n- I adapt my approach based on your feedback and follow-up questions\n\n**What Makes Me Different:**\n- **Thoroughness**: I provide comprehensive responses that cover all aspects of your question\n- **Clarity**: I explain complex concepts in clear, understandable terms\n- **Practicality**: I focus on solutions you can actually implement\n- **Adaptability**: I adjust my communication style to match your needs\n- **Reliability**: I maintain consistency and accuracy across our entire conversation\n\n**Ready to Get Started?**\nI'm here to help with whatever challenge or question you're facing. Whether it's:\n- Strategic planning and decision-making\n- Technical problem-solving\n- Creative brainstorming and ideation\n- Process improvement and optimization\n- Research and analysis\n- Or any other topic you'd like to explore\n\nJust share your question or describe what you're working on, and I'll provide you with the detailed, actionable assistance you need to move forward successfully!\n\nWhat would you like to work on together today?`
-    ];
+
+    // Default response for any assistant - use the actual user input
+    return `Hello! I'm ${assistantName}. You said: "${userMessage}"
+
+I'm here to provide you with comprehensive assistance tailored to your specific needs. Based on your message, I can help you with detailed analysis, problem-solving, and actionable guidance.
+
+Could you provide a bit more context about what you're looking for? This will help me give you the most relevant and helpful response.
+
+What specific aspect would you like me to focus on?`;
   }
 
   deleteThread(threadId: string) {
