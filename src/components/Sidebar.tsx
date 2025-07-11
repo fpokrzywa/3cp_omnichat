@@ -52,7 +52,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onThreadSelect }) =
   const pinnedChats = chats.filter(chat => chat.isPinned);
   
   // Convert chat threads to chat format for display
-  const threadChats = chatThreads.map(thread => ({
+  const threadChats = chatThreads
+    .filter(thread => thread.messages.length > 0) // Only show threads with messages
+    .map(thread => ({
     id: parseInt(thread.id.replace(/\D/g, '')) || Date.now(),
     title: thread.messages.length > 0 
       ? thread.messages[0].content.substring(0, 50) + (thread.messages[0].content.length > 50 ? '...' : '')
