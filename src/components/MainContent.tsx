@@ -283,7 +283,7 @@ const MainContent: React.FC<MainContentProps> = ({
                    : 'justify-start'
                }`}
               >
-               <div className={`relative group ${
+               <div className={`group ${
                  message.role === 'user' && editingMessageId === message.id
                    ? 'w-full'
                    : 'max-w-[80%] sm:max-w-[70%]'
@@ -348,11 +348,8 @@ const MainContent: React.FC<MainContentProps> = ({
                       </>
                     )}
                   </div>
-
-                  {/* Hover Actions for User Messages */}
-                </div>
                 
-                {/* Hover Actions for User Messages - Under message, right aligned */}
+                  {/* Hover Actions for User Messages - Under entire message bubble */}
                 {message.role === 'user' && editingMessageId !== message.id && (
                   <div className="flex justify-end mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                     <div className="flex items-center space-x-1 bg-white border border-gray-200 rounded-lg shadow-lg p-1">
@@ -373,6 +370,7 @@ const MainContent: React.FC<MainContentProps> = ({
                     </div>
                   </div>
                 )}
+                </div>
               </div>
             ))}
             
