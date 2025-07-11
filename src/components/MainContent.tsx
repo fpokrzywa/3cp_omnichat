@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { MessageSquare, HelpCircle, ChevronDown, Mic, Send, Search, BarChart3, Image } from 'lucide-react';
+import { MessageSquare, HelpCircle, ChevronDown, Mic, Send, Search, BarChart3, Image, Paperclip } from 'lucide-react';
+import { chatService, type ChatMessage, type ChatThread } from '../services/chatService';
 
 interface MainContentProps {
   selectedAssistant: string;
@@ -16,6 +17,9 @@ const MainContent: React.FC<MainContentProps> = ({
 }) => {
   const [inputValue, setInputValue] = useState('');
   const [userProfile, setUserProfile] = useState<any>(null);
+  const [currentThread, setCurrentThread] = useState<ChatThread | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Load user profile from localStorage
   useEffect(() => {
@@ -23,6 +27,25 @@ const MainContent: React.FC<MainContentProps> = ({
     if (savedProfile) {
       setUserProfile(JSON.parse(savedProfile));
     }
+  }, []);
+
+  // Initialize or switch chat thread when assistant changes
+  useEffect(() => {
+    const existingThread = chatService.getCurrentThread();
+    if (!existingThread || existingThread.assistantName !== selectedAssistant) {
+      // Create new thread for this assistant
+      const threadId = chatService.createThread('assistant_' + selectedAssistant.toLowerCase().replace(/\s+/g, '_'), selectedAssistant);
+      const newThread = chatService.getThread(threadId);
+      setCurrentThread(newThread);
+    } else {
+      setCurrentThread(existingThread);
+    }
+  }, [selectedAssistant]);
+
+  // Update current thread state when messages change
+  useEffect(() => {
+    const thread = chatService.getCurrentThread();
+    setCurrentThread(thread);
   }, []);
 
   // Update input when a prompt is selected
@@ -40,14 +63,34 @@ const MainContent: React.FC<MainContentProps> = ({
     }
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (inputValue.trim()) {
-      // Handle sending the message here
-      console.log('Sending message:', inputValue);
+      setIsLoading(true);
+      setError(null);
+      
+      try {
+        await chatService.sendMessage(inputValue.trim());
+        const updatedThread = chatService.getCurrentThread();
+        setCurrentThread(updatedThread);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to send message');
+      } finally {
+        setIsLoading(false);
+      }
+      
       setInputValue('');
       if (selectedPrompt) {
         onPromptUsed();
       }
+    }
+  };
+
+  const handleClearChat = () => {
+    if (currentThread) {
+      chatService.deleteThread(currentThread.id);
+      const threadId = chatService.createThread('assistant_' + selectedAssistant.toLowerCase().replace(/\s+/g, '_'), selectedAssistant);
+      const newThread = chatService.getThread(threadId);
+      setCurrentThread(newThread);
     }
   };
 
@@ -95,12 +138,56 @@ const MainContent: React.FC<MainContentProps> = ({
             >
               Prompts
             </button>
+            <button 
+              onClick={handleClearChat}
+              className="px-2 py-1 sm:px-3 sm:py-1 border border-gray-300 text-gray-600 rounded text-xs sm:text-sm hover:bg-gray-50 transition-colors"
+            >
+              Clear
+            </button>
           </div>
         </div>
       </div>
       
-      {/* Main Content - Mobile Responsive */}
-      <div className="flex-1 flex flex-col justify-center px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
+      {/* Chat Messages Area */}
+      <div className="flex-1 flex flex-col px-3 sm:px-6 lg:px-8 py-4 sm:py-6 overflow-hidden">
+        {currentThread && currentThread.messages.length > 0 ? (
+          <div className="flex-1 overflow-y-auto mb-4 space-y-4">
+            {currentThread.messages.map((message) => (
+              <div
+                key={message.id}
+                className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div
+                  className={`max-w-[80%] sm:max-w-[70%] px-4 py-3 rounded-lg ${
+                    message.role === 'user'
+                      ? 'bg-pink-600 text-white'
+                      : 'bg-white border border-gray-200 text-gray-800'
+                  }`}
+                >
+                  {message.isLoading ? (
+                    <div className="flex items-center space-x-2">
+                      <div className="flex space-x-1">
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                      </div>
+                      <span className="text-sm text-gray-500">Thinking...</span>
+                    </div>
+                  ) : (
+                    <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                  )}
+                  <div className={`text-xs mt-2 ${
+                    message.role === 'user' ? 'text-pink-200' : 'text-gray-500'
+                  }`}>
+                    {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          /* Welcome Screen - Only show when no messages */
+          <div className="flex-1 flex flex-col justify-center">
         <div className="max-w-4xl w-full mx-auto">
           <h2 className="text-base sm:text-lg lg:text-xl font-medium text-gray-800 mb-4 sm:mb-6 lg:mb-8 text-center">
             Please ask {selectedAssistant} your questions
@@ -167,6 +254,66 @@ const MainContent: React.FC<MainContentProps> = ({
                   <span className="sm:hidden">Image</span>
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+        )}
+
+        {/* Error Message */}
+        {error && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-sm text-red-600">{error}</p>
+          </div>
+        )}
+
+        {/* Input Section - Always at bottom */}
+        <div className="flex-shrink-0">
+          <div className="relative">
+            <div className="flex items-center space-x-2 sm:space-x-3 bg-white rounded-lg p-2 sm:p-3 border border-gray-200 shadow-sm">
+              <button className="p-1 sm:p-2 text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0">
+                <Paperclip className="w-4 h-4 sm:w-5 sm:h-5" />
+              </button>
+              <input
+                type="text"
+                placeholder="Ask a question..."
+                value={inputValue}
+                onChange={handleInputChange}
+                onKeyPress={handleKeyPress}
+                disabled={isLoading}
+                className="flex-1 bg-transparent border-none outline-none text-gray-700 placeholder-gray-400 text-sm sm:text-base min-w-0 disabled:opacity-50"
+              />
+              <button 
+                className="p-1 sm:p-2 text-gray-400 hover:text-pink-600 transition-colors flex-shrink-0"
+                disabled={isLoading}
+              >
+                <Mic className="w-4 h-4 sm:w-5 sm:h-5" />
+              </button>
+              <button 
+                onClick={handleSend}
+                disabled={isLoading || !inputValue.trim()}
+                className="p-1 sm:p-2 text-gray-400 hover:text-pink-600 transition-colors flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Send className="w-4 h-4 sm:w-5 sm:h-5" />
+              </button>
+            </div>
+            
+            {/* Web Search Buttons - Mobile Responsive */}
+            <div className="flex flex-wrap gap-1 sm:gap-2 mt-2 sm:mt-3 justify-start">
+              <button className="flex items-center space-x-1 px-2 py-1 border border-gray-200 rounded-full text-gray-600 hover:bg-gray-50 transition-colors text-xs">
+                <Search className="w-3 h-3 text-gray-400" />
+                <span className="hidden sm:inline">Web Search</span>
+                <span className="sm:hidden">Web</span>
+              </button>
+              <button className="flex items-center space-x-1 px-2 py-1 border border-gray-200 rounded-full text-gray-600 hover:bg-gray-50 transition-colors text-xs">
+                <BarChart3 className="w-3 h-3 text-gray-400" />
+                <span>Research</span>
+              </button>
+              <button className="flex items-center space-x-1 px-2 py-1 border border-gray-200 rounded-full text-gray-600 hover:bg-gray-50 transition-colors text-xs">
+                <Image className="w-3 h-3 text-gray-400" />
+                <span className="hidden sm:inline">Generate Image</span>
+                <span className="sm:hidden">Image</span>
+              </button>
             </div>
           </div>
         </div>

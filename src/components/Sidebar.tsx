@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { Search, MoreHorizontal, MessageSquare, Menu, Edit3, Pin, Trash2, PanelLeftClose } from 'lucide-react';
+import { chatService, type ChatThread } from '../services/chatService';
 
 interface Chat {
   id: number;
@@ -27,6 +28,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
   const [editTitle, setEditTitle] = useState('');
   const menuRef = useRef<HTMLDivElement>(null);
   const editInputRef = useRef<HTMLInputElement>(null);
+  const [chatThreads, setChatThreads] = useState<ChatThread[]>([]);
 
   // Auto-expand sections when searching
   useEffect(() => {
@@ -35,8 +37,35 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
       setRecentCollapsed(false);
     }
   }, [searchQuery]);
+
+  // Load chat threads from chatService
+  useEffect(() => {
+    const loadThreads = () => {
+      const threads = chatService.getAllThreads();
+      setChatThreads(threads);
+    };
+
+    loadThreads();
+    
+    // Set up interval to refresh threads periodically
+    const interval = setInterval(loadThreads, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   const pinnedChats = chats.filter(chat => chat.isPinned);
   const recentChats = chats.filter(chat => !chat.isPinned);
+  
+  // Convert chat threads to chat format for display
+  const threadChats = chatThreads.map(thread => ({
+    id: parseInt(thread.id.replace(/\D/g, '')) || Date.now(),
+    title: thread.messages.length > 0 
+      ? thread.messages[0].content.substring(0, 50) + (thread.messages[0].content.length > 50 ? '...' : '')
+      : `Chat with ${thread.assistantName}`,
+    icon: MessageSquare,
+    isPinned: false,
+    threadId: thread.id,
+    assistantName: thread.assistantName
+  }));
 
   const filteredPinnedChats = useMemo(() => {
     if (!searchQuery.trim()) return pinnedChats;
@@ -46,11 +75,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
   }, [searchQuery, pinnedChats]);
 
   const filteredRecentChats = useMemo(() => {
-    if (!searchQuery.trim()) return recentChats;
-    return recentChats.filter(chat =>
+    const allRecentChats = [...recentChats, ...threadChats];
+    if (!searchQuery.trim()) return allRecentChats;
+    return allRecentChats.filter(chat =>
       chat.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
-  }, [searchQuery, recentChats]);
+  }, [searchQuery, recentChats, threadChats]);
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -116,20 +146,40 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
     setActiveMenu(null);
   };
 
+  const handleChatClick = (chat: any) => {
+    if (chat.threadId) {
+      // This is a chat thread, switch to it
+      chatService.setCurrentThread(chat.threadId);
+      // You might want to emit an event or use a callback to notify parent components
+    }
+  };
+
   const handleDelete = (chatId: number) => {
-    setChats(chats.filter(chat => chat.id !== chatId));
+    const chat = [...chats, ...threadChats].find(c => c.id === chatId);
+    if (chat && 'threadId' in chat) {
+      // Delete chat thread
+      chatService.deleteThread(chat.threadId);
+      setChatThreads(chatService.getAllThreads());
+    } else {
+      // Delete regular chat
+      setChats(chats.filter(chat => chat.id !== chatId));
+    }
     setActiveMenu(null);
   };
 
-  const renderChatItem = (chat: Chat) => (
+  const renderChatItem = (chat: any) => (
     <div 
       key={chat.id}
+      onClick={() => handleChatClick(chat)}
       className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 transition-colors group cursor-pointer relative"
     >
       <div className="flex items-center space-x-3 flex-1 min-w-0">
-        <div className="w-6 h-6 bg-pink-100 rounded flex items-center justify-center flex-shrink-0">
-          <chat.icon className="w-3 h-3 text-pink-600" />
+        <div className={`w-6 h-6 rounded flex items-center justify-center flex-shrink-0 ${
+          chat.threadId ? 'bg-blue-100' : 'bg-pink-100'
+        }`}>
+          <chat.icon className={`w-3 h-3 ${chat.threadId ? 'text-blue-600' : 'text-pink-600'}`} />
         </div>
+        <div className="flex-1 min-w-0">
         {editingChat === chat.id ? (
           <input
             ref={editInputRef}
@@ -141,8 +191,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
             className="flex-1 text-sm text-gray-700 bg-white border border-pink-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-pink-500"
           />
         ) : (
-          <span className="text-sm text-gray-700 truncate">{chat.title}</span>
+          <div>
+            <span className="text-sm text-gray-700 truncate block">{chat.title}</span>
+            {chat.assistantName && (
+              <span className="text-xs text-gray-500">{chat.assistantName}</span>
+            )}
+          </div>
         )}
+        </div>
       </div>
       
       <div className="relative">
