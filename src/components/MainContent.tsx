@@ -305,7 +305,7 @@ const MainContent: React.FC<MainContentProps> = ({
                             <textarea
                               value={editingText}
                               onChange={(e) => setEditingText(e.target.value)}
-                              className="col-start-1 col-end-2 row-start-1 row-end-2 w-full resize-none overflow-hidden p-0 m-0 border-0 bg-transparent focus:ring-0 focus-visible:ring-0 text-gray-900 placeholder-gray-500"
+                              className="col-start-1 col-end-2 row-start-1 row-end-2 w-full resize-none overflow-hidden p-0 m-0 border-0 bg-transparent focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 text-gray-900 placeholder-gray-500"
                               autoFocus
                               placeholder="Edit your message..."
                             />
