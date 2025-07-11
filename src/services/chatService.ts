@@ -13,6 +13,8 @@ interface ChatThread {
   messages: ChatMessage[];
   createdAt: Date;
   updatedAt: Date;
+  isPinned?: boolean;
+  customTitle?: string;
 }
 
 class ChatService {
@@ -144,6 +146,22 @@ class ChatService {
   updateThread(thread: ChatThread) {
     this.threads.set(thread.id, thread);
     this.saveThreadsToStorage();
+  }
+
+  pinThread(threadId: string, isPinned: boolean) {
+    const thread = this.threads.get(threadId);
+    if (thread) {
+      thread.isPinned = isPinned;
+      this.saveThreadsToStorage();
+    }
+  }
+
+  renameThread(threadId: string, customTitle: string) {
+    const thread = this.threads.get(threadId);
+    if (thread) {
+      thread.customTitle = customTitle.trim() || undefined;
+      this.saveThreadsToStorage();
+    }
   }
 
   private generateMessageId(): string {

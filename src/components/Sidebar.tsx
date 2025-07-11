@@ -56,13 +56,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onThreadSelect }) =
     .filter(thread => thread.messages.length > 0) // Only show threads with messages
     .map(thread => ({
     id: parseInt(thread.id.replace(/\D/g, '')) || Date.now(),
-    title: thread.messages.length > 0 
+    title: thread.customTitle || (thread.messages.length > 0 
       ? thread.messages[0].content.substring(0, 50) + (thread.messages[0].content.length > 50 ? '...' : '')
-      : `Chat with ${thread.assistantName}`,
+      : `Chat with ${thread.assistantName}`),
     icon: MessageSquare,
-    isPinned: false,
+    isPinned: thread.isPinned || false,
     threadId: thread.id,
-    assistantName: thread.assistantName
+    assistantName: thread.assistantName,
+    isThreadChat: true
   }));
 
   const filteredPinnedChats = useMemo(() => {
@@ -73,8 +74,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onThreadSelect }) =
   }, [searchQuery, pinnedChats]);
 
   const filteredRecentChats = useMemo(() => {
-    // Only show user-created chat threads, no default chats
-    const allRecentChats = threadChats;
+    // Show non-pinned thread chats in recent section
+    const allRecentChats = threadChats.filter(chat => !chat.isPinned);
     if (!searchQuery.trim()) return allRecentChats;
     return allRecentChats.filter(chat =>
       chat.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -108,7 +109,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onThreadSelect }) =
   };
 
   const handleRename = (chatId: number) => {
-    const chat = chats.find(c => c.id === chatId);
+    const chat = [...chats, ...threadChats].find(c => c.id === chatId);
     if (chat) {
       setEditTitle(chat.title);
       setEditingChat(chatId);
@@ -118,9 +119,19 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onThreadSelect }) =
 
   const handleSaveRename = (chatId: number) => {
     if (editTitle.trim()) {
-      setChats(chats.map(chat => 
-        chat.id === chatId ? { ...chat, title: editTitle.trim() } : chat
-      ));
+      // Check if it's a thread chat
+      const threadChat = threadChats.find(c => c.id === chatId);
+      if (threadChat && 'threadId' in threadChat) {
+        // Update thread title in chat service
+        chatService.renameThread(threadChat.threadId, editTitle.trim());
+        // Refresh threads
+        setChatThreads(chatService.getAllThreads());
+      } else {
+        // Update regular chat
+        setChats(chats.map(chat => 
+          chat.id === chatId ? { ...chat, title: editTitle.trim() } : chat
+        ));
+      }
     }
     setEditingChat(null);
     setEditTitle('');
@@ -140,9 +151,19 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onThreadSelect }) =
   };
 
   const handlePin = (chatId: number) => {
-    setChats(chats.map(chat => 
-      chat.id === chatId ? { ...chat, isPinned: !chat.isPinned } : chat
-    ));
+    // Check if it's a thread chat
+    const threadChat = threadChats.find(c => c.id === chatId);
+    if (threadChat && 'threadId' in threadChat) {
+      // Update thread pin status in chat service
+      chatService.pinThread(threadChat.threadId, !threadChat.isPinned);
+      // Refresh threads
+      setChatThreads(chatService.getAllThreads());
+    } else {
+      // Update regular chat
+      setChats(chats.map(chat => 
+        chat.id === chatId ? { ...chat, isPinned: !chat.isPinned } : chat
+      ));
+    }
     setActiveMenu(null);
   };
 
@@ -158,11 +179,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onThreadSelect }) =
   };
 
   const handleDelete = (chatId: number) => {
-    const chat = threadChats.find(c => c.id === chatId);
-    if (chat && 'threadId' in chat) {
+    const threadChat = threadChats.find(c => c.id === chatId);
+    if (threadChat && 'threadId' in threadChat) {
       // Delete chat thread
-      chatService.deleteThread(chat.threadId);
+      chatService.deleteThread(threadChat.threadId);
       setChatThreads(chatService.getAllThreads());
+    } else {
+      // Delete regular chat
+      setChats(chats.filter(chat => chat.id !== chatId));
     }
     setActiveMenu(null);
   };
