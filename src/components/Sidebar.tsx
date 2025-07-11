@@ -12,9 +12,10 @@ interface Chat {
 interface SidebarProps {
   isOpen: boolean;
   onToggle: () => void;
+  onThreadSelect?: (threadId: string, assistantName: string) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onThreadSelect }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeMenu, setActiveMenu] = useState<number | null>(null);
   const [pinnedCollapsed, setPinnedCollapsed] = useState(false);
@@ -144,9 +145,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
 
   const handleChatClick = (chat: any) => {
     if (chat.threadId) {
-      // This is a chat thread, switch to it
+      // Switch to the selected thread
       chatService.setCurrentThread(chat.threadId);
-      // You might want to emit an event or use a callback to notify parent components
+      // Notify parent component to update the selected assistant and refresh UI
+      if (onThreadSelect) {
+        onThreadSelect(chat.threadId, chat.assistantName);
+      }
     }
   };
 

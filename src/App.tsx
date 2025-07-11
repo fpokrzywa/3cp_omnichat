@@ -122,7 +122,15 @@ function App() {
       <div className="flex-1 flex overflow-hidden">
         {currentPage === 'chat' && (
           <>
-            <Sidebar isOpen={sidebarOpen} onToggle={toggleSidebar} />
+            <Sidebar 
+              isOpen={sidebarOpen} 
+              onToggle={toggleSidebar}
+              onThreadSelect={(threadId, assistantName) => {
+                setSelectedAssistant(assistantName);
+                // Force MainContent to refresh by updating a key or state
+                setCurrentPage('chat');
+              }}
+            />
             <MainContent 
               selectedAssistant={selectedAssistant} 
               selectedPrompt={selectedPrompt}

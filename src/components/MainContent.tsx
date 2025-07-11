@@ -32,21 +32,29 @@ const MainContent: React.FC<MainContentProps> = ({
   // Initialize or switch chat thread when assistant changes
   useEffect(() => {
     const existingThread = chatService.getCurrentThread();
-    if (!existingThread || existingThread.assistantName !== selectedAssistant) {
+    
+    // If there's an existing thread for this assistant, use it
+    if (existingThread && existingThread.assistantName === selectedAssistant) {
+      setCurrentThread(existingThread);
+    } else {
       // Create new thread for this assistant
       const threadId = chatService.createThread('assistant_' + selectedAssistant.toLowerCase().replace(/\s+/g, '_'), selectedAssistant);
       const newThread = chatService.getThread(threadId);
       setCurrentThread(newThread);
-    } else {
-      setCurrentThread(existingThread);
     }
   }, [selectedAssistant]);
 
-  // Update current thread state when messages change
+  // Update current thread state periodically to catch changes
   useEffect(() => {
-    const thread = chatService.getCurrentThread();
-    setCurrentThread(thread);
-  }, []);
+    const interval = setInterval(() => {
+      const thread = chatService.getCurrentThread();
+      if (thread && (!currentThread || thread.id !== currentThread.id || thread.messages.length !== currentThread.messages.length)) {
+        setCurrentThread(thread);
+      }
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, [currentThread]);
 
   // Update input when a prompt is selected
   useEffect(() => {
