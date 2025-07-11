@@ -303,7 +303,7 @@ const MainContent: React.FC<MainContentProps> = ({
                         <textarea
                           value={editingText}
                           onChange={(e) => setEditingText(e.target.value)}
-                          className="w-full p-3 bg-white text-gray-900 border border-gray-300 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-pink-400 placeholder-gray-500"
+                          className="w-full p-3 bg-white text-gray-900 border-none rounded-lg text-sm resize-none focus:outline-none placeholder-gray-500"
                           rows={3}
                           autoFocus
                           placeholder="Edit your message..."
@@ -311,14 +311,14 @@ const MainContent: React.FC<MainContentProps> = ({
                         <div className="flex items-center justify-end space-x-2">
                           <button
                             onClick={handleCancelEdit}
-                            className="px-4 py-2 text-sm bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                            className="px-4 py-2 text-sm bg-white text-gray-700 border border-gray-300 rounded-full hover:bg-gray-50 transition-colors"
                           >
                             Cancel
                           </button>
                           <button
                             onClick={handleSendEdit}
                             disabled={!editingText.trim()}
-                            className="px-4 py-2 text-sm bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-4 py-2 text-sm bg-pink-600 text-white rounded-full hover:bg-pink-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             Send
                           </button>
