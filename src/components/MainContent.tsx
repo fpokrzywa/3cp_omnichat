@@ -292,7 +292,7 @@ const MainContent: React.FC<MainContentProps> = ({
                   <div
                     className={`px-4 py-3 rounded-lg ${
                       message.role === 'user'
-                        ? 'bg-gray-100 text-gray-900 border border-pink-500 rounded-xl'
+                        ? 'bg-white text-gray-900 border border-pink-500 rounded-xl'
                         : 'bg-white border border-gray-200 text-gray-800'
                     }`}
                   >
@@ -303,7 +303,7 @@ const MainContent: React.FC<MainContentProps> = ({
                         <textarea
                           value={editingText}
                           onChange={(e) => setEditingText(e.target.value)}
-                          className="w-full p-3 bg-white text-gray-900 border border-pink-500 rounded-lg text-sm resize-none focus:outline-none placeholder-gray-500 focus:ring-2 focus:ring-pink-500"
+                          className="w-full p-3 bg-white text-gray-900 border border-gray-300 rounded-lg text-sm resize-none focus:outline-none placeholder-gray-500 focus:ring-2 focus:ring-pink-500"
                           rows={3}
                           autoFocus
                           placeholder="Edit your message..."
