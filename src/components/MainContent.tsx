@@ -201,22 +201,8 @@ const MainContent: React.FC<MainContentProps> = ({
             Please ask {selectedAssistant} your questions
           </h2>
           
-          {/* Action Buttons - Mobile Responsive Grid */}
-          <div className="grid grid-cols-4 sm:flex sm:flex-wrap sm:justify-center gap-1 sm:gap-2 mb-4 sm:mb-6 lg:mb-8">
-            {actionButtons.map((button, index) => (
-              <button
-                key={index}
-                className="flex flex-col sm:flex-row items-center justify-center sm:space-x-1 px-1 py-2 sm:px-3 sm:py-1 border border-gray-200 rounded-lg sm:rounded-full text-gray-600 hover:bg-gray-50 transition-colors text-xs min-h-12 sm:min-h-0"
-              >
-                <span className="text-sm mb-1 sm:mb-0">{button.icon}</span>
-                <span className="hidden sm:inline text-xs">{button.label}</span>
-                <span className="sm:hidden text-xs text-center leading-tight">{button.shortLabel}</span>
-              </button>
-            ))}
-          </div>
-          
           <p className="text-gray-500 text-xs sm:text-sm mb-4 sm:mb-6 text-center px-2">
-            Select a category from above or ask a question, add files to the conversation using the paperclip icon.
+            Ask a question or add files to the conversation using the paperclip icon.
           </p>
         </div>
       </div>
