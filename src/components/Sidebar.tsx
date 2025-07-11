@@ -49,7 +49,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onThreadSelect }) =
     return () => clearInterval(interval);
   }, []);
 
-  const pinnedChats = chats.filter(chat => chat.isPinned);
+  // Combine regular pinned chats with pinned thread chats
+  const pinnedThreadChats = threadChats.filter(chat => chat.isPinned);
+  const pinnedRegularChats = chats.filter(chat => chat.isPinned);
+  const pinnedChats = [...pinnedRegularChats, ...pinnedThreadChats];
   
   // Convert chat threads to chat format for display
   const threadChats = chatThreads
