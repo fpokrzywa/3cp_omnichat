@@ -20,6 +20,8 @@ class ChatService {
   private baseURL = 'https://api.openai.com/v1';
   private threads: Map<string, ChatThread> = new Map();
   private currentThreadId: string | null = null;
+  private abortController: AbortController | null = null;
+  private shouldStopStreaming: boolean = false;
 
   constructor() {
     // Get API key from environment or localStorage
@@ -259,10 +261,18 @@ class ChatService {
   }
 
   private async streamResponse(text: string, onChunk: (chunk: string) => void): Promise<void> {
+    this.shouldStopStreaming = false;
+    this.abortController = new AbortController();
+    
     const words = text.split(' ');
     let currentText = '';
     
     for (let i = 0; i < words.length; i++) {
+      // Check if streaming should be stopped
+      if (this.shouldStopStreaming || this.abortController?.signal.aborted) {
+        break;
+      }
+      
       const word = words[i];
       currentText += (i === 0 ? '' : ' ') + word;
       
@@ -271,6 +281,15 @@ class ChatService {
       
       // Add a small delay to simulate streaming
       await new Promise(resolve => setTimeout(resolve, 50 + Math.random() * 100));
+    }
+    
+    this.abortController = null;
+  }
+  
+  stopStreaming() {
+    this.shouldStopStreaming = true;
+    if (this.abortController) {
+      this.abortController.abort();
     }
   }
   private async simulateAssistantResponse(userMessage: string, assistantName: string): Promise<string> {
