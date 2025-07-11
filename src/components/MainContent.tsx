@@ -298,9 +298,40 @@ const MainContent: React.FC<MainContentProps> = ({
                   >
                     {editingMessageId === message.id ? (
                       /* Edit Mode */
-                    <div className="w-full bg-gray-50 text-gray-900 rounded-xl">
-                      <div className="space-y-3">
-                        <textarea
+                    <div className="relative flex flex-col gap-3 w-full">
+                      <div className="bg-gray-50 rounded-3xl px-3 py-3 border border-pink-500">
+                        <div className="m-2 max-h-[25dvh] overflow-auto">
+                          <div className="grid">
+                            <textarea
+                              value={editingText}
+                              onChange={(e) => setEditingText(e.target.value)}
+                              className="col-start-1 col-end-2 row-start-1 row-end-2 w-full resize-none overflow-hidden p-0 m-0 border-0 bg-transparent focus:ring-0 focus-visible:ring-0 text-gray-900 placeholder-gray-500"
+                              autoFocus
+                              placeholder="Edit your message..."
+                            />
+                            <span className="invisible col-start-1 col-end-2 row-start-1 row-end-2 p-0 break-all whitespace-pre-wrap">
+                              {editingText} 
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex justify-end gap-2">
+                          <button
+                            onClick={handleCancelEdit}
+                            className="px-4 py-2 text-sm bg-white text-gray-700 border border-gray-300 rounded-full hover:bg-gray-50 transition-colors"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            onClick={handleSendEdit}
+                            disabled={!editingText.trim()}
+                            className="px-4 py-2 text-sm bg-pink-600 text-white rounded-full hover:bg-pink-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            Send
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    ) : (
                           value={editingText}
                           onChange={(e) => setEditingText(e.target.value)}
                           className="w-full bg-white text-gray-900 border rounded-lg text-sm resize-none"
