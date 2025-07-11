@@ -298,12 +298,12 @@ const MainContent: React.FC<MainContentProps> = ({
                   >
                     {editingMessageId === message.id ? (
                       /* Edit Mode */
-                    <div className="w-full bg-white text-gray-900 p-4 rounded-xl">
+                    <div className="w-full bg-gray-50 text-gray-900 p-4 rounded-xl">
                       <div className="space-y-3">
                         <textarea
                           value={editingText}
                           onChange={(e) => setEditingText(e.target.value)}
-                          className="w-full p-3 bg-white text-gray-900 border-none rounded-lg text-sm resize-none focus:outline-none placeholder-gray-500"
+                          className="w-full p-3 bg-white text-gray-900 border border-pink-500 rounded-lg text-sm resize-none focus:outline-none placeholder-gray-500 focus:ring-2 focus:ring-pink-500"
                           rows={3}
                           autoFocus
                           placeholder="Edit your message..."
