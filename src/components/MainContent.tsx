@@ -275,24 +275,35 @@ const MainContent: React.FC<MainContentProps> = ({
             {currentThread.messages.map((message) => (
               <div
                 key={message.id}
-                className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+               className={`flex ${
+                 message.role === 'user' 
+                   ? editingMessageId === message.id 
+                     ? 'justify-start' 
+                     : 'justify-end' 
+                   : 'justify-start'
+               }`}
               >
-                <div className={`relative group max-w-[80%] sm:max-w-[70%] ${message.role === 'user' ? '' : ''}`}>
+               <div className={`relative group ${
+                 message.role === 'user' && editingMessageId === message.id
+                   ? 'w-full'
+                   : 'max-w-[80%] sm:max-w-[70%]'
+               }`}>
                   {/* Message Content */}
                   <div
                     className={`px-4 py-3 rounded-lg ${
                       message.role === 'user'
-                        ? 'bg-gray-800 text-white border-2 border-pink-500 rounded-xl'
+                        ? 'bg-gray-100 text-gray-900 border-2 border-pink-500 rounded-xl'
                         : 'bg-white border border-gray-200 text-gray-800'
                     }`}
                   >
                     {editingMessageId === message.id ? (
                       /* Edit Mode */
-                      <div className="space-y-3 bg-gray-800 text-white p-4 rounded-xl border-2 border-pink-500">
+                    <div className="w-full">
+                      <div className="space-y-3 bg-gray-100 text-gray-900 p-4 rounded-xl border-2 border-pink-500">
                         <textarea
                           value={editingText}
                           onChange={(e) => setEditingText(e.target.value)}
-                          className="w-full p-3 bg-gray-800 text-white border-2 border-pink-500 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-pink-400 placeholder-gray-400"
+                          className="w-full p-3 bg-gray-100 text-gray-900 border-2 border-pink-500 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-pink-400 placeholder-gray-500"
                           rows={3}
                           autoFocus
                           placeholder="Edit your message..."
@@ -312,6 +323,7 @@ const MainContent: React.FC<MainContentProps> = ({
                             Send
                           </button>
                         </div>
+                      </div>
                       </div>
                     ) : (
                       /* Normal Display Mode */
