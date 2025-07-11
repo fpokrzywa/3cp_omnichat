@@ -101,12 +101,12 @@ class ChatService {
     }
   }
 
-  createThread(assistantId: string, assistantName: string): string {
+  createThread(assistantName: string, displayName: string): string {
     const threadId = `thread_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const thread: ChatThread = {
       id: threadId,
-      assistantId,
-      assistantName,
+      assistantId: assistantName,
+      assistantName: displayName,
       messages: [],
       createdAt: new Date(),
       updatedAt: new Date()

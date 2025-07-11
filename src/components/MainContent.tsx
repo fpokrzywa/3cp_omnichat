@@ -38,7 +38,7 @@ const MainContent: React.FC<MainContentProps> = ({
       setCurrentThread(existingThread);
     } else {
       // Create new thread for this assistant
-      const threadId = chatService.createThread('assistant_' + selectedAssistant.toLowerCase().replace(/\s+/g, '_'), selectedAssistant);
+      const threadId = chatService.createThread(selectedAssistant, selectedAssistant);
       const newThread = chatService.getThread(threadId);
       setCurrentThread(newThread);
     }
@@ -96,7 +96,7 @@ const MainContent: React.FC<MainContentProps> = ({
   const handleClearChat = () => {
     if (currentThread) {
       chatService.deleteThread(currentThread.id);
-      const threadId = chatService.createThread('assistant_' + selectedAssistant.toLowerCase().replace(/\s+/g, '_'), selectedAssistant);
+      const threadId = chatService.createThread(selectedAssistant, selectedAssistant);
       const newThread = chatService.getThread(threadId);
       setCurrentThread(newThread);
     }
