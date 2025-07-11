@@ -49,11 +49,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onThreadSelect }) =
     return () => clearInterval(interval);
   }, []);
 
-  // Combine regular pinned chats with pinned thread chats
-  const pinnedThreadChats = threadChats.filter(chat => chat.isPinned);
-  const pinnedRegularChats = chats.filter(chat => chat.isPinned);
-  const pinnedChats = [...pinnedRegularChats, ...pinnedThreadChats];
-  
   // Convert chat threads to chat format for display
   const threadChats = chatThreads
     .filter(thread => thread.messages.length > 0) // Only show threads with messages
@@ -68,6 +63,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onThreadSelect }) =
     assistantName: thread.assistantName,
     isThreadChat: true
   }));
+
+  // Combine regular pinned chats with pinned thread chats
+  const pinnedThreadChats = threadChats.filter(chat => chat.isPinned);
+  const pinnedRegularChats = chats.filter(chat => chat.isPinned);
+  const pinnedChats = [...pinnedRegularChats, ...pinnedThreadChats];
 
   const filteredPinnedChats = useMemo(() => {
     if (!searchQuery.trim()) return pinnedChats;
