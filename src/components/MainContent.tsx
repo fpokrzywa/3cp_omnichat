@@ -311,14 +311,14 @@ const MainContent: React.FC<MainContentProps> = ({
               <button 
                 onClick={isStreaming ? handleStopStreaming : handleSend}
                 disabled={isLoading && !isStreaming || (!inputValue.trim() && !isStreaming)}
-                className={`p-1 sm:p-2 transition-colors flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed ${
+                className={`p-2 sm:p-3 transition-colors flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg ${
                   isStreaming 
-                    ? 'text-red-500 hover:text-red-600' 
+                    ? 'bg-blue-500 hover:bg-blue-600 text-white' 
                     : 'text-gray-400 hover:text-pink-600'
                 }`}
               >
                 {isStreaming ? (
-                  <div className="w-4 h-4 sm:w-5 sm:h-5 bg-current rounded-sm"></div>
+                  <div className="w-3 h-3 sm:w-4 sm:h-4 bg-white rounded-sm"></div>
                 ) : (
                   <Send className="w-4 h-4 sm:w-5 sm:h-5" />
                 )}

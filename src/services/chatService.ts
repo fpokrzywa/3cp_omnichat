@@ -265,7 +265,6 @@ class ChatService {
     this.abortController = new AbortController();
     
     const words = text.split(' ');
-    let currentText = '';
     
     for (let i = 0; i < words.length; i++) {
       // Check if streaming should be stopped
@@ -274,7 +273,7 @@ class ChatService {
       }
       
       const word = words[i];
-      currentText += (i === 0 ? '' : ' ') + word;
+      const currentText = words.slice(0, i + 1).join(' ');
       
       // Call the chunk callback with the current accumulated text
       onChunk(currentText);
