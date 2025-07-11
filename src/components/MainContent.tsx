@@ -332,6 +332,7 @@ const MainContent: React.FC<MainContentProps> = ({
                       </div>
                     </div>
                     ) : (
+                        <>
                         {message.isLoading ? (
                           <div className="flex items-center space-x-2">
                             <div className="flex space-x-1">
@@ -349,6 +350,7 @@ const MainContent: React.FC<MainContentProps> = ({
                         }`}>
                           {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </div>
+                        </>
                       </>
                     )}
                   </div>
