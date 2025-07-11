@@ -181,18 +181,6 @@ const MainContent: React.FC<MainContentProps> = ({
               onClick={onOpenPromptCatalog}
               className="px-2 py-1 sm:px-4 sm:py-1 bg-pink-600 text-white rounded text-xs sm:text-sm hover:bg-pink-700 transition-colors"
             >
-            {userProfile?.isAdmin && (
-              <select className="px-2 py-1 border border-gray-200 rounded text-xs focus:outline-none focus:ring-2 focus:ring-pink-500 max-w-20 sm:max-w-none sm:px-3 sm:text-sm">
-                <option>GPT-4o</option>
-                <option>GPT-4</option>
-                <option>Claude-3.5</option>
-                <option>Gemini Pro</option>
-              </select>
-            )}
-            <button 
-              onClick={onOpenPromptCatalog}
-              className="px-2 py-1 sm:px-4 sm:py-1 bg-pink-600 text-white rounded text-xs sm:text-sm hover:bg-pink-700 transition-colors"
-            >
               Prompts
             </button>
             <button 
@@ -257,16 +245,16 @@ const MainContent: React.FC<MainContentProps> = ({
         ) : (
           /* Welcome Screen - Only show when no messages */
           <div className="flex-1 flex flex-col justify-center">
-        <div className="max-w-4xl w-full mx-auto">
-          <h2 className="text-base sm:text-lg lg:text-xl font-medium text-gray-800 mb-4 sm:mb-6 lg:mb-8 text-center">
-            Please ask {selectedAssistant} your questions
-          </h2>
-          
-          <p className="text-gray-500 text-xs sm:text-sm mb-4 sm:mb-6 text-center px-2">
-            Ask a question or add files to the conversation using the paperclip icon.
-          </p>
-        </div>
-      </div>
+            <div className="max-w-4xl w-full mx-auto">
+              <h2 className="text-base sm:text-lg lg:text-xl font-medium text-gray-800 mb-4 sm:mb-6 lg:mb-8 text-center">
+                Please ask {selectedAssistant} your questions
+              </h2>
+              
+              <p className="text-gray-500 text-xs sm:text-sm mb-4 sm:mb-6 text-center px-2">
+                Ask a question or add files to the conversation using the paperclip icon.
+              </p>
+            </div>
+          </div>
         )}
 
         {/* Error Message */}
