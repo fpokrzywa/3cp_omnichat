@@ -301,6 +301,21 @@ const MainContent: React.FC<MainContentProps> = ({
               >
                 <Send className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
+              <button 
+                onClick={isStreaming ? handleStopStreaming : handleSend}
+                disabled={isLoading && !isStreaming || (!inputValue.trim() && !isStreaming)}
+                className={`p-1 sm:p-2 transition-colors flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed ${
+                  isStreaming 
+                    ? 'text-red-500 hover:text-red-600' 
+                    : 'text-gray-400 hover:text-pink-600'
+                }`}
+              >
+                {isStreaming ? (
+                  <div className="w-4 h-4 sm:w-5 sm:h-5 bg-current rounded-sm"></div>
+                ) : (
+                  <Send className="w-4 h-4 sm:w-5 sm:h-5" />
+                )}
+              </button>
             </div>
             
             {/* Web Search Buttons - Mobile Responsive */}
