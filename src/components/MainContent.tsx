@@ -96,7 +96,7 @@ const MainContent: React.FC<MainContentProps> = ({
       
       try {
         await chatService.sendMessageWithStreaming(inputValue.trim(), (chunk) => {
-          setStreamingMessage(prev => prev + chunk);
+          setStreamingMessage(chunk);
         });
         const updatedThread = chatService.getCurrentThread();
         setCurrentThread(updatedThread);
