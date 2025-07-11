@@ -302,13 +302,6 @@ const MainContent: React.FC<MainContentProps> = ({
                 <Mic className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
               <button 
-                onClick={handleSend}
-                disabled={isLoading || !inputValue.trim()}
-                className="p-1 sm:p-2 text-gray-400 hover:text-pink-600 transition-colors flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <Send className="w-4 h-4 sm:w-5 sm:h-5" />
-              </button>
-              <button 
                 onClick={isStreaming ? handleStopStreaming : handleSend}
                 disabled={isLoading && !isStreaming || (!inputValue.trim() && !isStreaming)}
                 className={`p-2 sm:p-3 transition-colors flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg ${
