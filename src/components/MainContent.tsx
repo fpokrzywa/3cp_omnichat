@@ -218,52 +218,6 @@ const MainContent: React.FC<MainContentProps> = ({
           <p className="text-gray-500 text-xs sm:text-sm mb-4 sm:mb-6 text-center px-2">
             Select a category from above or ask a question, add files to the conversation using the paperclip icon.
           </p>
-          
-          {/* Input Section - Mobile Responsive */}
-          <div className="mb-4">
-            <div className="relative">
-              <div className="flex items-center space-x-2 sm:space-x-3 bg-gray-50 rounded-lg p-2 sm:p-3 border border-gray-200">
-                <button className="p-1 sm:p-2 text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0">
-                  <span className="text-base sm:text-lg">📎</span>
-                </button>
-                <input
-                  type="text"
-                  placeholder="Ask a question..."
-                  value={inputValue}
-                  onChange={handleInputChange}
-                  onKeyPress={handleKeyPress}
-                  className="flex-1 bg-transparent border-none outline-none text-gray-700 placeholder-gray-400 text-sm sm:text-base min-w-0"
-                />
-                <button className="p-1 sm:p-2 text-gray-400 hover:text-pink-600 transition-colors flex-shrink-0">
-                  <Mic className="w-4 h-4 sm:w-5 sm:h-5" />
-                </button>
-                <button 
-                  onClick={handleSend}
-                  className="p-1 sm:p-2 text-gray-400 hover:text-pink-600 transition-colors flex-shrink-0"
-                >
-                  <Send className="w-4 h-4 sm:w-5 sm:h-5" />
-                </button>
-              </div>
-              
-              {/* Web Search Buttons - Mobile Responsive */}
-              <div className="flex flex-wrap gap-1 sm:gap-2 mt-2 sm:mt-3 justify-start">
-                <button className="flex items-center space-x-1 px-2 py-1 border border-gray-200 rounded-full text-gray-600 hover:bg-gray-50 transition-colors text-xs">
-                  <Search className="w-3 h-3 text-gray-400" />
-                  <span className="hidden sm:inline">Web Search</span>
-                  <span className="sm:hidden">Web</span>
-                </button>
-                <button className="flex items-center space-x-1 px-2 py-1 border border-gray-200 rounded-full text-gray-600 hover:bg-gray-50 transition-colors text-xs">
-                  <BarChart3 className="w-3 h-3 text-gray-400" />
-                  <span>Research</span>
-                </button>
-                <button className="flex items-center space-x-1 px-2 py-1 border border-gray-200 rounded-full text-gray-600 hover:bg-gray-50 transition-colors text-xs">
-                  <Image className="w-3 h-3 text-gray-400" />
-                  <span className="hidden sm:inline">Generate Image</span>
-                  <span className="sm:hidden">Image</span>
-                </button>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
         )}
