@@ -124,6 +124,13 @@ const MainContent: React.FC<MainContentProps> = ({
     }
   };
 
+  const handleStopStreaming = () => {
+    chatService.stopStreaming();
+    setIsStreaming(false);
+    setStreamingMessage('');
+    setIsLoading(false);
+  };
+
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleSend();
