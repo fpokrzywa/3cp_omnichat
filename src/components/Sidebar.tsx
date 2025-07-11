@@ -77,7 +77,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onThreadSelect }) =
     const allRecentChats = threadChats;
     if (!searchQuery.trim()) return allRecentChats;
     return allRecentChats.filter(chat =>
-      chat.title.toLowerCase().includes(searchQuery.toLowerCase())
+      chat.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (chat.assistantName && chat.assistantName.toLowerCase().includes(searchQuery.toLowerCase()))
     );
   }, [searchQuery, threadChats]);
 
