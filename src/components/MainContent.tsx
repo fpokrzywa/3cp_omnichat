@@ -298,7 +298,7 @@ const MainContent: React.FC<MainContentProps> = ({
                   >
                     {editingMessageId === message.id ? (
                       /* Edit Mode */
-                    <div className="w-full bg-white text-gray-900 p-4 rounded-xl border-2 border-pink-500">
+                    <div className="w-full bg-white text-gray-900 p-4 rounded-xl">
                       <div className="space-y-3">
                         <textarea
                           value={editingText}
