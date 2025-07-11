@@ -309,12 +309,12 @@ const MainContent: React.FC<MainContentProps> = ({
                 disabled={isLoading && !isStreaming || (!inputValue.trim() && !isStreaming)}
                 className={`p-2 sm:p-3 transition-colors flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg ${
                   isStreaming 
-                    ? 'bg-blue-500 hover:bg-blue-600 text-white' 
+                    ? 'text-gray-400 hover:text-gray-600' 
                     : 'text-gray-400 hover:text-pink-600'
                 }`}
               >
                 {isStreaming ? (
-                  <div className="w-3 h-3 sm:w-4 sm:h-4 bg-white rounded-sm"></div>
+                  <div className="w-3 h-3 bg-gray-400 rounded-sm"></div>
                 ) : (
                   <Send className="w-4 h-4 sm:w-5 sm:h-5" />
                 )}
