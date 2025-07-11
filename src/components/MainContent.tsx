@@ -351,7 +351,6 @@ const MainContent: React.FC<MainContentProps> = ({
                           {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </div>
                         </>
-                      </>
                     )}
                   </div>
                 
