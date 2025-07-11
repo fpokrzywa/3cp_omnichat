@@ -219,7 +219,7 @@ const MainContent: React.FC<MainContentProps> = ({
     { icon: '🔄', label: 'Compare files', shortLabel: 'Compare' },
     { icon: '💻', label: 'Code', shortLabel: 'Code' },
     { icon: '📊', label: 'Analyze', shortLabel: 'Analyze' },
-    { icon: '🎓', label: 'Learn', shortLabel: 'Learn' },
+    { icon: '🎓', label: 'Learn', shortLabel: 'Learn' }
   ];
 
   return (
@@ -324,6 +324,7 @@ const MainContent: React.FC<MainContentProps> = ({
                           </button>
                         </div>
                       </div>
+                    </div>
                     ) : (
                       /* Normal Display Mode */
                       <>
