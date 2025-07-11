@@ -332,33 +332,6 @@ const MainContent: React.FC<MainContentProps> = ({
                       </div>
                     </div>
                     ) : (
-                          value={editingText}
-                          onChange={(e) => setEditingText(e.target.value)}
-                          className="w-full bg-white text-gray-900 border rounded-lg text-sm resize-none"
-                          rows={3}
-                          autoFocus
-                          placeholder="Edit your message..."
-                        />
-                        <div className="flex items-center justify-end space-x-2">
-                          <button
-                            onClick={handleCancelEdit}
-                            className="px-4 py-2 text-sm bg-white text-gray-700 border border-gray-300 rounded-full hover:bg-gray-50 transition-colors"
-                          >
-                            Cancel
-                          </button>
-                          <button
-                            onClick={handleSendEdit}
-                            disabled={!editingText.trim()}
-                            className="px-4 py-2 text-sm bg-pink-600 text-white rounded-full hover:bg-pink-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            Send
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                    ) : (
-                      /* Normal Display Mode */
-                      <>
                         {message.isLoading ? (
                           <div className="flex items-center space-x-2">
                             <div className="flex space-x-1">
