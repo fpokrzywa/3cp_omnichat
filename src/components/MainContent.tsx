@@ -282,31 +282,32 @@ const MainContent: React.FC<MainContentProps> = ({
                   <div
                     className={`px-4 py-3 rounded-lg ${
                       message.role === 'user'
-                        ? 'bg-pink-600 text-white'
+                        ? 'bg-gray-800 text-white border-2 border-pink-500 rounded-xl'
                         : 'bg-white border border-gray-200 text-gray-800'
                     }`}
                   >
                     {editingMessageId === message.id ? (
                       /* Edit Mode */
-                      <div className="space-y-3">
+                      <div className="space-y-3 bg-gray-800 text-white p-4 rounded-xl border-2 border-pink-500">
                         <textarea
                           value={editingText}
                           onChange={(e) => setEditingText(e.target.value)}
-                          className="w-full p-2 border border-gray-300 rounded text-gray-800 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-pink-500"
+                          className="w-full p-3 bg-gray-800 text-white border-2 border-pink-500 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-pink-400 placeholder-gray-400"
                           rows={3}
                           autoFocus
+                          placeholder="Edit your message..."
                         />
                         <div className="flex items-center justify-end space-x-2">
                           <button
                             onClick={handleCancelEdit}
-                            className="px-3 py-1 text-xs bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
+                            className="px-4 py-2 text-sm bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
                           >
                             Cancel
                           </button>
                           <button
                             onClick={handleSendEdit}
                             disabled={!editingText.trim()}
-                            className="px-3 py-1 text-xs bg-pink-600 text-white rounded hover:bg-pink-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-4 py-2 text-sm bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             Send
                           </button>
@@ -328,7 +329,7 @@ const MainContent: React.FC<MainContentProps> = ({
                           <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                         )}
                         <div className={`text-xs mt-2 ${
-                          message.role === 'user' ? 'text-pink-200' : 'text-gray-500'
+                          message.role === 'user' ? 'text-gray-400' : 'text-gray-500'
                         }`}>
                           {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </div>
