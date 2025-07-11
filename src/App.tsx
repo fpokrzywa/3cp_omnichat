@@ -9,6 +9,7 @@ import ResourcesPage from './components/ResourcesPage';
 import SettingsOverlay from './components/SettingsOverlay';
 import AcknowledgmentOverlay from './components/AcknowledgmentOverlay';
 import ProfileOverlay from './components/ProfileOverlay';
+import { chatService } from './services/chatService';
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -129,8 +130,15 @@ function App() {
               onToggle={toggleSidebar}
               onThreadSelect={(threadId, assistantName) => {
                 setSelectedAssistant(assistantName);
-                // Force MainContent to refresh by updating a key or state
-                setCurrentPage('chat');
+                // Force MainContent to refresh by updating the selected assistant ID
+                const thread = chatService.getThread(threadId);
+                if (thread) {
+                  setSelectedAssistantId(thread.assistantId);
+                }
+                // Ensure we're on the chat page
+                if (currentPage !== 'chat') {
+                  setCurrentPage('chat');
+                }
               }}
             />
             <MainContent 
