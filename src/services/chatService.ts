@@ -205,6 +205,74 @@ class ChatService {
     }
   }
 
+  async sendMessageWithStreaming(
+    message: string, 
+    onChunk: (chunk: string) => void,
+    threadId?: string
+  ): Promise<ChatMessage> {
+    const targetThreadId = threadId || this.currentThreadId;
+    if (!targetThreadId) {
+      throw new Error('No active chat thread');
+    }
+
+    const thread = this.threads.get(targetThreadId);
+    if (!thread) {
+      throw new Error('Thread not found');
+    }
+
+    // Add user message
+    const userMessage: ChatMessage = {
+      id: this.generateMessageId(),
+      role: 'user',
+      content: message,
+      timestamp: new Date()
+    };
+
+    thread.messages.push(userMessage);
+    thread.updatedAt = new Date();
+    this.saveThreadsToStorage();
+
+    try {
+      // Simulate streaming response
+      const fullResponse = await this.simulateAssistantResponse(message, thread.assistantName);
+      
+      // Stream the response word by word
+      await this.streamResponse(fullResponse, onChunk);
+      
+      // Add the complete message to the thread
+      const responseMessage: ChatMessage = {
+        id: this.generateMessageId(),
+        role: 'assistant',
+        content: fullResponse,
+        timestamp: new Date()
+      };
+
+      thread.messages.push(responseMessage);
+      thread.updatedAt = new Date();
+      this.saveThreadsToStorage();
+
+      return responseMessage;
+    } catch (error) {
+      this.saveThreadsToStorage();
+      throw error;
+    }
+  }
+
+  private async streamResponse(text: string, onChunk: (chunk: string) => void): Promise<void> {
+    const words = text.split(' ');
+    let currentText = '';
+    
+    for (let i = 0; i < words.length; i++) {
+      const word = words[i];
+      currentText += (i === 0 ? '' : ' ') + word;
+      
+      // Call the chunk callback with the current accumulated text
+      onChunk(currentText);
+      
+      // Add a small delay to simulate streaming
+      await new Promise(resolve => setTimeout(resolve, 50 + Math.random() * 100));
+    }
+  }
   private async simulateAssistantResponse(userMessage: string, assistantName: string): Promise<string> {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));

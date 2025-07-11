@@ -21,6 +21,10 @@ const MainContent: React.FC<MainContentProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showAssistantId, setShowAssistantId] = useState(false);
+  const [streamingMessage, setStreamingMessage] = useState<string>('');
+  const [isStreaming, setIsStreaming] = useState(false);
+  const messagesEndRef = React.useRef<HTMLDivElement>(null);
+  const chatContainerRef = React.useRef<HTMLDivElement>(null);
 
   // Load user profile from localStorage
   useEffect(() => {
@@ -57,6 +61,17 @@ const MainContent: React.FC<MainContentProps> = ({
     return () => clearInterval(interval);
   }, [currentThread]);
 
+  // Auto-scroll to bottom when new messages arrive or when streaming
+  useEffect(() => {
+    scrollToBottom();
+  }, [currentThread?.messages, streamingMessage]);
+
+  const scrollToBottom = () => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   // Update input when a prompt is selected
   useEffect(() => {
     if (selectedPrompt) {
@@ -75,16 +90,22 @@ const MainContent: React.FC<MainContentProps> = ({
   const handleSend = async () => {
     if (inputValue.trim()) {
       setIsLoading(true);
+      setIsStreaming(true);
+      setStreamingMessage('');
       setError(null);
       
       try {
-        await chatService.sendMessage(inputValue.trim());
+        await chatService.sendMessageWithStreaming(inputValue.trim(), (chunk) => {
+          setStreamingMessage(prev => prev + chunk);
+        });
         const updatedThread = chatService.getCurrentThread();
         setCurrentThread(updatedThread);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to send message');
       } finally {
         setIsLoading(false);
+        setIsStreaming(false);
+        setStreamingMessage('');
       }
       
       setInputValue('');
@@ -175,7 +196,7 @@ const MainContent: React.FC<MainContentProps> = ({
       {/* Chat Messages Area */}
       <div className="flex-1 flex flex-col px-3 sm:px-6 lg:px-8 py-4 sm:py-6 overflow-hidden">
         {currentThread && currentThread.messages.length > 0 ? (
-          <div className="flex-1 overflow-y-auto mb-4 space-y-4">
+          <div ref={chatContainerRef} className="flex-1 overflow-y-auto mb-4 space-y-4">
             {currentThread.messages.map((message) => (
               <div
                 key={message.id}
@@ -208,6 +229,26 @@ const MainContent: React.FC<MainContentProps> = ({
                 </div>
               </div>
             ))}
+            
+            {/* Streaming Message */}
+            {isStreaming && streamingMessage && (
+              <div className="flex justify-start">
+                <div className="max-w-[80%] sm:max-w-[70%] px-4 py-3 rounded-lg bg-white border border-gray-200 text-gray-800">
+                  <p className="text-sm whitespace-pre-wrap">{streamingMessage}</p>
+                  <div className="flex items-center space-x-2 mt-2">
+                    <div className="flex space-x-1">
+                      <div className="w-1 h-1 bg-gray-400 rounded-full animate-pulse"></div>
+                      <div className="w-1 h-1 bg-gray-400 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                      <div className="w-1 h-1 bg-gray-400 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                    </div>
+                    <span className="text-xs text-gray-500">Streaming...</span>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {/* Auto-scroll anchor */}
+            <div ref={messagesEndRef} />
           </div>
         ) : (
           /* Welcome Screen - Only show when no messages */
