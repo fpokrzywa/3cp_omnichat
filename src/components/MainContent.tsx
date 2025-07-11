@@ -242,14 +242,6 @@ const MainContent: React.FC<MainContentProps> = ({
               <div className="flex justify-start">
                 <div className="max-w-[80%] sm:max-w-[70%] px-4 py-3 rounded-lg bg-white border border-gray-200 text-gray-800">
                   <p className="text-sm whitespace-pre-wrap">{streamingMessage}</p>
-                  <div className="flex items-center space-x-2 mt-2">
-                    <div className="flex space-x-1">
-                      <div className="w-1 h-1 bg-gray-400 rounded-full animate-pulse"></div>
-                      <div className="w-1 h-1 bg-gray-400 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-                      <div className="w-1 h-1 bg-gray-400 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
-                    </div>
-                    <span className="text-xs text-gray-500">Streaming...</span>
-                  </div>
                 </div>
               </div>
             )}
