@@ -84,11 +84,6 @@ function App() {
     setCurrentPage('chat');
   };
 
-  const handleAssistantSelect = (assistant: { name: string; id: string }) => {
-    setSelectedAssistant(assistant.name);
-    setSelectedAssistantId(assistant.id);
-    setCurrentPage('chat');
-  };
   const handleNavigateToChat = () => {
     // When navigating to chat, use the user's preferred assistant if available
     if (userProfile?.preferredAssistant) {
