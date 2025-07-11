@@ -20,6 +20,7 @@ const MainContent: React.FC<MainContentProps> = ({
   const [currentThread, setCurrentThread] = useState<ChatThread | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showAssistantId, setShowAssistantId] = useState(false);
 
   // Load user profile from localStorage
   useEffect(() => {
@@ -128,8 +129,23 @@ const MainContent: React.FC<MainContentProps> = ({
               <MessageSquare className="w-3 h-3 sm:w-4 sm:h-4 text-pink-600" />
             </div>
             <span className="font-medium text-gray-900 text-sm sm:text-base truncate">{selectedAssistant}</span>
-            <HelpCircle className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 flex-shrink-0" />
+            <button 
+              onClick={() => setShowAssistantId(!showAssistantId)}
+              className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
+              title="Show Assistant ID"
+            >
+              <HelpCircle className="w-full h-full" />
+            </button>
           </div>
+          
+          {/* Assistant ID Tooltip */}
+          {showAssistantId && (
+            <div className="absolute top-full left-0 mt-2 bg-gray-800 text-white text-xs px-3 py-2 rounded-lg shadow-lg z-10 whitespace-nowrap">
+              <div className="font-medium">Assistant ID:</div>
+              <div className="font-mono">{selectedAssistant}</div>
+              <div className="absolute -top-1 left-4 w-2 h-2 bg-gray-800 transform rotate-45"></div>
+            </div>
+          )}
           
           <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
             {userProfile?.isAdmin && (
