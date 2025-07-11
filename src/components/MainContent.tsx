@@ -350,27 +350,29 @@ const MainContent: React.FC<MainContentProps> = ({
                   </div>
 
                   {/* Hover Actions for User Messages */}
-                  {message.role === 'user' && editingMessageId !== message.id && (
-                    <div className="absolute -left-16 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                      <div className="flex items-center space-x-1 bg-white border border-gray-200 rounded-lg shadow-lg p-1">
-                        <button
-                          onClick={() => handleCopyMessage(message.content)}
-                          className="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded transition-colors"
-                          title="Copy message"
-                        >
-                          <Copy className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          onClick={() => handleEditMessage(message)}
-                          className="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded transition-colors"
-                          title="Edit message"
-                        >
-                          <Edit3 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </div>
-                  )}
                 </div>
+                
+                {/* Hover Actions for User Messages - Under message, right aligned */}
+                {message.role === 'user' && editingMessageId !== message.id && (
+                  <div className="flex justify-end mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <div className="flex items-center space-x-1 bg-white border border-gray-200 rounded-lg shadow-lg p-1">
+                      <button
+                        onClick={() => handleCopyMessage(message.content)}
+                        className="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded transition-colors"
+                        title="Copy message"
+                      >
+                        <Copy className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => handleEditMessage(message)}
+                        className="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded transition-colors"
+                        title="Edit message"
+                      >
+                        <Edit3 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
             
