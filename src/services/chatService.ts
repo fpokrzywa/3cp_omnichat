@@ -152,6 +152,8 @@ class ChatService {
     const thread = this.threads.get(threadId);
     if (thread) {
       thread.isPinned = isPinned;
+      thread.updatedAt = new Date();
+      this.threads.set(threadId, thread);
       this.saveThreadsToStorage();
     }
   }
