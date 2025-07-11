@@ -298,12 +298,12 @@ const MainContent: React.FC<MainContentProps> = ({
                   >
                     {editingMessageId === message.id ? (
                       /* Edit Mode */
-                    <div className="w-full">
-                      <div className="space-y-3 bg-gray-100 text-gray-900 p-4 rounded-xl border-2 border-pink-500">
+                    <div className="w-full bg-gray-100 text-gray-900 p-4 rounded-xl border-2 border-pink-500">
+                      <div className="space-y-3">
                         <textarea
                           value={editingText}
                           onChange={(e) => setEditingText(e.target.value)}
-                          className="w-full p-3 bg-gray-100 text-gray-900 border-2 border-pink-500 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-pink-400 placeholder-gray-500"
+                          className="w-full p-3 bg-white text-gray-900 border border-gray-300 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-pink-400 placeholder-gray-500"
                           rows={3}
                           autoFocus
                           placeholder="Edit your message..."
@@ -323,7 +323,6 @@ const MainContent: React.FC<MainContentProps> = ({
                             Send
                           </button>
                         </div>
-                      </div>
                       </div>
                     ) : (
                       /* Normal Display Mode */
