@@ -292,14 +292,14 @@ const MainContent: React.FC<MainContentProps> = ({
                   <div
                     className={`px-4 py-3 rounded-lg ${
                       message.role === 'user'
-                        ? 'bg-white text-gray-900 rounded-xl'
+                        ? 'bg-white text-gray-900 border border-pink-500 rounded-xl'
                         : 'bg-white border border-gray-200 text-gray-800'
                     }`}
                   >
                     {editingMessageId === message.id ? (
                       /* Edit Mode */
                     <div className="relative flex flex-col gap-3 w-full">
-                      <div className="bg-gray-50 rounded-3xl px-3 py-3 border border-pink-500">
+                      <div className="bg-gray-50 rounded-3xl px-3 py-3">
                         <div className="m-2 max-h-[25dvh] overflow-auto">
                           <div className="grid">
                             <textarea
