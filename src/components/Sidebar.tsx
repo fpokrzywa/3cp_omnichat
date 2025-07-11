@@ -19,11 +19,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
   const [activeMenu, setActiveMenu] = useState<number | null>(null);
   const [pinnedCollapsed, setPinnedCollapsed] = useState(false);
   const [recentCollapsed, setRecentCollapsed] = useState(false);
-  const [chats, setChats] = useState<Chat[]>([
-    { id: 1, title: "Sure! Let's dive", icon: MessageSquare, isPinned: false },
-    { id: 2, title: "Creating an HR", icon: MessageSquare, isPinned: false },
-    { id: 3, title: "I can assist", icon: MessageSquare, isPinned: false },
-  ]);
+  const [chats, setChats] = useState<Chat[]>([]);
   const [editingChat, setEditingChat] = useState<number | null>(null);
   const [editTitle, setEditTitle] = useState('');
   const menuRef = useRef<HTMLDivElement>(null);
@@ -53,7 +49,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
   }, []);
 
   const pinnedChats = chats.filter(chat => chat.isPinned);
-  const recentChats = chats.filter(chat => !chat.isPinned);
   
   // Convert chat threads to chat format for display
   const threadChats = chatThreads.map(thread => ({
@@ -75,12 +70,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
   }, [searchQuery, pinnedChats]);
 
   const filteredRecentChats = useMemo(() => {
-    const allRecentChats = [...recentChats, ...threadChats];
+    // Only show user-created chat threads, no default chats
+    const allRecentChats = threadChats;
     if (!searchQuery.trim()) return allRecentChats;
     return allRecentChats.filter(chat =>
       chat.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
-  }, [searchQuery, recentChats, threadChats]);
+  }, [searchQuery, threadChats]);
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -155,14 +151,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
   };
 
   const handleDelete = (chatId: number) => {
-    const chat = [...chats, ...threadChats].find(c => c.id === chatId);
+    const chat = threadChats.find(c => c.id === chatId);
     if (chat && 'threadId' in chat) {
       // Delete chat thread
       chatService.deleteThread(chat.threadId);
       setChatThreads(chatService.getAllThreads());
-    } else {
-      // Delete regular chat
-      setChats(chats.filter(chat => chat.id !== chatId));
     }
     setActiveMenu(null);
   };
