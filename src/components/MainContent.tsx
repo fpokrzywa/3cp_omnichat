@@ -303,7 +303,7 @@ const MainContent: React.FC<MainContentProps> = ({
                         <textarea
                           value={editingText}
                           onChange={(e) => setEditingText(e.target.value)}
-                          className="w-full p-3 bg-white text-gray-900 border rounded-lg text-sm resize-none"
+                          className="w-full bg-white text-gray-900 border rounded-lg text-sm resize-none"
                           rows={3}
                           autoFocus
                           placeholder="Edit your message..."
