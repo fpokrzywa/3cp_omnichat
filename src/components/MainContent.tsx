@@ -157,25 +157,30 @@ const MainContent: React.FC<MainContentProps> = ({
               <MessageSquare className="w-3 h-3 sm:w-4 sm:h-4 text-pink-600" />
             </div>
             <span className="font-medium text-gray-900 text-sm sm:text-base truncate">{selectedAssistant}</span>
-            <button 
-              onClick={() => setShowAssistantId(!showAssistantId)}
-              className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
-              title="Show Assistant ID"
-            >
-              <HelpCircle className="w-full h-full" />
-            </button>
+            <div className="relative group">
+              <HelpCircle className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0 cursor-help" />
+              {/* Tooltip */}
+              <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 px-2 py-1 bg-gray-800 text-white text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
+                Assistant ID: {selectedAssistant}
+                {/* Arrow pointing up */}
+                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-2 border-r-2 border-b-2 border-transparent border-b-gray-800"></div>
+              </div>
+            </div>
           </div>
           
-          {/* Assistant ID Tooltip */}
-          {showAssistantId && (
-            <div className="absolute top-full left-0 mt-2 bg-gray-800 text-white text-xs px-3 py-2 rounded-lg shadow-lg z-10 whitespace-nowrap">
-              <div className="font-medium">Assistant ID:</div>
-              <div className="font-mono">{selectedAssistant}</div>
-              <div className="absolute -top-1 left-4 w-2 h-2 bg-gray-800 transform rotate-45"></div>
-            </div>
-          )}
-          
           <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
+            {userProfile?.isAdmin && (
+              <select className="px-2 py-1 border border-gray-200 rounded text-xs focus:outline-none focus:ring-2 focus:ring-pink-500 max-w-20 sm:max-w-none sm:px-3 sm:text-sm">
+                <option>GPT-4o</option>
+                <option>GPT-4</option>
+                <option>Claude-3.5</option>
+                <option>Gemini Pro</option>
+              </select>
+            )}
+            <button 
+              onClick={onOpenPromptCatalog}
+              className="px-2 py-1 sm:px-4 sm:py-1 bg-pink-600 text-white rounded text-xs sm:text-sm hover:bg-pink-700 transition-colors"
+            >
             {userProfile?.isAdmin && (
               <select className="px-2 py-1 border border-gray-200 rounded text-xs focus:outline-none focus:ring-2 focus:ring-pink-500 max-w-20 sm:max-w-none sm:px-3 sm:text-sm">
                 <option>GPT-4o</option>
