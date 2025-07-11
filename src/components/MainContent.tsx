@@ -292,7 +292,7 @@ const MainContent: React.FC<MainContentProps> = ({
                   <div
                     className={`px-4 py-3 rounded-lg ${
                       message.role === 'user'
-                        ? 'bg-white text-gray-900 border border-pink-500 rounded-xl'
+                        ? 'bg-white text-gray-900 rounded-xl'
                         : 'bg-white border border-gray-200 text-gray-800'
                     }`}
                   >
