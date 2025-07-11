@@ -79,8 +79,9 @@ function App() {
     setSidebarOpen(!sidebarOpen);
   };
 
-  const handleAssistantSelect = (assistantName: string) => {
-    setSelectedAssistant(assistantName);
+  const handleAssistantSelect = (assistant: { name: string; id: string }) => {
+    setSelectedAssistant(assistant.name);
+    setSelectedAssistantId(assistant.id);
     setCurrentPage('chat');
   };
 
