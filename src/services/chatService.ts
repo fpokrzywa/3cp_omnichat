@@ -291,6 +291,7 @@ class ChatService {
       this.abortController.abort();
     }
   }
+
   private async simulateAssistantResponse(userMessage: string, assistantName: string): Promise<string> {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
@@ -302,24 +303,23 @@ class ChatService {
   private generateContextualResponse(assistantName: string, userMessage: string): string {
     const message = userMessage.toLowerCase();
 
-    // For Coding Assistant, provide specific code solutions based on user request
     if (assistantName === 'IT Support') {
       if (message.includes('password') || message.includes('login')) {
         return [
           "I can help you with password issues. For security reasons, I'll need to verify your identity first. Here's what you can do:\n\n1. **Self-Service Reset**: Use our password reset portal at portal.company.com/reset\n2. **Verify Identity**: You'll need your employee ID and registered email\n3. **Security Questions**: Answer the security questions you set up during onboarding\n4. **Contact IT**: If self-service doesn't work, call IT at ext. 4357\n\nFor future reference, passwords must be at least 12 characters with uppercase, lowercase, numbers, and special characters. They expire every 90 days.",
           "Password problems are very common, so don't worry! Let me walk you through the troubleshooting steps:\n\n**Quick Fixes:**\n1. Check if Caps Lock is enabled\n2. Try typing your password in a text editor first to verify it's correct\n3. Clear your browser cache and cookies\n4. Try using an incognito/private browsing window\n\n**Advanced Steps:**\n5. Restart your computer to clear any cached credentials\n6. Check if your account is locked (you'll get a specific error message)\n7. Verify you're using the correct username format (usually firstname.lastname)\n\n**Still Having Issues?**\nContact IT support at help@company.com or call ext. 4357. We're available 24/7 for password emergencies."
-        ];
+        ][Math.floor(Math.random() * 2)];
       }
       if (message.includes('printer') || message.includes('print')) {
         return [
           "Let me help you troubleshoot your printer issues. Here's a comprehensive step-by-step guide:\n\n**Basic Checks:**\n1. Verify the printer is powered on and all cables are securely connected\n2. Check if there are any error lights or messages on the printer display\n3. Ensure there's paper in the tray and toner/ink cartridges aren't empty\n\n**Software Troubleshooting:**\n4. Restart the Print Spooler service:\n   - Press Win+R, type 'services.msc'\n   - Find 'Print Spooler', right-click and restart\n5. Clear the print queue of any stuck jobs\n6. Update or reinstall printer drivers from the manufacturer's website\n\n**Network Printer Issues:**\n7. Check if other users can print to the same printer\n8. Verify the printer's IP address hasn't changed\n9. Try printing a test page directly from the printer\n\nIf these steps don't resolve the issue, please let me know the specific error message and printer model.",
           "Printer problems can be frustrating! Let me guide you through a systematic approach:\n\n**Physical Inspection:**\n- Check all cable connections (USB, Ethernet, power)\n- Verify paper is loaded correctly and not jammed\n- Ensure toner/ink cartridges are properly installed and not empty\n- Look for any error messages on the printer's display panel\n\n**Windows Troubleshooting:**\n1. Go to Settings > Devices > Printers & scanners\n2. Remove the problematic printer\n3. Restart your computer\n4. Re-add the printer (it should auto-detect)\n5. Set it as the default printer if needed\n\n**Advanced Solutions:**\n- Download latest drivers from manufacturer's website\n- Run Windows built-in printer troubleshooter\n- Check if Windows Update has any pending driver updates\n- For network printers, verify the IP address and network connectivity\n\nWhat specific issue are you experiencing? Is it not printing at all, printing blank pages, or showing error messages?"
-        ];
+        ][Math.floor(Math.random() * 2)];
       }
       return [
         "Hello! I'm here to help with all your IT support needs. I can assist with a wide range of technical issues including:\n\n**Common Issues I Handle:**\n- Password resets and account lockouts\n- Printer and hardware troubleshooting\n- Software installation and updates\n- Network connectivity problems\n- Email configuration and sync issues\n- VPN setup and connection problems\n- Computer performance optimization\n- Security software and antivirus issues\n\n**To Better Assist You:**\nPlease provide details about:\n1. What specific problem you're experiencing\n2. Any error messages you've seen (exact wording helps)\n3. When the issue started occurring\n4. What device/software you're using\n5. Any troubleshooting steps you've already tried\n\nThe more information you can provide, the faster I can help resolve your issue!",
         "Welcome to IT Support! I'm here to help resolve any technical challenges you're facing.\n\n**How I Can Help:**\n- Troubleshoot hardware and software issues\n- Guide you through step-by-step solutions\n- Provide preventive maintenance tips\n- Help with account and security issues\n- Assist with software installations and updates\n- Resolve network and connectivity problems\n\n**For Fastest Resolution:**\nWhen describing your issue, please include:\n- Detailed description of the problem\n- Exact error messages (screenshots are helpful)\n- Your operating system and software versions\n- When the issue first occurred\n- Any recent changes to your system\n\n**Emergency Support:**\nFor urgent issues affecting business operations, call our emergency line at ext. 911 or email urgent@company.com\n\nWhat technical issue can I help you with today?"
-      ];
+      ][Math.floor(Math.random() * 2)];
     }
 
     if (assistantName === 'HR Support') {
@@ -327,22 +327,21 @@ class ChatService {
         return [
           "I'd be happy to help you with PTO (Paid Time Off) information and procedures.\n\n**PTO Request Process:**\n1. **Advance Notice**: Submit requests at least 2 weeks in advance (4 weeks for extended leave)\n2. **HR Portal**: Log into the employee portal at hr.company.com\n3. **Manager Approval**: Your direct manager must approve all PTO requests\n4. **Blackout Periods**: Some departments have blackout periods during busy seasons\n\n**PTO Accrual Rates:**\n- 0-2 years: 15 days annually (1.25 days/month)\n- 3-5 years: 20 days annually (1.67 days/month)\n- 6+ years: 25 days annually (2.08 days/month)\n\n**Important Notes:**\n- PTO rolls over up to 40 hours annually\n- Unused PTO over the limit is forfeited on December 31st\n- You can check your current balance in the employee dashboard\n- Sick leave is separate from PTO (10 days annually)\n\n**Need Help?**\nContact HR at hr@company.com or call ext. 2468 if you have trouble accessing the portal.",
           "Let me provide you with comprehensive information about our time off policies:\n\n**Types of Leave Available:**\n- **PTO (Paid Time Off)**: Vacation, personal days\n- **Sick Leave**: Medical appointments, illness\n- **Personal Leave**: Unpaid time off for personal matters\n- **FMLA**: Family and Medical Leave Act (eligible after 1 year)\n- **Bereavement**: Up to 5 days for immediate family\n\n**PTO Accrual Schedule:**\nYour PTO accrual depends on your length of service:\n- New employees: 15 days/year (prorated first year)\n- 3+ years: 20 days/year\n- 6+ years: 25 days/year\n- 10+ years: 30 days/year\n\n**Request Guidelines:**\n- Submit requests through the HR portal\n- Minimum 2 weeks notice for regular PTO\n- 30 days notice for extended leave (5+ consecutive days)\n- Manager approval required\n- Consider team coverage and project deadlines\n\n**Checking Your Balance:**\nView your current PTO balance in the employee self-service portal or on your pay stub.\n\nDo you have specific questions about requesting time off or your current balance?"
-        ];
+        ][Math.floor(Math.random() * 2)];
       }
       if (message.includes('benefits') || message.includes('insurance')) {
         return [
           "I'm happy to provide information about our comprehensive benefits package:\n\n**Health Insurance Options:**\n- **PPO Plan**: Higher premiums, more flexibility in choosing providers\n- **HMO Plan**: Lower premiums, requires primary care physician referrals\n- **High Deductible Health Plan (HDHP)**: Lower premiums, paired with HSA\n- **Health Savings Account (HSA)**: Tax-advantaged savings for medical expenses\n\n**Additional Insurance:**\n- **Dental**: Two plan options (Basic and Premium)\n- **Vision**: Coverage for exams, glasses, and contacts\n- **Life Insurance**: Basic coverage provided, additional coverage available\n- **Disability**: Short-term and long-term disability insurance\n\n**Retirement Benefits:**\n- **401(k) Plan**: Company matches 50% of contributions up to 6% of salary\n- **Vesting**: Immediate vesting for employee contributions, 3-year vesting for company match\n- **Investment Options**: 15+ fund choices including target-date funds\n\n**Other Benefits:**\n- Flexible Spending Accounts (FSA) for healthcare and dependent care\n- Employee Assistance Program (EAP)\n- Tuition reimbursement up to $5,000 annually\n- Wellness programs and gym membership discounts\n\n**Open Enrollment:**\nAnnual enrollment period is November 1-15. You can make changes outside this period only for qualifying life events.\n\nWould you like detailed information about any specific benefit?",
           "Let me break down our comprehensive benefits package for you:\n\n**Medical Coverage:**\nWe offer three medical plan options to fit different needs and budgets:\n1. **Traditional PPO**: Most flexibility, higher cost\n2. **HMO**: Lower cost, requires referrals\n3. **High Deductible + HSA**: Lowest premiums, tax savings\n\n**Company Contributions:**\n- Medical: Company pays 80% of premiums\n- Dental: Company pays 100% of basic plan\n- Vision: Company pays 75% of premiums\n- Life Insurance: Basic coverage (1x salary) provided free\n\n**Retirement Planning:**\n- 401(k) with company match up to 3% of salary\n- Immediate vesting on your contributions\n- Company match vests over 3 years\n- Financial planning resources available\n\n**Work-Life Balance:**\n- Flexible work arrangements\n- Employee Assistance Program (confidential counseling)\n- Wellness programs with premium discounts\n- Professional development opportunities\n\n**Family Benefits:**\n- Maternity/Paternity leave\n- Dependent care FSA\n- Family medical coverage options\n- Adoption assistance program\n\n**Getting Started:**\nNew employees have 30 days to enroll. Schedule a benefits consultation with our team at benefits@company.com or call ext. 2469.\n\nWhat specific aspect of our benefits would you like to explore further?"
-        ];
+        ][Math.floor(Math.random() * 2)];
       }
       return [
         "Welcome to HR Support! I'm here to assist you with all human resources related questions and concerns.\n\n**Areas I Can Help With:**\n\n**Benefits & Compensation:**\n- Health, dental, and vision insurance\n- 401(k) and retirement planning\n- Flexible spending accounts\n- Life and disability insurance\n- Salary and bonus information\n\n**Time Off & Leave:**\n- PTO requests and balances\n- Sick leave policies\n- FMLA and family leave\n- Bereavement and personal leave\n- Holiday schedules\n\n**Policies & Procedures:**\n- Employee handbook questions\n- Code of conduct\n- Performance review process\n- Disciplinary procedures\n- Workplace policies\n\n**Career Development:**\n- Training and development opportunities\n- Tuition reimbursement\n- Internal job postings\n- Performance improvement resources\n\n**Workplace Issues:**\n- Conflict resolution\n- Harassment or discrimination concerns\n- Accommodation requests\n- Employee relations\n\n**Administrative Support:**\n- Payroll questions\n- Address or emergency contact changes\n- Employment verification\n- Tax document requests\n\n**Confidential Matters:**\nFor sensitive issues, you can always request a private meeting or call our confidential hotline.\n\nWhat HR topic can I help you with today?",
         "Hello! I'm your HR Support assistant, ready to help with any human resources questions or concerns you may have.\n\n**Quick Access Resources:**\n- **Employee Portal**: Access pay stubs, benefits, and personal information\n- **HR Handbook**: Complete policies and procedures guide\n- **Benefits Summary**: Overview of all available benefits\n- **Emergency Contacts**: Important HR phone numbers and emails\n\n**Common Requests I Handle:**\n\n**🏥 Benefits Questions**\n- Insurance enrollment and changes\n- Claims assistance\n- FSA and HSA information\n- Retirement plan guidance\n\n**📅 Time Off Management**\n- PTO balance inquiries\n- Leave request procedures\n- FMLA eligibility\n- Holiday schedules\n\n**📋 Policy Clarification**\n- Workplace guidelines\n- Performance expectations\n- Compliance requirements\n- Code of conduct\n\n**💼 Career Support**\n- Professional development\n- Internal opportunities\n- Training programs\n- Performance resources\n\n**🤝 Employee Relations**\n- Workplace concerns\n- Conflict resolution\n- Accommodation requests\n- Confidential reporting\n\n**Contact Information:**\n- Email: hr@company.com\n- Phone: ext. 2468\n- Emergency HR Line: ext. 911\n\nHow can I assist you today? Please feel free to ask about any HR-related topic!"
-      ];
+      ][Math.floor(Math.random() * 2)];
     }
 
     if (assistantName === 'Coding Assistant') {
-      // Handle specific requests for business rules with error messages
       if (message.includes('business rule') && message.includes('hello world') && message.includes('error')) {
         return `I'll help you create a business rule that presents "Hello World" as an error message. Here's a comprehensive solution:
 
@@ -444,7 +443,6 @@ function validateForm(data) {
 Would you like me to elaborate on any specific implementation or add additional error handling features?`;
       }
       
-      // Handle other business rule requests
       if (message.includes('business rule')) {
         return `I can help you create a business rule! Based on your request: "${userMessage}"
 
@@ -477,114 +475,38 @@ Let me provide assistance based on your specific request. Could you share more d
 - What programming language you're using
 - What you're trying to accomplish
 - Any specific requirements or constraints
-    // Handle IT Support requests
 - Current code (if you have any)
-
-        return `I can help you with password issues. You mentioned: "${userMessage}"
-
-Here's what you can do:
-
-1. **Self-Service Reset**: Use our password reset portal at portal.company.com/reset
-2. **Verify Identity**: You'll need your employee ID and registered email
-3. **Security Questions**: Answer the security questions you set up during onboarding
-4. **Contact IT**: If self-service doesn't work, call IT at ext. 4357
-
-For future reference, passwords must be at least 12 characters with uppercase, lowercase, numbers, and special characters. They expire every 90 days.
-
-Is there a specific password issue you're experiencing?`;
 - Best practices and architecture
 - Testing strategies
-        return `Let me help you troubleshoot your printer issues. You mentioned: "${userMessage}"
 
-Here's a comprehensive step-by-step guide:
-
-**Basic Checks:**
-1. Verify the printer is powered on and all cables are securely connected
-2. Check if there are any error lights or messages on the printer display
-3. Ensure there's paper in the tray and toner/ink cartridges aren't empty
-
-**Software Troubleshooting:**
-4. Restart the Print Spooler service:
-   - Press Win+R, type 'services.msc'
-   - Find 'Print Spooler', right-click and restart
-5. Clear the print queue of any stuck jobs
-6. Update or reinstall printer drivers from the manufacturer's website
-
-**Network Printer Issues:**
-7. Check if other users can print to the same printer
-8. Verify the printer's IP address hasn't changed
-9. Try printing a test page directly from the printer
-
-What specific printer issue are you experiencing?`;
-      // Default coding assistant response
-      
-      return `Hello! I'm here to help with your IT support needs. You said: "${userMessage}"
-
-I can assist with a wide range of technical issues including:
-- Password resets and account lockouts
-- Printer and hardware troubleshooting
-- Software installation and updates
-- Network connectivity problems
-- Email configuration and sync issues
-- VPN setup and connection problems
-
-What specific technical issue can I help you with today?`;
 **💻 Code Development:**
 - Writing functions, classes, and applications
-    // Handle HR Support requests
 - Implementing algorithms and data structures
 - Creating APIs and web services
-        return `I'd be happy to help you with PTO information. You mentioned: "${userMessage}"
-
-**PTO Request Process:**
-1. **Advance Notice**: Submit requests at least 2 weeks in advance (4 weeks for extended leave)
-2. **HR Portal**: Log into the employee portal at hr.company.com
-3. **Manager Approval**: Your direct manager must approve all PTO requests
-4. **Blackout Periods**: Some departments have blackout periods during busy seasons
-
-**PTO Accrual Rates:**
-- 0-2 years: 15 days annually (1.25 days/month)
-- 3-5 years: 20 days annually (1.67 days/month)
-- 6+ years: 25 days annually (2.08 days/month)
-
-Do you have specific questions about requesting time off or your current balance?`;
 - Code optimization
 - Best practices review
-        return `I'm happy to provide information about our benefits package. You asked: "${userMessage}"
-
-**Health Insurance Options:**
-- **PPO Plan**: Higher premiums, more flexibility in choosing providers
-- **HMO Plan**: Lower premiums, requires primary care physician referrals
-- **High Deductible Health Plan (HDHP)**: Lower premiums, paired with HSA
-
-**Additional Insurance:**
-- **Dental**: Two plan options (Basic and Premium)
-- **Vision**: Coverage for exams, glasses, and contacts
-- **Life Insurance**: Basic coverage provided, additional coverage available
-- **Disability**: Short-term and long-term disability insurance
-
-**Retirement Benefits:**
-- **401(k) Plan**: Company matches 50% of contributions up to 6% of salary
-
-Would you like detailed information about any specific benefit?`;
 - Database schema design
+
+Please provide more context about your coding needs, and I'll help you create an efficient and maintainable solution.`;
+      }
       
-      return `Welcome to HR Support! You said: "${userMessage}"
+      return `Hello! I'm your Coding Assistant. You said: "${userMessage}"
 
-I'm here to assist you with all human resources related questions and concerns.
+I can help you with various programming and development tasks:
 
-**Areas I Can Help With:**
-- Benefits & Compensation
-- Time Off & Leave
-- Policies & Procedures
-- Career Development
-- Workplace Issues
-- Administrative Support
+**Areas of Expertise:**
+- Algorithm Design & Implementation
+- Code Review & Optimization
+- Debugging & Problem Solving
+- API Development
+- Database Design
+- Testing Strategies
+- Best Practices & Design Patterns
 
-What specific HR topic can I help you with today?`;
+What specific coding challenge would you like help with?`;
     }
 
-    // Default response for any assistant - use the actual user input
+    // Default response for any assistant
     return `Hello! I'm ${assistantName}. You said: "${userMessage}"
 
 I'm here to provide you with comprehensive assistance tailored to your specific needs. Based on your message, I can help you with detailed analysis, problem-solving, and actionable guidance.
