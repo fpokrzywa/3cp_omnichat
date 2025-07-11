@@ -299,13 +299,13 @@ const MainContent: React.FC<MainContentProps> = ({
                     {editingMessageId === message.id ? (
                       /* Edit Mode */
                     <div className="relative flex flex-col gap-3 w-full">
-                      <div className="bg-gray-50 rounded-3xl px-3 py-3">
+                      <div className="bg-white rounded-3xl px-3 py-3">
                         <div className="m-2 max-h-[25dvh] overflow-auto">
                           <div className="grid">
                             <textarea
                               value={editingText}
                               onChange={(e) => setEditingText(e.target.value)}
-                              className="col-start-1 col-end-2 row-start-1 row-end-2 w-full resize-none overflow-hidden p-0 m-0 border-0 bg-white focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 text-gray-900 placeholder-gray-500"
+                              className="col-start-1 col-end-2 row-start-1 row-end-2 w-full resize-none overflow-hidden p-0 m-0 border-0 bg-transparent focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 text-gray-900 placeholder-gray-500"
                               autoFocus
                               placeholder="Edit your message..."
                             />
