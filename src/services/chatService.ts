@@ -104,10 +104,11 @@ class ChatService {
   }
 
   createThread(assistantName: string, displayName: string): string {
+  createThread(assistantId: string, displayName: string): string {
     const threadId = `thread_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const thread: ChatThread = {
       id: threadId,
-      assistantId: assistantName,
+      assistantId: assistantId,
       assistantName: displayName,
       messages: [],
       createdAt: new Date(),
@@ -178,9 +179,8 @@ class ChatService {
     this.saveThreadsToStorage();
 
     try {
-      // For now, we'll simulate the OpenAI API call since direct browser calls have CORS issues
-      // In a real implementation, this would go through a backend proxy
-      const assistantResponse = await this.simulateAssistantResponse(message, thread.assistantName);
+      // Try to use real OpenAI API if available, otherwise simulate
+      const assistantResponse = await this.getAssistantResponse(message, thread.assistantId, thread.assistantName);
       
       // Update the loading message with the actual response
       const responseMessage: ChatMessage = {
@@ -235,8 +235,8 @@ class ChatService {
     this.saveThreadsToStorage();
 
     try {
-      // Simulate streaming response
-      const fullResponse = await this.simulateAssistantResponse(message, thread.assistantName);
+      // Get response from OpenAI or simulation
+      const fullResponse = await this.getAssistantResponse(message, thread.assistantId, thread.assistantName);
       
       // Stream the response word by word
       await this.streamResponse(fullResponse, onChunk);
@@ -285,6 +285,77 @@ class ChatService {
     this.abortController = null;
   }
   
+  private async getAssistantResponse(userMessage: string, assistantId: string, assistantName: string): Promise<string> {
+    const currentApiKey = this.getApiKey();
+    
+    // If we have an API key and a real OpenAI assistant ID, try to use the real API
+    if (currentApiKey && assistantId.startsWith('asst_')) {
+      try {
+        return await this.sendMessageToOpenAIAssistant(userMessage, assistantId);
+      } catch (error) {
+        console.warn('Failed to use OpenAI API, falling back to simulation:', error);
+        // Fall back to simulation if API fails
+        return this.simulateAssistantResponse(userMessage, assistantName);
+      }
+    }
+    
+    // Use simulation for non-OpenAI assistants or when no API key
+    return this.simulateAssistantResponse(userMessage, assistantName);
+  }
+
+  private async sendMessageToOpenAIAssistant(message: string, assistantId: string): Promise<string> {
+    try {
+      // Create a thread
+      const threadResponse = await this.makeRequest('/threads', {
+        method: 'POST',
+        body: JSON.stringify({})
+      });
+      
+      const threadId = threadResponse.id;
+      
+      // Add message to thread
+      await this.makeRequest(`/threads/${threadId}/messages`, {
+        method: 'POST',
+        body: JSON.stringify({
+          role: 'user',
+          content: message
+        })
+      });
+      
+      // Run the assistant
+      const runResponse = await this.makeRequest(`/threads/${threadId}/runs`, {
+        method: 'POST',
+        body: JSON.stringify({
+          assistant_id: assistantId
+        })
+      });
+      
+      const runId = runResponse.id;
+      
+      // Poll for completion
+      let run = runResponse;
+      while (run.status === 'queued' || run.status === 'in_progress') {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        run = await this.makeRequest(`/threads/${threadId}/runs/${runId}`);
+      }
+      
+      if (run.status === 'completed') {
+        // Get the assistant's response
+        const messagesResponse = await this.makeRequest(`/threads/${threadId}/messages`);
+        const assistantMessage = messagesResponse.data.find((msg: any) => msg.role === 'assistant');
+        
+        if (assistantMessage && assistantMessage.content[0]?.text?.value) {
+          return assistantMessage.content[0].text.value;
+        }
+      }
+      
+      throw new Error(`Assistant run failed with status: ${run.status}`);
+      
+    } catch (error) {
+      throw new Error(`OpenAI API error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
   stopStreaming() {
     this.shouldStopStreaming = true;
     if (this.abortController) {
@@ -531,11 +602,6 @@ What specific aspect would you like me to focus on?`;
   }
 
   // Method to integrate with real OpenAI API (requires backend proxy)
-  async sendMessageToOpenAI(message: string, assistantId: string): Promise<string> {
-    // This would be implemented when you have a backend proxy
-    // For now, we'll use the simulation
-    throw new Error('Direct OpenAI API integration requires a backend proxy due to CORS limitations');
-  }
 }
 
 export const chatService = new ChatService();

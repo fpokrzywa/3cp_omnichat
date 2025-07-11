@@ -4,7 +4,7 @@ import { openaiService, type Assistant } from '../services/openaiService';
 import OpenAISetup from './OpenAISetup';
 
 interface AssistantsPageProps {
-  onAssistantSelect: (assistantName: string) => void;
+  onAssistantSelect: (assistant: { name: string; id: string }) => void;
 }
 
 const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) => {
@@ -249,7 +249,7 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
             {filteredAndSortedAssistants.map((assistant) => (
               <div
                 key={assistant.id}
-                onClick={() => onAssistantSelect(assistant.name)}
+                onClick={() => onAssistantSelect({ name: assistant.name, id: assistant.id })}
                 className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200 cursor-pointer group relative"
               >
 

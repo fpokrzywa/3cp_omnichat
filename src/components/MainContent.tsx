@@ -4,6 +4,7 @@ import { chatService, type ChatMessage, type ChatThread } from '../services/chat
 
 interface MainContentProps {
   selectedAssistant: string;
+  selectedAssistantId: string;
   selectedPrompt: string;
   onPromptUsed: () => void;
   onOpenPromptCatalog: () => void;
@@ -11,6 +12,7 @@ interface MainContentProps {
 
 const MainContent: React.FC<MainContentProps> = ({ 
   selectedAssistant, 
+  selectedAssistantId,
   selectedPrompt, 
   onPromptUsed,
   onOpenPromptCatalog
@@ -39,15 +41,15 @@ const MainContent: React.FC<MainContentProps> = ({
     const existingThread = chatService.getCurrentThread();
     
     // If there's an existing thread for this assistant, use it
-    if (existingThread && existingThread.assistantName === selectedAssistant) {
+    if (existingThread && existingThread.assistantId === selectedAssistantId) {
       setCurrentThread(existingThread);
     } else {
       // Create new thread for this assistant
-      const threadId = chatService.createThread(selectedAssistant, selectedAssistant);
+      const threadId = chatService.createThread(selectedAssistantId, selectedAssistant);
       const newThread = chatService.getThread(threadId);
       setCurrentThread(newThread);
     }
-  }, [selectedAssistant]);
+  }, [selectedAssistant, selectedAssistantId]);
 
   // Update current thread state periodically to catch changes
   useEffect(() => {
@@ -118,7 +120,7 @@ const MainContent: React.FC<MainContentProps> = ({
   const handleClearChat = () => {
     if (currentThread) {
       chatService.deleteThread(currentThread.id);
-      const threadId = chatService.createThread(selectedAssistant, selectedAssistant);
+      const threadId = chatService.createThread(selectedAssistantId, selectedAssistant);
       const newThread = chatService.getThread(threadId);
       setCurrentThread(newThread);
     }
@@ -161,7 +163,7 @@ const MainContent: React.FC<MainContentProps> = ({
               <HelpCircle className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0 cursor-help" />
               {/* Tooltip */}
               <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 px-2 py-1 bg-gray-800 text-white text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
-                Assistant ID: {selectedAssistant}
+                Assistant ID: {selectedAssistantId || selectedAssistant}
                 {/* Arrow pointing up */}
                 <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-2 border-r-2 border-b-2 border-transparent border-b-gray-800"></div>
               </div>

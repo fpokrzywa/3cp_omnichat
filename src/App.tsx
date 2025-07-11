@@ -20,6 +20,7 @@ function App() {
   const [acknowledgmentOpen, setAcknowledgmentOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [userProfile, setUserProfile] = useState<any>(null);
+  const [selectedAssistantId, setSelectedAssistantId] = useState<string>('');
 
   // Auto-close sidebar on mobile devices
   useEffect(() => {
@@ -83,6 +84,11 @@ function App() {
     setCurrentPage('chat');
   };
 
+  const handleAssistantSelect = (assistant: { name: string; id: string }) => {
+    setSelectedAssistant(assistant.name);
+    setSelectedAssistantId(assistant.id);
+    setCurrentPage('chat');
+  };
   const handleNavigateToChat = () => {
     // When navigating to chat, use the user's preferred assistant if available
     if (userProfile?.preferredAssistant) {
@@ -133,6 +139,7 @@ function App() {
             />
             <MainContent 
               selectedAssistant={selectedAssistant} 
+              selectedAssistantId={selectedAssistantId}
               selectedPrompt={selectedPrompt}
               onPromptUsed={() => setSelectedPrompt('')}
               onOpenPromptCatalog={() => setPromptCatalogOpen(true)}
