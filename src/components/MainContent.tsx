@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MessageSquare, HelpCircle, ChevronDown, Mic, Send, Search, BarChart3, Image, Paperclip } from 'lucide-react';
+import { MessageSquare, HelpCircle, ChevronDown, Mic, Send, Search, BarChart3, Image, Paperclip, Copy, Edit3 } from 'lucide-react';
 import { chatService, type ChatMessage, type ChatThread } from '../services/chatService';
 
 interface MainContentProps {
@@ -25,6 +25,8 @@ const MainContent: React.FC<MainContentProps> = ({
   const [showAssistantId, setShowAssistantId] = useState(false);
   const [streamingMessage, setStreamingMessage] = useState<string>('');
   const [isStreaming, setIsStreaming] = useState(false);
+  const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
+  const [editingText, setEditingText] = useState('');
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
   const chatContainerRef = React.useRef<HTMLDivElement>(null);
 
@@ -133,6 +135,77 @@ const MainContent: React.FC<MainContentProps> = ({
     setIsLoading(false);
   };
 
+  const handleCopyMessage = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (err) {
+      console.error('Failed to copy text:', err);
+    }
+  };
+
+  const handleEditMessage = (message: ChatMessage) => {
+    setEditingMessageId(message.id);
+    setEditingText(message.content);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingMessageId(null);
+    setEditingText('');
+  };
+
+  const handleSendEdit = async () => {
+    if (!currentThread || !editingMessageId || !editingText.trim()) return;
+
+    // Find the index of the message being edited
+    const messageIndex = currentThread.messages.findIndex(msg => msg.id === editingMessageId);
+    if (messageIndex === -1) return;
+
+    // Update the message content
+    const updatedMessages = [...currentThread.messages];
+    updatedMessages[messageIndex] = {
+      ...updatedMessages[messageIndex],
+      content: editingText.trim()
+    };
+
+    // Remove all messages after the edited message
+    const messagesToKeep = updatedMessages.slice(0, messageIndex + 1);
+    
+    // Update the thread with only the messages up to the edited one
+    const updatedThread = {
+      ...currentThread,
+      messages: messagesToKeep,
+      updatedAt: new Date()
+    };
+
+    // Update the thread in the service
+    chatService.updateThread(updatedThread);
+    setCurrentThread(updatedThread);
+
+    // Clear editing state
+    setEditingMessageId(null);
+    setEditingText('');
+
+    // Send the edited message to get a new response
+    setIsLoading(true);
+    setIsStreaming(true);
+    setStreamingMessage('');
+    setError(null);
+    
+    try {
+      await chatService.sendMessageWithStreaming(editingText.trim(), (chunk) => {
+        setStreamingMessage(chunk);
+      });
+      const refreshedThread = chatService.getCurrentThread();
+      setCurrentThread(refreshedThread);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to send message');
+    } finally {
+      setIsLoading(false);
+      setIsStreaming(false);
+      setStreamingMessage('');
+    }
+  };
+
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleSend();
@@ -204,30 +277,86 @@ const MainContent: React.FC<MainContentProps> = ({
                 key={message.id}
                 className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
-                <div
-                  className={`max-w-[80%] sm:max-w-[70%] px-4 py-3 rounded-lg ${
-                    message.role === 'user'
-                      ? 'bg-pink-600 text-white'
-                      : 'bg-white border border-gray-200 text-gray-800'
-                  }`}
-                >
-                  {message.isLoading ? (
-                    <div className="flex items-center space-x-2">
-                      <div className="flex space-x-1">
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                <div className={`relative group max-w-[80%] sm:max-w-[70%] ${message.role === 'user' ? '' : ''}`}>
+                  {/* Message Content */}
+                  <div
+                    className={`px-4 py-3 rounded-lg ${
+                      message.role === 'user'
+                        ? 'bg-pink-600 text-white'
+                        : 'bg-white border border-gray-200 text-gray-800'
+                    }`}
+                  >
+                    {editingMessageId === message.id ? (
+                      /* Edit Mode */
+                      <div className="space-y-3">
+                        <textarea
+                          value={editingText}
+                          onChange={(e) => setEditingText(e.target.value)}
+                          className="w-full p-2 border border-gray-300 rounded text-gray-800 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-pink-500"
+                          rows={3}
+                          autoFocus
+                        />
+                        <div className="flex items-center justify-end space-x-2">
+                          <button
+                            onClick={handleCancelEdit}
+                            className="px-3 py-1 text-xs bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            onClick={handleSendEdit}
+                            disabled={!editingText.trim()}
+                            className="px-3 py-1 text-xs bg-pink-600 text-white rounded hover:bg-pink-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            Send
+                          </button>
+                        </div>
                       </div>
-                      <span className="text-sm text-gray-500">Thinking...</span>
-                    </div>
-                  ) : (
-                    <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                  )}
-                  <div className={`text-xs mt-2 ${
-                    message.role === 'user' ? 'text-pink-200' : 'text-gray-500'
-                  }`}>
-                    {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    ) : (
+                      /* Normal Display Mode */
+                      <>
+                        {message.isLoading ? (
+                          <div className="flex items-center space-x-2">
+                            <div className="flex space-x-1">
+                              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                            </div>
+                            <span className="text-sm text-gray-500">Thinking...</span>
+                          </div>
+                        ) : (
+                          <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                        )}
+                        <div className={`text-xs mt-2 ${
+                          message.role === 'user' ? 'text-pink-200' : 'text-gray-500'
+                        }`}>
+                          {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </div>
+                      </>
+                    )}
                   </div>
+
+                  {/* Hover Actions for User Messages */}
+                  {message.role === 'user' && editingMessageId !== message.id && (
+                    <div className="absolute -left-16 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      <div className="flex items-center space-x-1 bg-white border border-gray-200 rounded-lg shadow-lg p-1">
+                        <button
+                          onClick={() => handleCopyMessage(message.content)}
+                          className="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded transition-colors"
+                          title="Copy message"
+                        >
+                          <Copy className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => handleEditMessage(message)}
+                          className="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded transition-colors"
+                          title="Edit message"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

@@ -141,6 +141,11 @@ class ChatService {
     }
   }
 
+  updateThread(thread: ChatThread) {
+    this.threads.set(thread.id, thread);
+    this.saveThreadsToStorage();
+  }
+
   private generateMessageId(): string {
     return `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
