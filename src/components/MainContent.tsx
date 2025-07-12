@@ -65,6 +65,27 @@ const MainContent: React.FC<MainContentProps> = ({
     return () => clearInterval(interval);
   }, [currentThread]);
 
+  // Register/unregister streaming callback when thread changes
+  useEffect(() => {
+    if (currentThread) {
+      // Check if this thread is currently streaming
+      if (chatService.isThreadStreaming(currentThread.id)) {
+        setIsStreaming(true);
+        // Register callback to receive streaming updates
+        chatService.registerStreamingCallback(currentThread.id, (chunk) => {
+          setStreamingMessage(chunk);
+        });
+      }
+
+      // Cleanup function to unregister callback
+      return () => {
+        if (currentThread) {
+          chatService.unregisterStreamingCallback(currentThread.id);
+        }
+      };
+    }
+  }, [currentThread?.id]);
+
   // Auto-scroll to bottom when new messages arrive or when streaming
   useEffect(() => {
     scrollToBottom();

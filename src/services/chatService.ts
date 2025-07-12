@@ -24,6 +24,8 @@ class ChatService {
   private currentThreadId: string | null = null;
   private abortController: AbortController | null = null;
   private shouldStopStreaming: boolean = false;
+  private streamingCallbacks: Map<string, (chunk: string) => void> = new Map();
+  private activeStreamingThreads: Set<string> = new Set();
 
   constructor() {
     // Get API key from environment or localStorage
@@ -248,6 +250,10 @@ class ChatService {
       throw new Error('Thread not found');
     }
 
+    // Register streaming callback for this thread
+    this.streamingCallbacks.set(targetThreadId, onChunk);
+    this.activeStreamingThreads.add(targetThreadId);
+
     // Add user message
     const userMessage: ChatMessage = {
       id: this.generateMessageId(),
@@ -265,7 +271,7 @@ class ChatService {
       const fullResponse = await this.getAssistantResponse(message, thread.assistantId, thread.assistantName);
       
       // Stream the response word by word
-      await this.streamResponse(fullResponse, onChunk);
+      await this.streamResponse(fullResponse, targetThreadId);
       
       // Add the complete message to the thread
       const responseMessage: ChatMessage = {
@@ -281,12 +287,19 @@ class ChatService {
 
       return responseMessage;
     } catch (error) {
+      // Clean up streaming state on error
+      this.streamingCallbacks.delete(targetThreadId);
+      this.activeStreamingThreads.delete(targetThreadId);
       this.saveThreadsToStorage();
       throw error;
+    } finally {
+      // Clean up streaming state when done
+      this.streamingCallbacks.delete(targetThreadId);
+      this.activeStreamingThreads.delete(targetThreadId);
     }
   }
 
-  private async streamResponse(text: string, onChunk: (chunk: string) => void): Promise<void> {
+  private async streamResponse(text: string, threadId: string): Promise<void> {
     this.shouldStopStreaming = false;
     this.abortController = new AbortController();
     
@@ -294,15 +307,18 @@ class ChatService {
     
     for (let i = 0; i < words.length; i++) {
       // Check if streaming should be stopped
-      if (this.shouldStopStreaming || this.abortController?.signal.aborted) {
+      if (this.shouldStopStreaming || this.abortController?.signal.aborted || !this.activeStreamingThreads.has(threadId)) {
         break;
       }
       
       const word = words[i];
       const currentText = words.slice(0, i + 1).join(' ');
       
-      // Call the chunk callback with the current accumulated text
-      onChunk(currentText);
+      // Call the chunk callback if it exists (component might be unmounted)
+      const callback = this.streamingCallbacks.get(threadId);
+      if (callback) {
+        callback(currentText);
+      }
       
       // Add a small delay to simulate streaming
       await new Promise(resolve => setTimeout(resolve, 15 + Math.random() * 25));
@@ -387,6 +403,9 @@ class ChatService {
     if (this.abortController) {
       this.abortController.abort();
     }
+    // Clear all streaming callbacks and active threads
+    this.streamingCallbacks.clear();
+    this.activeStreamingThreads.clear();
   }
 
   private async simulateAssistantResponse(userMessage: string, assistantName: string): Promise<string> {
@@ -615,6 +634,8 @@ What specific aspect would you like me to focus on?`;
 
   deleteThread(threadId: string) {
     this.threads.delete(threadId);
+    this.streamingCallbacks.delete(threadId);
+    this.activeStreamingThreads.delete(threadId);
     if (this.currentThreadId === threadId) {
       this.currentThreadId = null;
     }
@@ -624,10 +645,29 @@ What specific aspect would you like me to focus on?`;
   clearAllThreads() {
     this.threads.clear();
     this.currentThreadId = null;
+    this.streamingCallbacks.clear();
+    this.activeStreamingThreads.clear();
     this.saveThreadsToStorage();
   }
 
   // Method to integrate with real OpenAI API (requires backend proxy)
+
+  // Method to check if a thread is currently streaming
+  isThreadStreaming(threadId: string): boolean {
+    return this.activeStreamingThreads.has(threadId);
+  }
+
+  // Method to register a new streaming callback (for when component remounts)
+  registerStreamingCallback(threadId: string, callback: (chunk: string) => void): void {
+    if (this.activeStreamingThreads.has(threadId)) {
+      this.streamingCallbacks.set(threadId, callback);
+    }
+  }
+
+  // Method to unregister streaming callback (for when component unmounts)
+  unregisterStreamingCallback(threadId: string): void {
+    this.streamingCallbacks.delete(threadId);
+  }
 }
 
 export const chatService = new ChatService();
