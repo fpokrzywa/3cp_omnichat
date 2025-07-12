@@ -119,6 +119,11 @@ const MainContent: React.FC<MainContentProps> = ({
       setStreamingMessage('');
       setError(null);
       
+      // Auto-scroll immediately after sending message
+      setTimeout(() => {
+        scrollToBottom();
+      }, 100);
+      
       try {
         await chatService.sendMessageWithStreaming(inputValue.trim(), (chunk) => {
           setStreamingMessage(chunk);
@@ -211,6 +216,11 @@ const MainContent: React.FC<MainContentProps> = ({
     setIsStreaming(true);
     setStreamingMessage('');
     setError(null);
+    
+    // Auto-scroll immediately after sending edited message
+    setTimeout(() => {
+      scrollToBottom();
+    }, 100);
     
     try {
       await chatService.sendMessageWithStreaming(editingText.trim(), (chunk) => {
