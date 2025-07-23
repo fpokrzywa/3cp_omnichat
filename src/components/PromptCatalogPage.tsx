@@ -45,7 +45,7 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
         setMongoConnected(mongoService.isMongoConnected());
         
         // Log connection info for debugging
-        console.log('MongoDB Connection Info:', mongoService.getConnectionInfo());
+        console.log('n8n Connection Info:', mongoService.getConnectionInfo());
       } catch (error) {
         console.error('Error loading prompts:', error);
       } finally {
@@ -219,20 +219,20 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
               {/* MongoDB Connection Status */}
               {mongoConnected && (
                 <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-                  <p className="text-sm text-green-700">✅ Connected to MongoDB - Loading prompts from your database</p>
+                  <p className="text-sm text-green-700">✅ Connected to n8n webhook - Loading prompts from your workflow</p>
                 </div>
               )}
               
               {!mongoConnected && (
                 <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                  <p className="text-sm text-amber-700">⚠️ MongoDB not configured - Using fallback prompt data</p>
+                  <p className="text-sm text-amber-700">⚠️ n8n webhook not configured - Using fallback prompt data</p>
                 </div>
               )}
 
               {isLoading ? (
                 <div className="text-center py-16">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600 mx-auto mb-4"></div>
-                  <p className="text-gray-500">Loading prompts from database...</p>
+                  <p className="text-gray-500">Loading prompts from n8n webhook...</p>
                 </div>
               ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

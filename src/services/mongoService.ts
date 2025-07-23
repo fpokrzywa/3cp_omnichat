@@ -10,6 +10,12 @@ export interface MongoPrompt {
   tags: string[];
 }
 
+// n8n webhook configuration
+interface N8nConfig {
+  webhookUrl: string | undefined;
+  isConfigured: boolean;
+}
+
 // Fallback prompts data when MongoDB is not connected
 const FALLBACK_PROMPTS: MongoPrompt[] = [
   {
@@ -309,36 +315,67 @@ const FALLBACK_PROMPTS: MongoPrompt[] = [
 ];
 
 class MongoService {
-  private connectionString: string | undefined;
-  private databaseName: string | undefined;
-  private collectionName: string | undefined;
+  private n8nConfig: N8nConfig;
 
   constructor() {
-    // Read environment variables
-    this.connectionString = import.meta.env.VITE_MONGODB_CONNECTION_STRING;
-    this.databaseName = import.meta.env.VITE_MONGODB_DATABASE_NAME;
-    this.collectionName = import.meta.env.VITE_MONGODB_COLLECTION_NAME;
+    // Read n8n webhook URL from environment variables
+    this.n8nConfig = {
+      webhookUrl: import.meta.env.VITE_N8N_WEBHOOK_URL,
+      isConfigured: !!import.meta.env.VITE_N8N_WEBHOOK_URL
+    };
   }
 
   async getPrompts(): Promise<MongoPrompt[]> {
     try {
-      // Since browsers can't directly connect to MongoDB, this would typically
-      // call a backend API endpoint that connects to MongoDB
-      if (this.isMongoConnected()) {
-        console.log('MongoDB configured - would fetch from:', {
-          database: this.databaseName,
-          collection: this.collectionName
-        });
+      // Try to fetch from n8n webhook first
+      if (this.n8nConfig.isConfigured && this.n8nConfig.webhookUrl) {
+        console.log('Fetching prompts from n8n webhook:', this.n8nConfig.webhookUrl);
         
-        // TODO: Replace with actual API call to your backend
-        // const response = await fetch('/api/prompts');
-        // return await response.json();
+        const response = await fetch(this.n8nConfig.webhookUrl, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`n8n webhook responded with status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        
+        // Handle different response formats from n8n
+        let prompts: MongoPrompt[];
+        if (Array.isArray(data)) {
+          prompts = data;
+        } else if (data.prompts && Array.isArray(data.prompts)) {
+          prompts = data.prompts;
+        } else if (data.data && Array.isArray(data.data)) {
+          prompts = data.data;
+        } else {
+          throw new Error('Invalid response format from n8n webhook');
+        }
+
+        // Validate and transform the data to match our interface
+        const validatedPrompts = prompts.map((prompt: any) => ({
+          id: prompt.id || prompt._id || Math.random().toString(36).substr(2, 9),
+          title: prompt.title || 'Untitled Prompt',
+          description: prompt.description || '',
+          assistant: prompt.assistant || 'OmniChat',
+          task: prompt.task,
+          functionalArea: prompt.functionalArea,
+          tags: Array.isArray(prompt.tags) ? prompt.tags : []
+        }));
+
+        console.log(`Successfully loaded ${validatedPrompts.length} prompts from n8n`);
+        return validatedPrompts;
       }
       
       // Return fallback data when MongoDB is not configured
       return FALLBACK_PROMPTS;
     } catch (error) {
-      console.error('Error fetching prompts from MongoDB:', error);
+      console.error('Error fetching prompts from n8n webhook:', error);
+      console.log('Falling back to static prompt data');
       return FALLBACK_PROMPTS;
     }
   }
@@ -361,47 +398,104 @@ class MongoService {
 
   async addPrompt(prompt: Omit<MongoPrompt, '_id'>): Promise<boolean> {
     try {
-      // This would typically call your backend API endpoint
-      console.log('Would add prompt to MongoDB:', prompt);
+      if (!this.n8nConfig.isConfigured || !this.n8nConfig.webhookUrl) {
+        console.warn('n8n webhook not configured for adding prompts');
+        return false;
+      }
+
+      const response = await fetch(this.n8nConfig.webhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'add',
+          prompt: prompt
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to add prompt: ${response.status}`);
+      }
+
+      console.log('Successfully added prompt via n8n webhook');
       return true;
     } catch (error) {
-      console.error('Error adding prompt to MongoDB:', error);
+      console.error('Error adding prompt via n8n webhook:', error);
       return false;
     }
   }
 
   async updatePrompt(id: string, updates: Partial<MongoPrompt>): Promise<boolean> {
     try {
-      // This would typically call your backend API endpoint
-      console.log('Would update prompt in MongoDB:', { id, updates });
+      if (!this.n8nConfig.isConfigured || !this.n8nConfig.webhookUrl) {
+        console.warn('n8n webhook not configured for updating prompts');
+        return false;
+      }
+
+      const response = await fetch(this.n8nConfig.webhookUrl, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'update',
+          id: id,
+          updates: updates
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to update prompt: ${response.status}`);
+      }
+
+      console.log('Successfully updated prompt via n8n webhook');
       return true;
     } catch (error) {
-      console.error('Error updating prompt in MongoDB:', error);
+      console.error('Error updating prompt via n8n webhook:', error);
       return false;
     }
   }
 
   async deletePrompt(id: string): Promise<boolean> {
     try {
-      // This would typically call your backend API endpoint
-      console.log('Would delete prompt from MongoDB:', id);
+      if (!this.n8nConfig.isConfigured || !this.n8nConfig.webhookUrl) {
+        console.warn('n8n webhook not configured for deleting prompts');
+        return false;
+      }
+
+      const response = await fetch(this.n8nConfig.webhookUrl, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'delete',
+          id: id
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to delete prompt: ${response.status}`);
+      }
+
+      console.log('Successfully deleted prompt via n8n webhook');
       return true;
     } catch (error) {
-      console.error('Error deleting prompt from MongoDB:', error);
+      console.error('Error deleting prompt via n8n webhook:', error);
       return false;
     }
   }
 
   isMongoConnected(): boolean {
-    return !!(this.connectionString && this.databaseName && this.collectionName);
+    return this.n8nConfig.isConfigured;
   }
 
   getConnectionInfo() {
     return {
-      database: this.databaseName,
-      collection: this.collectionName,
-      hasConnectionString: !!this.connectionString,
-      isConfigured: this.isMongoConnected()
+      webhookUrl: this.n8nConfig.webhookUrl ? 'Configured' : 'Not configured',
+      isConfigured: this.n8nConfig.isConfigured,
+      source: 'n8n webhook'
     };
   }
 }
