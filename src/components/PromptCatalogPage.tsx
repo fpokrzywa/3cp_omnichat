@@ -11,6 +11,9 @@ interface Prompt {
   task?: string;
   functionalArea?: string;
   tags: string[];
+  user?: string;
+  system?: string;
+  owner?: string;
 }
 
 interface PromptCatalogPageProps {
@@ -50,7 +53,10 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
         assistant: prompt.assistant,
         task: prompt.task,
         functionalArea: prompt.functionalArea,
-        tags: prompt.tags
+        tags: prompt.tags,
+        user: (prompt as any).user,
+        system: (prompt as any).system,
+        owner: (prompt as any).owner
       }));
       setPrompts(convertedPrompts);
       

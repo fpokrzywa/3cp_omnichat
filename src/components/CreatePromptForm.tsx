@@ -16,6 +16,9 @@ interface Prompt {
   task?: string;
   functionalArea?: string;
   tags: string[];
+  user?: string;
+  system?: string;
+  owner?: string;
 }
 
 const CreatePromptForm: React.FC<CreatePromptFormProps> = ({ isOpen, onClose, onSubmit, editingPrompt }) => {
@@ -55,8 +58,8 @@ const CreatePromptForm: React.FC<CreatePromptFormProps> = ({ isOpen, onClose, on
           task: editingPrompt.task || '',
           tags: editingPrompt.tags.join(', '),
           assistant: editingPrompt.assistant,
-          user: (editingPrompt as any).user || '',
-          system: (editingPrompt as any).system || '',
+          user: editingPrompt.user || '',
+          system: editingPrompt.system || '',
           owner: userProfile?.name || 'Current User'
         });
       } else {
