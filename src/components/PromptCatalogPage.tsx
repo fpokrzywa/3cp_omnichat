@@ -326,7 +326,6 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
                     </div>
                   )}
                 </div>
-                  </div>
                   
                   {/* Edit button - positioned in bottom right corner */}
                   <button
