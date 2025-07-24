@@ -139,8 +139,7 @@ const CreatePromptForm: React.FC<CreatePromptFormProps> = ({ isOpen, onClose, on
       .filter(tag => tag.length > 0);
 
     const promptData = {
-      id: `custom_${Date.now()}`,
-      mongoId: editingPrompt?.mongoId,
+      id: editingPrompt ? editingPrompt.id : `custom_${Date.now()}`,
       title: formData.title,
       description: formData.description,
       functionalArea: formData.functionalAreas.join(', '),
