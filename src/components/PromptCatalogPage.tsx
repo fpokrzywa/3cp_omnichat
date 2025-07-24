@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Heart, ChevronDown, X, RefreshCw } from 'lucide-react';
+import { Search, Heart, ChevronDown, X, RefreshCw, Edit } from 'lucide-react';
 import { mongoService, type MongoPrompt } from '../services/mongoService';
 import CreatePromptForm from './CreatePromptForm';
 
@@ -27,6 +27,16 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [editingPrompt, setEditingPrompt] = useState<Prompt | null>(null);
+  const [userProfile, setUserProfile] = useState<any>(null);
+
+  // Load user profile
+  React.useEffect(() => {
+    const savedProfile = localStorage.getItem('userProfile');
+    if (savedProfile) {
+      setUserProfile(JSON.parse(savedProfile));
+    }
+  }, []);
 
   // Load prompts from MongoDB when component mounts
   React.useEffect(() => {
@@ -102,7 +112,7 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
     'Resume Assistant'
   ];
 
-  const filteredPrompts = prompts.filter(prompt => {
+  const filteredPrompts = displayPrompts.filter(prompt => {
     const matchesSearch = prompt.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          prompt.description.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesAssistant = selectedAssistant === 'All Assistants' || prompt.assistant === selectedAssistant;
@@ -116,6 +126,27 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
   const handlePromptClick = (prompt: Prompt) => {
     onPromptSelect(prompt.description, prompt.assistant);
   };
+
+  const handleEditPrompt = (prompt: Prompt, event: React.MouseEvent) => {
+    event.stopPropagation();
+    setEditingPrompt(prompt);
+    setShowCreateForm(true);
+  };
+
+  const handleCloseForm = () => {
+    setShowCreateForm(false);
+    setEditingPrompt(null);
+  };
+
+  // Filter prompts for "Your Prompts" tab based on owner
+  const yourPrompts = prompts.filter(prompt => {
+    const promptOwner = (prompt as any).owner;
+    const currentUser = userProfile?.name || 'Current User';
+    return promptOwner === currentUser;
+  });
+
+  // Use appropriate prompts based on active tab
+  const displayPrompts = activeTab === 'your' ? yourPrompts : prompts;
 
   return (
     <div className="flex-1 bg-gray-50 overflow-y-auto">
@@ -273,7 +304,7 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
                 <div
                   key={prompt.id}
                   onClick={() => handlePromptClick(prompt)}
-                  className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow duration-200 cursor-pointer group"
+                  className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow duration-200 cursor-pointer group relative"
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
@@ -288,6 +319,17 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
                       <Heart className="w-4 h-4" />
                     </button>
                   </div>
+                  
+                  {/* Edit button - only show for user's own prompts or if user is admin */}
+                  {(activeTab === 'your' || userProfile?.isAdmin) && (
+                    <button
+                      onClick={(e) => handleEditPrompt(prompt, e)}
+                      className="absolute bottom-3 right-3 p-2 text-gray-400 hover:text-pink-600 transition-colors opacity-0 group-hover:opacity-100 bg-white rounded-full shadow-md hover:shadow-lg"
+                      title="Edit prompt"
+                    >
+                      <Edit className="w-4 h-4" />
+                    </button>
+                  )}
                   <p className="text-xs text-gray-600 leading-relaxed mb-4">
                     {prompt.description}
                   </p>
@@ -314,8 +356,15 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Search className="w-8 h-8 text-gray-400" />
               </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No personal prompts yet</h3>
-              <p className="text-gray-500 mb-6">Create your first prompt to get started</p>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                {yourPrompts.length === 0 ? 'No personal prompts yet' : 'No prompts found'}
+              </h3>
+              <p className="text-gray-500 mb-6">
+                {yourPrompts.length === 0 
+                  ? 'Create your first prompt to get started' 
+                  : 'Try adjusting your search terms or filters'
+                }
+              </p>
               <button 
                 onClick={() => setShowCreateForm(true)}
                 className="px-6 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors"
@@ -338,8 +387,9 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
       {/* Create Prompt Form Modal */}
       <CreatePromptForm
         isOpen={showCreateForm}
-        onClose={() => setShowCreateForm(false)}
+        onClose={handleCloseForm}
         onSubmit={handleCreatePrompt}
+        editingPrompt={editingPrompt}
       />
     </div>
   );
