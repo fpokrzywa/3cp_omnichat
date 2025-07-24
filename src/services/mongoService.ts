@@ -341,13 +341,6 @@ class MongoService {
       return this.cachedPrompts;
     }
 
-    // Clear cache when force refreshing
-    if (forceRefresh) {
-      console.log('Force refresh requested - clearing cache');
-      this.cachedPrompts = null;
-      this.cacheTimestamp = 0;
-    }
-
     try {
       // Try to fetch from n8n webhook first
       if (this.n8nConfig.isConfigured && this.n8nConfig.getWebhookUrl) {

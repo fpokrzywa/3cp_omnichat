@@ -46,9 +46,7 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
   }, []);
 
   const loadOpenAIAssistants = async (forceRefresh: boolean = false) => {
-    if (!forceRefresh) {
-      setIsLoading(true);
-    }
+    setIsLoading(true);
     setIsLoadingFresh(forceRefresh);
     setError(null);
 
@@ -62,7 +60,8 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
       setLastUpdated(new Date());
       
       if (!result.fromCache) {
-        console.log('Assistants refreshed from OpenAI API');
+        // Show a subtle notification that data was refreshed
+        console.log('Assistants updated from OpenAI API');
       }
     } catch (err) {
       console.error('Error loading OpenAI assistants:', err);
@@ -74,10 +73,6 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
   };
 
   const handleRefresh = () => {
-    if (!hasApiKey) {
-      console.warn('Cannot refresh assistants: No API key configured');
-      return;
-    }
     loadOpenAIAssistants(true);
   };
 
