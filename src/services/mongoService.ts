@@ -316,6 +316,9 @@ const FALLBACK_PROMPTS: MongoPrompt[] = [
 
 class MongoService {
   private n8nConfig: N8nConfig;
+  private cachedPrompts: MongoPrompt[] | null = null;
+  private cacheTimestamp: number = 0;
+  private cacheExpiryMs = 5 * 60 * 1000; // 5 minutes
 
   constructor() {
     // Read n8n webhook URL from environment variables
@@ -325,7 +328,13 @@ class MongoService {
     };
   }
 
-  async getPrompts(): Promise<MongoPrompt[]> {
+  async getPrompts(forceRefresh: boolean = false): Promise<MongoPrompt[]> {
+    // Check cache first unless force refresh is requested
+    if (!forceRefresh && this.cachedPrompts && (Date.now() - this.cacheTimestamp) < this.cacheExpiryMs) {
+      console.log('Returning cached prompts');
+      return this.cachedPrompts;
+    }
+
     try {
       // Try to fetch from n8n webhook first
       if (this.n8nConfig.isConfigured && this.n8nConfig.webhookUrl) {
@@ -372,6 +381,10 @@ class MongoService {
           }));
 
           console.log(`Successfully loaded ${validatedPrompts.length} prompts from n8n`);
+          
+          // Cache the results
+          this.cachedPrompts = validatedPrompts;
+          this.cacheTimestamp = Date.now();
           return validatedPrompts;
         } catch (fetchError) {
           // Handle specific fetch errors
@@ -390,6 +403,10 @@ class MongoService {
         
       // Return fallback data when MongoDB is not configured
       console.log('n8n webhook not configured, using fallback data');
+      
+      // Cache fallback data too
+      this.cachedPrompts = FALLBACK_PROMPTS;
+      this.cacheTimestamp = Date.now();
       return FALLBACK_PROMPTS;
     } catch (error) {
       console.log('Falling back to static prompt data');
