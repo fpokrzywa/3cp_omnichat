@@ -27,6 +27,7 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [editingPrompt, setEditingPrompt] = useState<Prompt | null>(null);
 
   // Load prompts from MongoDB when component mounts
   React.useEffect(() => {
@@ -66,24 +67,39 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
 
   const handleCreatePrompt = async (promptData: any) => {
     try {
-      // Add the new prompt to MongoDB via the service
-      const success = await mongoService.addPrompt(promptData);
+      let success;
+      if (editingPrompt) {
+        // Update existing prompt
+        success = await mongoService.updatePrompt(editingPrompt.id, promptData);
+      } else {
+        // Add new prompt
+        success = await mongoService.addPrompt(promptData);
+      }
+      
       if (success) {
         // Refresh the prompts list to include the new prompt
         await loadPrompts(true);
-        console.log('Prompt created successfully');
+        console.log(editingPrompt ? 'Prompt updated successfully' : 'Prompt created successfully');
       } else {
-        console.warn('Failed to save prompt to n8n webhook, but continuing...');
+        console.warn(`Failed to ${editingPrompt ? 'update' : 'save'} prompt to n8n webhook, but continuing...`);
         // Still close the form and refresh to show any cached changes
         setShowCreateForm(false);
+        setEditingPrompt(null);
         await loadPrompts(true);
       }
     } catch (error) {
-      console.error('Error in prompt creation process:', error);
+      console.error(`Error in prompt ${editingPrompt ? 'update' : 'creation'} process:`, error);
       // Still close the form to prevent user confusion
       setShowCreateForm(false);
+      setEditingPrompt(null);
     }
   };
+
+  const handleEditPrompt = (prompt: Prompt) => {
+    setEditingPrompt(prompt);
+    setShowCreateForm(true);
+  };
+
   const handleRefresh = () => {
     console.log('Refresh button clicked - forcing data refresh');
     loadPrompts(true);
@@ -115,6 +131,11 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
 
   const handlePromptClick = (prompt: Prompt) => {
     onPromptSelect(prompt.description, prompt.assistant);
+  };
+
+  const handleCloseForm = () => {
+    setShowCreateForm(false);
+    setEditingPrompt(null);
   };
 
   return (
@@ -272,9 +293,9 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
               {filteredPrompts.map((prompt) => (
                 <div
                   key={prompt.id}
-                  onClick={() => handlePromptClick(prompt)}
-                  className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow duration-200 cursor-pointer group"
+                  className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow duration-200 cursor-pointer group relative"
                 >
+                  <div onClick={() => handlePromptClick(prompt)} className="h-full">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
                       <div className="flex items-center space-x-2 mb-2">
@@ -305,6 +326,18 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
                     </div>
                   )}
                 </div>
+                  </div>
+                  
+                  {/* Edit button - positioned in bottom right corner */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEditPrompt(prompt);
+                    }}
+                    className="absolute bottom-3 right-3 p-2 text-gray-400 hover:text-pink-600 hover:bg-pink-50 rounded-full transition-all duration-200 opacity-0 group-hover:opacity-100"
+                  >
+                    <Edit3 className="w-4 h-4" />
+                  </button>
               ))}
             </div>
               )}
@@ -338,8 +371,9 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
       {/* Create Prompt Form Modal */}
       <CreatePromptForm
         isOpen={showCreateForm}
-        onClose={() => setShowCreateForm(false)}
+        onClose={handleCloseForm}
         onSubmit={handleCreatePrompt}
+        editingPrompt={editingPrompt}
       />
     </div>
   );

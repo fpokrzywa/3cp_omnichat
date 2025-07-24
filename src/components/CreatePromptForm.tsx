@@ -5,9 +5,20 @@ interface CreatePromptFormProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (promptData: any) => void;
+  editingPrompt?: Prompt | null;
 }
 
-const CreatePromptForm: React.FC<CreatePromptFormProps> = ({ isOpen, onClose, onSubmit }) => {
+interface Prompt {
+  id: string;
+  title: string;
+  description: string;
+  assistant: string;
+  task?: string;
+  functionalArea?: string;
+  tags: string[];
+}
+
+const CreatePromptForm: React.FC<CreatePromptFormProps> = ({ isOpen, onClose, onSubmit, editingPrompt }) => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -35,19 +46,35 @@ const CreatePromptForm: React.FC<CreatePromptFormProps> = ({ isOpen, onClose, on
   // Reset form when modal opens
   useEffect(() => {
     if (isOpen) {
-      setFormData({
-        title: '',
-        description: '',
-        functionalAreas: [],
-        task: '',
-        tags: '',
-        assistant: '',
-        user: '',
-        system: '',
-        owner: userProfile?.name || 'Current User'
-      });
+      if (editingPrompt) {
+        // Populate form with existing prompt data
+        setFormData({
+          title: editingPrompt.title,
+          description: editingPrompt.description,
+          functionalAreas: editingPrompt.functionalArea ? editingPrompt.functionalArea.split(', ') : [],
+          task: editingPrompt.task || '',
+          tags: editingPrompt.tags.join(', '),
+          assistant: editingPrompt.assistant,
+          user: '',
+          system: '',
+          owner: userProfile?.name || 'Current User'
+        });
+      } else {
+        // Reset form for new prompt
+        setFormData({
+          title: '',
+          description: '',
+          functionalAreas: [],
+          task: '',
+          tags: '',
+          assistant: '',
+          user: '',
+          system: '',
+          owner: userProfile?.name || 'Current User'
+        });
+      }
     }
-  }, [isOpen, userProfile]);
+  }, [isOpen, userProfile, editingPrompt]);
 
   const functionalAreaOptions = [
     'Research & Development',
@@ -135,7 +162,9 @@ const CreatePromptForm: React.FC<CreatePromptFormProps> = ({ isOpen, onClose, on
       <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-800">Create New Prompt</h2>
+          <h2 className="text-xl font-semibold text-gray-800">
+            {editingPrompt ? 'Edit Prompt' : 'Create New Prompt'}
+          </h2>
           <button 
             onClick={onClose}
             className="p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-lg hover:bg-gray-50"
@@ -329,7 +358,7 @@ const CreatePromptForm: React.FC<CreatePromptFormProps> = ({ isOpen, onClose, on
               disabled={!isFormValid}
               className="px-6 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Create Prompt
+              {editingPrompt ? 'Update Prompt' : 'Create Prompt'}
             </button>
           </div>
         </form>
