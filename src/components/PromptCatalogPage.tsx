@@ -299,7 +299,7 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
               {filteredPrompts.map((prompt) => (
                 <div
                   key={prompt.id}
-                  className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow duration-200 cursor-pointer group relative"
+                  className="prompt-card bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow duration-200 cursor-pointer group relative"
                 >
                   <div onClick={() => handlePromptClick(prompt)} className="h-full">
                   <div className="flex items-start justify-between mb-4">
@@ -319,6 +319,13 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
                     {prompt.description}
                   </p>
 
+                  {/* Hidden fields to store user and system data */}
+                  <div className="hidden">
+                    <span data-user={prompt.user || ''}></span>
+                    <span data-system={prompt.system || ''}></span>
+                    <span data-owner={prompt.owner || ''}></span>
+                  </div>
+
                   {prompt.tags.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       {prompt.tags.map((tag, index) => (
@@ -337,7 +344,20 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleEditPrompt(prompt);
+                      // Get the hidden data from the card
+                      const card = e.currentTarget.closest('.prompt-card');
+                      const userSpan = card?.querySelector('[data-user]') as HTMLElement;
+                      const systemSpan = card?.querySelector('[data-system]') as HTMLElement;
+                      const ownerSpan = card?.querySelector('[data-owner]') as HTMLElement;
+                      
+                      const promptWithHiddenData = {
+                        ...prompt,
+                        user: userSpan?.getAttribute('data-user') || '',
+                        system: systemSpan?.getAttribute('data-system') || '',
+                        owner: ownerSpan?.getAttribute('data-owner') || ''
+                      };
+                      
+                      handleEditPrompt(promptWithHiddenData);
                     }}
                     className="absolute bottom-3 right-3 p-2 text-gray-400 hover:text-pink-600 hover:bg-pink-50 rounded-full transition-all duration-200 opacity-0 group-hover:opacity-100"
                   >
