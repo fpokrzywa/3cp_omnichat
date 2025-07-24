@@ -1,7 +1,5 @@
 // MongoDB Service for handling prompt data
 export interface MongoPrompt {
-  _id?: string;
-  mongoId?: string;
   id: string;
   title: string;
   description: string;
@@ -405,6 +403,9 @@ class MongoService {
             user: prompt.user || '',
             system: prompt.system || '',
             owner: prompt.owner || ''
+          }
+          )
+          )
 
           console.log(`Successfully loaded ${validatedPrompts.length} prompts from n8n`);
           
