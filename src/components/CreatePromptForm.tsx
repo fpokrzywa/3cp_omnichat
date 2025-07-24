@@ -148,6 +148,33 @@ const CreatePromptForm: React.FC<CreatePromptFormProps> = ({ isOpen, onClose, on
       assistant: formData.assistant,
       user: formData.user,
       system: formData.system,
+      owner: formData.owner
+    };
+
+    onSubmit(promptData);
+    onClose();
+  };
+
+  const isFormValid = formData.title.trim() && formData.description.trim() && formData.assistant;
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] flex flex-col">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+          <h2 className="text-xl font-semibold text-gray-900">
+            {editingPrompt ? 'Edit Prompt' : 'Create New Prompt'}
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
         {/* Hidden User field */}
         <input
           type="hidden"
