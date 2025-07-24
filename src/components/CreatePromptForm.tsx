@@ -55,8 +55,8 @@ const CreatePromptForm: React.FC<CreatePromptFormProps> = ({ isOpen, onClose, on
           task: editingPrompt.task || '',
           tags: editingPrompt.tags.join(', '),
           assistant: editingPrompt.assistant,
-          user: '',
-          system: '',
+          user: editingPrompt.user || '',
+          system: editingPrompt.system || '',
           owner: userProfile?.name || 'Current User'
         });
       } else {
