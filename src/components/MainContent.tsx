@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MessageSquare, HelpCircle, ChevronDown, Mic, Send, Search, BarChart3, Image, Paperclip, Copy, Edit3, Bot } from 'lucide-react';
+import { MessageSquare, HelpCircle, ChevronDown, Mic, Send, Search, BarChart3, Image, Paperclip, Copy, Edit3, Bot, X } from 'lucide-react';
 import { chatService, type ChatMessage, type ChatThread } from '../services/chatService';
 
 interface MainContentProps {
@@ -34,6 +34,7 @@ const MainContent: React.FC<MainContentProps> = ({
   const [filteredAssistants, setFilteredAssistants] = useState<string[]>([]);
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [pendingAssistantMessage, setPendingAssistantMessage] = useState<{assistant: string, message: string} | null>(null);
+  const [pinnedAssistant, setPinnedAssistant] = useState<string | null>(null);
 
   // Available assistants list
   const availableAssistants = [
@@ -161,15 +162,17 @@ const MainContent: React.FC<MainContentProps> = ({
         // If there's a message after the assistant mention, send it immediately
         setPendingAssistantMessage({ assistant, message: messageAfterAssistant });
         setInputValue('');
+        setPinnedAssistant(null);
       } else {
-        // If no message yet, just insert the assistant name and let user continue typing
-        const newValue = `${beforeAt}@${assistant} ${afterCursor}`;
-        setInputValue(newValue);
+        // Pin the assistant and clear the @ mention from input
+        setPinnedAssistant(assistant);
+        const newValue = beforeAt + afterCursor;
+        setInputValue(newValue.trim());
         
         // Focus back to input and set cursor position
         setTimeout(() => {
           if (inputRef.current) {
-            const newCursorPosition = beforeAt.length + assistant.length + 2;
+            const newCursorPosition = beforeAt.length;
             inputRef.current.focus();
             inputRef.current.setSelectionRange(newCursorPosition, newCursorPosition);
           }
@@ -245,17 +248,27 @@ const MainContent: React.FC<MainContentProps> = ({
     }
     
     if (e.key === 'Enter' && !showAssistantDropdown) {
-      // Check if the message contains an @ mention
-      const atMentionMatch = inputValue.match(/@(\w+(?:\s+\w+)*)\s+(.+)/);
-      if (atMentionMatch) {
-        const mentionedAssistant = atMentionMatch[1];
-        const messageText = atMentionMatch[2];
-        
-        // Check if the mentioned assistant exists
-        if (availableAssistants.includes(mentionedAssistant)) {
-          setPendingAssistantMessage({ assistant: mentionedAssistant, message: messageText });
-          setInputValue('');
-          return;
+      // Check if there's a pinned assistant
+      if (pinnedAssistant && inputValue.trim()) {
+        setPendingAssistantMessage({ assistant: pinnedAssistant, message: inputValue.trim() });
+        setInputValue('');
+        setPinnedAssistant(null);
+        return;
+      }
+      
+      // Check if the message contains an @ mention (fallback)
+      if (!pinnedAssistant) {
+        const atMentionMatch = inputValue.match(/@(\w+(?:\s+\w+)*)\s+(.+)/);
+        if (atMentionMatch) {
+          const mentionedAssistant = atMentionMatch[1];
+          const messageText = atMentionMatch[2];
+          
+          // Check if the mentioned assistant exists
+          if (availableAssistants.includes(mentionedAssistant)) {
+            setPendingAssistantMessage({ assistant: mentionedAssistant, message: messageText });
+            setInputValue('');
+            return;
+          }
         }
       }
       handleSend();
@@ -277,7 +290,7 @@ const MainContent: React.FC<MainContentProps> = ({
     }
   }, [showAssistantDropdown]);
   const handleSend = async () => {
-    if (inputValue.trim()) {
+    if (inputValue.trim() && !pinnedAssistant) {
       setIsLoading(true);
       setIsStreaming(true);
       setStreamingMessage('');
@@ -649,13 +662,29 @@ const MainContent: React.FC<MainContentProps> = ({
             )}
             
             <div className="flex items-center space-x-2 sm:space-x-3 bg-white rounded-lg p-2 sm:p-3 border border-gray-200 shadow-sm">
+              {/* Pinned Assistant Indicator */}
+              {pinnedAssistant && (
+                <div className="flex items-center space-x-2 bg-blue-50 border border-blue-200 rounded-full px-3 py-1 text-sm">
+                  <div className="w-4 h-4 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Bot className="w-2.5 h-2.5 text-blue-600" />
+                  </div>
+                  <span className="text-blue-700 font-medium">{pinnedAssistant}</span>
+                  <button
+                    onClick={() => setPinnedAssistant(null)}
+                    className="text-blue-400 hover:text-blue-600 transition-colors"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              )}
+              
               <button className="p-1 sm:p-2 text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0">
                 <Paperclip className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
               <input
                 ref={inputRef}
                 type="text"
-                placeholder="Ask a question..."
+                placeholder={pinnedAssistant ? `Message ${pinnedAssistant}...` : "Ask a question..."}
                 value={inputValue}
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
@@ -670,7 +699,7 @@ const MainContent: React.FC<MainContentProps> = ({
               </button>
               <button 
                 onClick={isStreaming ? handleStopStreaming : handleSend}
-                disabled={isLoading && !isStreaming || (!inputValue.trim() && !isStreaming)}
+                disabled={isLoading && !isStreaming || (!inputValue.trim() && !isStreaming) || (pinnedAssistant && !inputValue.trim())}
                 className={`p-2 sm:p-3 transition-colors flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg ${
                   isStreaming 
                     ? 'text-gray-400 hover:text-gray-600' 
