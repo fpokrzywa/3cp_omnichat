@@ -76,7 +76,8 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
       let success;
       if (editingPrompt) {
         // Update existing prompt
-        success = await mongoService.updatePrompt(editingPrompt.id, promptData);
+        const updateId = editingPrompt.mongoId || editingPrompt.id;
+        success = await mongoService.updatePrompt(updateId, promptData);
       } else {
         // Add new prompt
         success = await mongoService.addPrompt(promptData);
