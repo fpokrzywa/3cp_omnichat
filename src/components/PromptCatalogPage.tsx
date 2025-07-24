@@ -47,7 +47,9 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
         // Log connection info for debugging
         console.log('n8n Connection Info:', mongoService.getConnectionInfo());
       } catch (error) {
-        console.error('Error loading prompts:', error);
+        // Error is already handled in mongoService, just set fallback state
+        setMongoConnected(false);
+        console.log('Using fallback prompt data due to connection issues');
       } finally {
         setIsLoading(false);
       }

@@ -331,50 +331,64 @@ class MongoService {
       if (this.n8nConfig.isConfigured && this.n8nConfig.webhookUrl) {
         console.log('Fetching prompts from n8n webhook:', this.n8nConfig.webhookUrl);
         
-        const response = await fetch(this.n8nConfig.webhookUrl, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
+        try {
+          const response = await fetch(this.n8nConfig.webhookUrl, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
 
-        if (!response.ok) {
-          throw new Error(`n8n webhook responded with status: ${response.status}`);
+          if (!response.ok) {
+            throw new Error(`n8n webhook responded with status: ${response.status}`);
+          }
+
+          const data = await response.json();
+          
+          // Handle different response formats from n8n
+          let prompts: MongoPrompt[];
+          if (Array.isArray(data)) {
+            prompts = data;
+          } else if (data.prompts && Array.isArray(data.prompts)) {
+            prompts = data.prompts;
+          } else if (data.data && Array.isArray(data.data)) {
+            prompts = data.data;
+          } else {
+            throw new Error('Invalid response format from n8n webhook');
+          }
+
+          // Validate and transform the data to match our interface
+          const validatedPrompts = prompts.map((prompt: any) => ({
+            id: prompt.id || prompt._id || Math.random().toString(36).substr(2, 9),
+            title: prompt.title || 'Untitled Prompt',
+            description: prompt.description || '',
+            assistant: prompt.assistant || 'OmniChat',
+            task: prompt.task,
+            functionalArea: prompt.functionalArea,
+            tags: Array.isArray(prompt.tags) ? prompt.tags : []
+          }));
+
+          console.log(`Successfully loaded ${validatedPrompts.length} prompts from n8n`);
+          return validatedPrompts;
+        } catch (fetchError) {
+          // Handle specific fetch errors
+          if (fetchError instanceof TypeError && fetchError.message === 'Failed to fetch') {
+            console.warn('n8n webhook is not accessible. This could be due to:');
+            console.warn('1. n8n server is not running');
+            console.warn('2. Network connectivity issues');
+            console.warn('3. CORS policy blocking the request');
+            console.warn('4. Incorrect webhook URL');
+          } else {
+            console.error('Error fetching from n8n webhook:', fetchError);
+          }
+          throw fetchError;
         }
-
-        const data = await response.json();
-        
-        // Handle different response formats from n8n
-        let prompts: MongoPrompt[];
-        if (Array.isArray(data)) {
-          prompts = data;
-        } else if (data.prompts && Array.isArray(data.prompts)) {
-          prompts = data.prompts;
-        } else if (data.data && Array.isArray(data.data)) {
-          prompts = data.data;
-        } else {
-          throw new Error('Invalid response format from n8n webhook');
-        }
-
-        // Validate and transform the data to match our interface
-        const validatedPrompts = prompts.map((prompt: any) => ({
-          id: prompt.id || prompt._id || Math.random().toString(36).substr(2, 9),
-          title: prompt.title || 'Untitled Prompt',
-          description: prompt.description || '',
-          assistant: prompt.assistant || 'OmniChat',
-          task: prompt.task,
-          functionalArea: prompt.functionalArea,
-          tags: Array.isArray(prompt.tags) ? prompt.tags : []
-        }));
-
-        console.log(`Successfully loaded ${validatedPrompts.length} prompts from n8n`);
-        return validatedPrompts;
       }
-      
+        
       // Return fallback data when MongoDB is not configured
+      console.log('n8n webhook not configured, using fallback data');
       return FALLBACK_PROMPTS;
     } catch (error) {
-      console.error('Error fetching prompts from n8n webhook:', error);
       console.log('Falling back to static prompt data');
       return FALLBACK_PROMPTS;
     }
