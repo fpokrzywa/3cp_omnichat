@@ -471,9 +471,6 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
                 </div>
               </div>
             </div>
-    </div>
-  );
-};
 
             {/* Footer */}
             <div className="flex items-center justify-end space-x-3 p-6 border-t border-gray-200">
@@ -493,4 +490,8 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
           </div>
         </div>
       )}
+    </div>
+  );
+};
+
 export default PromptCatalogPage;
