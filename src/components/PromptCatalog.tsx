@@ -46,9 +46,11 @@ const PromptCatalog: React.FC<PromptCatalogProps> = ({
   React.useEffect(() => {
     const loadPrompts = async () => {
       if (isOpen) {
+        console.log('Loading prompts for PromptCatalog overlay');
         setIsLoading(true);
         try {
           const mongoPrompts = await mongoService.getPrompts();
+          console.log('Loaded prompts:', mongoPrompts.length);
           const convertedPrompts: Prompt[] = mongoPrompts.map(prompt => ({
             id: prompt.id,
             title: prompt.title,
@@ -59,9 +61,6 @@ const PromptCatalog: React.FC<PromptCatalogProps> = ({
             tags: prompt.tags
           }));
           setPrompts(convertedPrompts);
-          
-          // Log connection info for debugging
-          console.log('n8n Connection Info:', mongoService.getConnectionInfo());
         } catch (error) {
           console.error('Error loading prompts:', error);
         } finally {

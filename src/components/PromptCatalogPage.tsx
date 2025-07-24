@@ -63,6 +63,7 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
   };
 
   const handleRefresh = () => {
+    console.log('Refresh button clicked - forcing data refresh');
     loadPrompts(true);
   };
 

@@ -354,24 +354,38 @@ class MongoService {
 
           const data = await response.json();
           
-          // Handle different response formats from n8n
+          // Handle different response formats from n8n/MongoDB
           let prompts: MongoPrompt[];
           if (Array.isArray(data)) {
+            // Direct array of prompts
             prompts = data;
           } else if (data.prompts && Array.isArray(data.prompts)) {
+            // Wrapped in prompts property
             prompts = data.prompts;
           } else if (data.data && Array.isArray(data.data)) {
+            // Wrapped in data property
             prompts = data.data;
-          } else if (data && typeof data === 'object' && data.id && data.title && data.description && data.assistant && data.tags) {
-            // Handle single prompt object response
-            prompts = [data];
+          } else if (data && typeof data === 'object') {
+            // Check if it's a single prompt object or contains prompt data
+            if (data.id && data.title && data.description && data.assistant) {
+              // Single prompt object
+              prompts = [data];
+            } else {
+              // Try to find prompts in nested structure
+              const possibleArrays = Object.values(data).filter(Array.isArray);
+              if (possibleArrays.length > 0) {
+                prompts = possibleArrays[0] as MongoPrompt[];
+              } else {
+                throw new Error('No valid prompt array found in response');
+              }
+            }
           } else {
             throw new Error('Invalid response format from n8n webhook');
           }
 
           // Validate and transform the data to match our interface
           const validatedPrompts = prompts.map((prompt: any) => ({
-            id: prompt.id || prompt._id || Math.random().toString(36).substr(2, 9),
+            id: prompt.id || prompt._id?.toString() || Math.random().toString(36).substr(2, 9),
             title: prompt.title || 'Untitled Prompt',
             description: prompt.description || '',
             assistant: prompt.assistant || 'OmniChat',
