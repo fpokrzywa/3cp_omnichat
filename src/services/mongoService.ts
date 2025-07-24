@@ -1,6 +1,7 @@
 // MongoDB Service for handling prompt data
 export interface MongoPrompt {
   _id?: string;
+  mongoId?: string;
   id: string;
   title: string;
   description: string;

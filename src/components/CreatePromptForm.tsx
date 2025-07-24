@@ -140,6 +140,7 @@ const CreatePromptForm: React.FC<CreatePromptFormProps> = ({ isOpen, onClose, on
 
     const promptData = {
       id: `custom_${Date.now()}`,
+      mongoId: editingPrompt?.mongoId,
       title: formData.title,
       description: formData.description,
       functionalArea: formData.functionalAreas.join(', '),
