@@ -467,9 +467,26 @@ class MongoService {
       }
 
       console.log('Successfully added prompt via n8n webhook');
+      
+      // Clear cache to force refresh on next load
+      this.cachedPrompts = null;
+      this.cacheTimestamp = 0;
+      
       return true;
     } catch (error) {
-      console.error('Error adding prompt via n8n webhook:', error);
+      // Provide detailed diagnostic information
+      if (error instanceof TypeError && error.message === 'Failed to fetch') {
+        console.warn('n8n webhook connection failed. Possible causes:');
+        console.warn('1. n8n server is not running or not accessible');
+        console.warn('2. Webhook URL is incorrect:', this.n8nConfig.webhookUrl);
+        console.warn('3. CORS policy is blocking the request');
+        console.warn('4. Network connectivity issues');
+        console.warn('Please check your VITE_N8N_WEBHOOK_URL environment variable and n8n server status');
+      } else {
+        console.error('Error adding prompt via n8n webhook:', error);
+      }
+      
+      // Return false instead of throwing to allow graceful handling
       return false;
     }
   }

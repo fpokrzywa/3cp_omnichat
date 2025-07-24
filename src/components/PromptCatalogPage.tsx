@@ -73,10 +73,15 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
         await loadPrompts(true);
         console.log('Prompt created successfully');
       } else {
-        console.error('Failed to create prompt');
+        console.warn('Failed to save prompt to n8n webhook, but continuing...');
+        // Still close the form and refresh to show any cached changes
+        setShowCreateForm(false);
+        await loadPrompts(true);
       }
     } catch (error) {
-      console.error('Error creating prompt:', error);
+      console.error('Error in prompt creation process:', error);
+      // Still close the form to prevent user confusion
+      setShowCreateForm(false);
     }
   };
   const handleRefresh = () => {
