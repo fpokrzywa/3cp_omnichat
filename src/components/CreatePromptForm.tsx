@@ -75,6 +75,17 @@ const CreatePromptForm: React.FC<CreatePromptFormProps> = ({ isOpen, onClose, on
     'Review'
   ];
 
+  const availableAssistants = [
+    'OmniChat',
+    'IT Support',
+    'HR Support',
+    'Advance Policies Assistant',
+    'Redact Assistant',
+    'ADEPT Assistant',
+    'RFP Assistant',
+    'Resume Assistant'
+  ];
+
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
@@ -246,14 +257,19 @@ const CreatePromptForm: React.FC<CreatePromptFormProps> = ({ isOpen, onClose, on
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Assistant <span className="text-red-500">*</span>
               </label>
-              <textarea
+              <select
                 value={formData.assistant}
                 onChange={(e) => handleInputChange('assistant', e.target.value)}
-                placeholder="Specify which assistant this prompt is for"
-                rows={2}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent resize-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                 required
-              />
+              >
+                <option value="">Select Assistant...</option>
+                {availableAssistants.map((assistant) => (
+                  <option key={assistant} value={assistant}>
+                    {assistant}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* User */}
