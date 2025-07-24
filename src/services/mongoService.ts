@@ -395,7 +395,7 @@ class MongoService {
 
           // Validate and transform the data to match our interface
           const validatedPrompts = prompts.map((prompt: any) => ({
-            id: prompt.id || prompt._id?.toString() || Math.random().toString(36).substr(2, 9),
+            id: prompt.id || Math.random().toString(36).substr(2, 9),
             title: prompt.title || 'Untitled Prompt',
             description: prompt.description || '',
             assistant: prompt.assistant || 'OmniChat',
@@ -405,7 +405,6 @@ class MongoService {
             user: prompt.user || '',
             system: prompt.system || '',
             owner: prompt.owner || ''
-          }));
 
           console.log(`Successfully loaded ${validatedPrompts.length} prompts from n8n`);
           
