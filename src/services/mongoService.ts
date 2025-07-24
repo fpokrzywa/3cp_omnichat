@@ -327,7 +327,7 @@ class MongoService {
     // Read n8n webhook URLs from environment variables or use defaults
     this.n8nConfig = {
       getWebhookUrl: import.meta.env.VITE_N8N_GET_WEBHOOK_URL || 'https://n8n.agenticweaver.com/webhook-test/get-prompts',
-      createWebhookUrl: import.meta.env.VITE_N8N_CREATE_WEBHOOK_URL || 'https://n8n.agenticweaver.com/webhook-test/create-prompt',
+      createWebhookUrl: import.meta.env.VITE_N8N_CREATE_WEBHOOK_URL || 'https://n8n.agenticweaver.com/webhook-test/05ac3bf5-0559-4319-9381-ec5584cc64eb',
       updateWebhookUrl: import.meta.env.VITE_N8N_UPDATE_WEBHOOK_URL || 'https://n8n.agenticweaver.com/webhook-test/update-prompt',
       deleteWebhookUrl: import.meta.env.VITE_N8N_DELETE_WEBHOOK_URL || 'https://n8n.agenticweaver.com/webhook-test/delete-prompt',
       isConfigured: true // Always configured since we have default URLs
