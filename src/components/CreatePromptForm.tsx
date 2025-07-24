@@ -148,33 +148,19 @@ const CreatePromptForm: React.FC<CreatePromptFormProps> = ({ isOpen, onClose, on
       assistant: formData.assistant,
       user: formData.user,
       system: formData.system,
-      owner: formData.owner
-    };
+        {/* Hidden User field */}
+        <input
+          type="hidden"
+          value={formData.user}
+          onChange={(e) => handleInputChange('user', e.target.value)}
+        />
 
-    // Submit to parent component for handling
-    onSubmit(promptData);
-    onClose();
-  };
-
-  const isFormValid = formData.title.trim() && formData.description.trim() && formData.assistant.trim();
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-800">
-            {editingPrompt ? 'Edit Prompt' : 'Create New Prompt'}
-          </h2>
-          <button 
-            onClick={onClose}
-            className="p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-lg hover:bg-gray-50"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
+        {/* Hidden System field */}
+        <input
+          type="hidden"
+          value={formData.system}
+          onChange={(e) => handleInputChange('system', e.target.value)}
+        />
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto">
