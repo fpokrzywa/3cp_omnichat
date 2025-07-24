@@ -565,7 +565,17 @@ class MongoService {
       console.log('Successfully deleted prompt via n8n webhook');
       return true;
     } catch (error) {
-      console.error('Error deleting prompt via n8n webhook:', error);
+      // Provide detailed diagnostic information
+      if (error instanceof TypeError && error.message === 'Failed to fetch') {
+        console.warn('n8n webhook connection failed. Possible causes:');
+        console.warn('1. n8n server is not running or not accessible');
+        console.warn('2. DELETE Webhook URL is incorrect:', this.n8nConfig.deleteWebhookUrl);
+        console.warn('3. CORS policy is blocking the request');
+        console.warn('4. Network connectivity issues');
+        console.warn('Please check your VITE_N8N_DELETE_WEBHOOK_URL environment variable and n8n server status');
+      } else {
+        console.error('Error deleting prompt via n8n webhook:', error);
+      }
       return false;
     }
   }
