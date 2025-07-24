@@ -12,7 +12,10 @@ export interface MongoPrompt {
 
 // n8n webhook configuration
 interface N8nConfig {
-  webhookUrl: string | undefined;
+  getWebhookUrl: string | undefined;
+  createWebhookUrl: string | undefined;
+  updateWebhookUrl: string | undefined;
+  deleteWebhookUrl: string | undefined;
   isConfigured: boolean;
 }
 
@@ -321,10 +324,13 @@ class MongoService {
   private cacheExpiryMs = 5 * 60 * 1000; // 5 minutes
 
   constructor() {
-    // Read n8n webhook URL from environment variables or use default
+    // Read n8n webhook URLs from environment variables or use defaults
     this.n8nConfig = {
-      webhookUrl: import.meta.env.VITE_N8N_WEBHOOK_URL || 'https://n8n.agenticweaver.com/webhook-test/create-prompt',
-      isConfigured: !!(import.meta.env.VITE_N8N_WEBHOOK_URL || 'https://n8n.agenticweaver.com/webhook-test/create-prompt')
+      getWebhookUrl: import.meta.env.VITE_N8N_GET_WEBHOOK_URL || 'https://n8n.agenticweaver.com/webhook-test/get-prompts',
+      createWebhookUrl: import.meta.env.VITE_N8N_CREATE_WEBHOOK_URL || 'https://n8n.agenticweaver.com/webhook-test/create-prompt',
+      updateWebhookUrl: import.meta.env.VITE_N8N_UPDATE_WEBHOOK_URL || 'https://n8n.agenticweaver.com/webhook-test/update-prompt',
+      deleteWebhookUrl: import.meta.env.VITE_N8N_DELETE_WEBHOOK_URL || 'https://n8n.agenticweaver.com/webhook-test/delete-prompt',
+      isConfigured: true // Always configured since we have default URLs
     };
   }
 
@@ -337,11 +343,11 @@ class MongoService {
 
     try {
       // Try to fetch from n8n webhook first
-      if (this.n8nConfig.isConfigured && this.n8nConfig.webhookUrl) {
-        console.log('Fetching prompts from n8n webhook:', this.n8nConfig.webhookUrl);
+      if (this.n8nConfig.isConfigured && this.n8nConfig.getWebhookUrl) {
+        console.log('Fetching prompts from n8n GET webhook:', this.n8nConfig.getWebhookUrl);
         
         try {
-          const response = await fetch(this.n8nConfig.webhookUrl, {
+          const response = await fetch(this.n8nConfig.getWebhookUrl, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
@@ -446,20 +452,19 @@ class MongoService {
 
   async addPrompt(prompt: Omit<MongoPrompt, '_id'>): Promise<boolean> {
     try {
-      if (!this.n8nConfig.isConfigured || !this.n8nConfig.webhookUrl) {
+      if (!this.n8nConfig.isConfigured || !this.n8nConfig.createWebhookUrl) {
         console.warn('n8n webhook not configured for adding prompts');
         return false;
       }
 
-      const response = await fetch(this.n8nConfig.webhookUrl, {
+      console.log('Adding prompt via n8n CREATE webhook:', this.n8nConfig.createWebhookUrl);
+      
+      const response = await fetch(this.n8nConfig.createWebhookUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          action: 'add',
-          prompt: prompt
-        })
+        body: JSON.stringify(prompt)
       });
 
       if (!response.ok) {
@@ -478,10 +483,10 @@ class MongoService {
       if (error instanceof TypeError && error.message === 'Failed to fetch') {
         console.warn('n8n webhook connection failed. Possible causes:');
         console.warn('1. n8n server is not running or not accessible');
-        console.warn('2. Webhook URL is incorrect:', this.n8nConfig.webhookUrl);
+        console.warn('2. CREATE Webhook URL is incorrect:', this.n8nConfig.createWebhookUrl);
         console.warn('3. CORS policy is blocking the request');
         console.warn('4. Network connectivity issues');
-        console.warn('Please check your VITE_N8N_WEBHOOK_URL environment variable and n8n server status');
+        console.warn('Please check your VITE_N8N_CREATE_WEBHOOK_URL environment variable and n8n server status');
       } else {
         console.error('Error adding prompt via n8n webhook:', error);
       }
@@ -493,20 +498,21 @@ class MongoService {
 
   async updatePrompt(id: string, updates: Partial<MongoPrompt>): Promise<boolean> {
     try {
-      if (!this.n8nConfig.isConfigured || !this.n8nConfig.webhookUrl) {
+      if (!this.n8nConfig.isConfigured || !this.n8nConfig.updateWebhookUrl) {
         console.warn('n8n webhook not configured for updating prompts');
         return false;
       }
 
-      const response = await fetch(this.n8nConfig.webhookUrl, {
-        method: 'PUT',
+      console.log('Updating prompt via n8n UPDATE webhook:', this.n8nConfig.updateWebhookUrl);
+      
+      const response = await fetch(this.n8nConfig.updateWebhookUrl, {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          action: 'update',
           id: id,
-          updates: updates
+          ...updates
         })
       });
 
@@ -524,18 +530,19 @@ class MongoService {
 
   async deletePrompt(id: string): Promise<boolean> {
     try {
-      if (!this.n8nConfig.isConfigured || !this.n8nConfig.webhookUrl) {
+      if (!this.n8nConfig.isConfigured || !this.n8nConfig.deleteWebhookUrl) {
         console.warn('n8n webhook not configured for deleting prompts');
         return false;
       }
 
-      const response = await fetch(this.n8nConfig.webhookUrl, {
-        method: 'DELETE',
+      console.log('Deleting prompt via n8n DELETE webhook:', this.n8nConfig.deleteWebhookUrl);
+      
+      const response = await fetch(this.n8nConfig.deleteWebhookUrl, {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          action: 'delete',
           id: id
         })
       });
@@ -558,7 +565,10 @@ class MongoService {
 
   getConnectionInfo() {
     return {
-      webhookUrl: this.n8nConfig.webhookUrl ? 'Configured' : 'Not configured',
+      getWebhookUrl: this.n8nConfig.getWebhookUrl || 'Not configured',
+      createWebhookUrl: this.n8nConfig.createWebhookUrl || 'Not configured',
+      updateWebhookUrl: this.n8nConfig.updateWebhookUrl || 'Not configured',
+      deleteWebhookUrl: this.n8nConfig.deleteWebhookUrl || 'Not configured',
       isConfigured: this.n8nConfig.isConfigured,
       source: 'n8n webhook'
     };
