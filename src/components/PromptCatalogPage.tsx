@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Heart, ChevronDown, X, RefreshCw } from 'lucide-react';
+import { Search, Heart, ChevronDown, X, RefreshCw, Edit3 } from 'lucide-react';
 import { mongoService, type MongoPrompt } from '../services/mongoService';
 import CreatePromptForm from './CreatePromptForm';
 
@@ -337,6 +337,7 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
                   >
                     <Edit3 className="w-4 h-4" />
                   </button>
+                </div>
               ))}
             </div>
               )}
