@@ -33,6 +33,7 @@ const MainContent: React.FC<MainContentProps> = ({
   const [atSymbolPosition, setAtSymbolPosition] = useState(-1);
   const [filteredAssistants, setFilteredAssistants] = useState<string[]>([]);
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const [pendingAssistantMessage, setPendingAssistantMessage] = useState<{assistant: string, message: string} | null>(null);
 
   // Available assistants list
   const availableAssistants = [
@@ -131,7 +132,7 @@ const MainContent: React.FC<MainContentProps> = ({
     if (atIndex !== -1 && (atIndex === 0 || value[atIndex - 1] === ' ')) {
       const searchTerm = value.substring(atIndex + 1, cursorPosition).toLowerCase();
       const filtered = availableAssistants.filter(assistant => 
-        assistant.toLowerCase().includes(searchTerm)
+        assistant !== selectedAssistant && assistant.toLowerCase().includes(searchTerm)
       );
       
       setFilteredAssistants(filtered);
@@ -152,20 +153,83 @@ const MainContent: React.FC<MainContentProps> = ({
     if (atSymbolPosition !== -1) {
       const beforeAt = inputValue.substring(0, atSymbolPosition);
       const afterCursor = inputValue.substring(inputRef.current?.selectionStart || inputValue.length);
-      const newValue = `${beforeAt}@${assistant} ${afterCursor}`;
       
-      setInputValue(newValue);
+      // Extract the message part (everything after the assistant mention)
+      const messageAfterAssistant = afterCursor.trim();
+      
+      if (messageAfterAssistant) {
+        // If there's a message after the assistant mention, send it immediately
+        setPendingAssistantMessage({ assistant, message: messageAfterAssistant });
+        setInputValue('');
+      } else {
+        // If no message yet, just insert the assistant name and let user continue typing
+        const newValue = `${beforeAt}@${assistant} ${afterCursor}`;
+        setInputValue(newValue);
+        
+        // Focus back to input and set cursor position
+        setTimeout(() => {
+          if (inputRef.current) {
+            const newCursorPosition = beforeAt.length + assistant.length + 2;
+            inputRef.current.focus();
+            inputRef.current.setSelectionRange(newCursorPosition, newCursorPosition);
+          }
+        }, 0);
+      }
+      
       setShowAssistantDropdown(false);
       setAtSymbolPosition(-1);
+    }
+  };
+
+  // Handle pending assistant messages
+  useEffect(() => {
+    if (pendingAssistantMessage) {
+      sendMessageToAssistant(pendingAssistantMessage.assistant, pendingAssistantMessage.message);
+      setPendingAssistantMessage(null);
+    }
+  }, [pendingAssistantMessage]);
+
+  const sendMessageToAssistant = async (assistantName: string, message: string) => {
+    // Find the assistant ID based on the name
+    const assistantId = assistantName.toLowerCase().replace(/\s+/g, '_');
+    
+    // Create or switch to a thread for this assistant
+    let targetThread = chatService.getAllThreads().find(thread => 
+      thread.assistantName === assistantName
+    );
+    
+    if (!targetThread) {
+      const threadId = chatService.createThread(assistantId, assistantName);
+      targetThread = chatService.getThread(threadId);
+    }
+    
+    if (targetThread) {
+      chatService.setCurrentThread(targetThread.id);
+      setCurrentThread(targetThread);
       
-      // Focus back to input and set cursor position
+      setIsLoading(true);
+      setIsStreaming(true);
+      setStreamingMessage('');
+      setError(null);
+      
+      // Auto-scroll immediately after sending message
       setTimeout(() => {
-        if (inputRef.current) {
-          const newCursorPosition = beforeAt.length + assistant.length + 2;
-          inputRef.current.focus();
-          inputRef.current.setSelectionRange(newCursorPosition, newCursorPosition);
-        }
-      }, 0);
+        scrollToBottom();
+      }, 100);
+      
+      try {
+        await chatService.sendMessageWithStreaming(message, (chunk) => {
+          setStreamingMessage(chunk);
+        }, targetThread.id);
+        const updatedThread = chatService.getCurrentThread();
+        setCurrentThread(updatedThread);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to send message');
+      } finally {
+        setIsLoading(false);
+        setIsStreaming(false);
+        setStreamingMessage('');
+      }
     }
   };
 
@@ -181,6 +245,19 @@ const MainContent: React.FC<MainContentProps> = ({
     }
     
     if (e.key === 'Enter' && !showAssistantDropdown) {
+      // Check if the message contains an @ mention
+      const atMentionMatch = inputValue.match(/@(\w+(?:\s+\w+)*)\s+(.+)/);
+      if (atMentionMatch) {
+        const mentionedAssistant = atMentionMatch[1];
+        const messageText = atMentionMatch[2];
+        
+        // Check if the mentioned assistant exists
+        if (availableAssistants.includes(mentionedAssistant)) {
+          setPendingAssistantMessage({ assistant: mentionedAssistant, message: messageText });
+          setInputValue('');
+          return;
+        }
+      }
       handleSend();
     }
   };
