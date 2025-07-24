@@ -324,7 +324,7 @@ class MongoService {
   private cacheExpiryMs = 5 * 60 * 1000; // 5 minutes
 
   constructor() {
-    // Read n8n webhook URLs from environment variables
+    // Read n8n webhook URLs from environment variables only
     this.n8nConfig = {
       getWebhookUrl: import.meta.env.VITE_N8N_GET_WEBHOOK_URL,
       createWebhookUrl: import.meta.env.VITE_N8N_CREATE_WEBHOOK_URL,
