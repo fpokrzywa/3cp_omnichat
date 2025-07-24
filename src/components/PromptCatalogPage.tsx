@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Heart, ChevronDown, X, RefreshCw, Edit3 } from 'lucide-react';
+import { Search, Heart, ChevronDown, X, RefreshCw, Edit3, Trash2 } from 'lucide-react';
 import { mongoService, type MongoPrompt } from '../services/mongoService';
 import CreatePromptForm from './CreatePromptForm';
 
@@ -31,6 +31,10 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingPrompt, setEditingPrompt] = useState<Prompt | null>(null);
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{
+    isOpen: boolean;
+    prompt: Prompt | null;
+  }>({ isOpen: false, prompt: null });
 
   // Load prompts from MongoDB when component mounts
   React.useEffect(() => {
@@ -105,6 +109,33 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
   const handleEditPrompt = (prompt: Prompt) => {
     setEditingPrompt(prompt);
     setShowCreateForm(true);
+  };
+
+  const handleDeletePrompt = (prompt: Prompt) => {
+    setDeleteConfirmation({ isOpen: true, prompt });
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteConfirmation.prompt) return;
+
+    try {
+      const success = await mongoService.deletePrompt(deleteConfirmation.prompt.id);
+      if (success) {
+        console.log('Prompt deleted successfully');
+        // Refresh the prompts list
+        await loadPrompts(true);
+      } else {
+        console.warn('Failed to delete prompt from n8n webhook');
+      }
+    } catch (error) {
+      console.error('Error deleting prompt:', error);
+    } finally {
+      setDeleteConfirmation({ isOpen: false, prompt: null });
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteConfirmation({ isOpen: false, prompt: null });
   };
 
   const handleRefresh = () => {
@@ -344,16 +375,29 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
                 </div>
                   
                   {/* Edit button - positioned in bottom right corner */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      console.log('Edit button clicked for prompt:', prompt);
-                      handleEditPrompt(prompt);
-                    }}
-                    className="absolute bottom-3 right-3 p-2 text-gray-400 hover:text-pink-600 hover:bg-pink-50 rounded-full transition-all duration-200 opacity-0 group-hover:opacity-100"
-                  >
-                    <Edit3 className="w-4 h-4" />
-                  </button>
+                  <div className="absolute bottom-3 right-3 flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-all duration-200">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeletePrompt(prompt);
+                      }}
+                      className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-all duration-200"
+                      title="Delete prompt"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        console.log('Edit button clicked for prompt:', prompt);
+                        handleEditPrompt(prompt);
+                      }}
+                      className="p-2 text-gray-400 hover:text-pink-600 hover:bg-pink-50 rounded-full transition-all duration-200"
+                      title="Edit prompt"
+                    >
+                      <Edit3 className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -392,8 +436,61 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
         onSubmit={handleCreatePrompt}
         editingPrompt={editingPrompt}
       />
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmation.isOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h2 className="text-xl font-semibold text-gray-800">Delete Prompt</h2>
+              <button 
+                onClick={handleCancelDelete}
+                className="p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-lg hover:bg-gray-50"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="p-6">
+              <div className="flex items-start space-x-4">
+                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Trash2 className="w-6 h-6 text-red-600" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    Are you sure you want to delete this prompt?
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-4">
+                    <strong>"{deleteConfirmation.prompt?.title}"</strong>
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    This action cannot be undone. The prompt will be permanently removed from the system.
+                  </p>
+                </div>
+              </div>
+            </div>
     </div>
   );
 };
 
+            {/* Footer */}
+            <div className="flex items-center justify-end space-x-3 p-6 border-t border-gray-200">
+              <button
+                onClick={handleCancelDelete}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmDelete}
+                className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Yes, Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 export default PromptCatalogPage;
