@@ -324,13 +324,13 @@ class MongoService {
   private cacheExpiryMs = 5 * 60 * 1000; // 5 minutes
 
   constructor() {
-    // Read n8n webhook URLs from environment variables or use defaults
+    // Read n8n webhook URLs from environment variables
     this.n8nConfig = {
-      getWebhookUrl: import.meta.env.VITE_N8N_GET_WEBHOOK_URL || 'https://n8n.agenticweaver.com/webhook-test/get-prompts',
-      createWebhookUrl: import.meta.env.VITE_N8N_CREATE_WEBHOOK_URL || 'https://n8n.agenticweaver.com/webhook-test/05ac3bf5-0559-4319-9381-ec5584cc64eb',
-      updateWebhookUrl: import.meta.env.VITE_N8N_UPDATE_WEBHOOK_URL || 'https://n8n.agenticweaver.com/webhook-test/update-prompt',
-      deleteWebhookUrl: import.meta.env.VITE_N8N_DELETE_WEBHOOK_URL || 'https://n8n.agenticweaver.com/webhook-test/delete-prompt',
-      isConfigured: true // Always configured since we have default URLs
+      getWebhookUrl: import.meta.env.VITE_N8N_GET_WEBHOOK_URL,
+      createWebhookUrl: import.meta.env.VITE_N8N_CREATE_WEBHOOK_URL,
+      updateWebhookUrl: import.meta.env.VITE_N8N_UPDATE_WEBHOOK_URL,
+      deleteWebhookUrl: import.meta.env.VITE_N8N_DELETE_WEBHOOK_URL,
+      isConfigured: !!(import.meta.env.VITE_N8N_GET_WEBHOOK_URL && import.meta.env.VITE_N8N_CREATE_WEBHOOK_URL)
     };
   }
 
@@ -464,7 +464,7 @@ class MongoService {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(prompt)
+        body: JSON.stringify({ data: JSON.stringify(prompt) })
       });
 
       if (!response.ok) {
@@ -510,9 +510,11 @@ class MongoService {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          id: id,
-          ...updates
+        body: JSON.stringify({ 
+          data: JSON.stringify({
+            id: id,
+            ...updates
+          })
         })
       });
 
@@ -542,8 +544,10 @@ class MongoService {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          id: id
+        body: JSON.stringify({ 
+          data: JSON.stringify({
+            id: id
+          })
         })
       });
 
