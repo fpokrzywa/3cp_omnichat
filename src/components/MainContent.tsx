@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MessageSquare, HelpCircle, ChevronDown, Mic, Send, Search, BarChart3, Image, Paperclip, Copy, Edit3 } from 'lucide-react';
+import { MessageSquare, HelpCircle, ChevronDown, Mic, Send, Search, BarChart3, Image, Paperclip, Copy, Edit3, Bot } from 'lucide-react';
 import { chatService, type ChatMessage, type ChatThread } from '../services/chatService';
 
 interface MainContentProps {
@@ -29,6 +29,22 @@ const MainContent: React.FC<MainContentProps> = ({
   const [editingText, setEditingText] = useState('');
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
   const chatContainerRef = React.useRef<HTMLDivElement>(null);
+  const [showAssistantDropdown, setShowAssistantDropdown] = useState(false);
+  const [atSymbolPosition, setAtSymbolPosition] = useState(-1);
+  const [filteredAssistants, setFilteredAssistants] = useState<string[]>([]);
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
+  // Available assistants list
+  const availableAssistants = [
+    'OmniChat',
+    'IT Support', 
+    'HR Support',
+    'Advance Policies Assistant',
+    'Redact Assistant',
+    'ADEPT Assistant',
+    'RFP Assistant',
+    'Resume Assistant'
+  ];
 
   // Load user profile from localStorage
   useEffect(() => {
@@ -105,13 +121,84 @@ const MainContent: React.FC<MainContentProps> = ({
   }, [selectedPrompt]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
+    const value = e.target.value;
+    const cursorPosition = e.target.selectionStart || 0;
+    
+    setInputValue(value);
+    
+    // Check for @ symbol
+    const atIndex = value.lastIndexOf('@', cursorPosition - 1);
+    if (atIndex !== -1 && (atIndex === 0 || value[atIndex - 1] === ' ')) {
+      const searchTerm = value.substring(atIndex + 1, cursorPosition).toLowerCase();
+      const filtered = availableAssistants.filter(assistant => 
+        assistant.toLowerCase().includes(searchTerm)
+      );
+      
+      setFilteredAssistants(filtered);
+      setAtSymbolPosition(atIndex);
+      setShowAssistantDropdown(true);
+    } else {
+      setShowAssistantDropdown(false);
+      setAtSymbolPosition(-1);
+    }
+    
     // Clear the selected prompt when user starts typing
     if (selectedPrompt && e.target.value !== selectedPrompt) {
       onPromptUsed();
     }
   };
 
+  const handleAssistantSelect = (assistant: string) => {
+    if (atSymbolPosition !== -1) {
+      const beforeAt = inputValue.substring(0, atSymbolPosition);
+      const afterCursor = inputValue.substring(inputRef.current?.selectionStart || inputValue.length);
+      const newValue = `${beforeAt}@${assistant} ${afterCursor}`;
+      
+      setInputValue(newValue);
+      setShowAssistantDropdown(false);
+      setAtSymbolPosition(-1);
+      
+      // Focus back to input and set cursor position
+      setTimeout(() => {
+        if (inputRef.current) {
+          const newCursorPosition = beforeAt.length + assistant.length + 2;
+          inputRef.current.focus();
+          inputRef.current.setSelectionRange(newCursorPosition, newCursorPosition);
+        }
+      }, 0);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (showAssistantDropdown) {
+      if (e.key === 'Escape') {
+        setShowAssistantDropdown(false);
+        setAtSymbolPosition(-1);
+      } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        // Could add keyboard navigation here if needed
+      }
+    }
+    
+    if (e.key === 'Enter' && !showAssistantDropdown) {
+      handleSend();
+    }
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (inputRef.current && !inputRef.current.contains(event.target as Node)) {
+        setShowAssistantDropdown(false);
+        setAtSymbolPosition(-1);
+      }
+    };
+
+    if (showAssistantDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [showAssistantDropdown]);
   const handleSend = async () => {
     if (inputValue.trim()) {
       setIsLoading(true);
@@ -238,7 +325,7 @@ const MainContent: React.FC<MainContentProps> = ({
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && !showAssistantDropdown) {
       handleSend();
     }
   };
@@ -463,16 +550,38 @@ const MainContent: React.FC<MainContentProps> = ({
         {/* Input Section - Always at bottom */}
         <div className="flex-shrink-0">
           <div className="relative">
+            {/* Assistant Dropdown */}
+            {showAssistantDropdown && filteredAssistants.length > 0 && (
+              <div className="absolute bottom-full left-0 right-0 mb-2 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto z-10">
+                <div className="p-2">
+                  <div className="text-xs text-gray-500 mb-2 px-2">Select an assistant:</div>
+                  {filteredAssistants.map((assistant) => (
+                    <button
+                      key={assistant}
+                      onClick={() => handleAssistantSelect(assistant)}
+                      className="w-full flex items-center space-x-3 px-3 py-2 text-left hover:bg-gray-50 rounded-lg transition-colors"
+                    >
+                      <div className="w-6 h-6 bg-pink-100 rounded flex items-center justify-center flex-shrink-0">
+                        <Bot className="w-3 h-3 text-pink-600" />
+                      </div>
+                      <span className="text-sm text-gray-700">{assistant}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            
             <div className="flex items-center space-x-2 sm:space-x-3 bg-white rounded-lg p-2 sm:p-3 border border-gray-200 shadow-sm">
               <button className="p-1 sm:p-2 text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0">
                 <Paperclip className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
               <input
+                ref={inputRef}
                 type="text"
                 placeholder="Ask a question..."
                 value={inputValue}
                 onChange={handleInputChange}
-                onKeyPress={handleKeyPress}
+                onKeyDown={handleKeyDown}
                 disabled={isLoading}
                 className="flex-1 bg-transparent border-none outline-none text-gray-700 placeholder-gray-400 text-sm sm:text-base min-w-0 disabled:opacity-50"
               />
