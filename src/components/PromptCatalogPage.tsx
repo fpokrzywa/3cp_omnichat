@@ -137,7 +137,9 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
   });
 
   const handlePromptClick = (prompt: Prompt) => {
-    onPromptSelect(prompt.description, prompt.assistant);
+    // Use the user field data if available, otherwise fall back to description
+    const promptText = prompt.user || prompt.description;
+    onPromptSelect(promptText, prompt.assistant);
   };
 
   const handleCloseForm = () => {
