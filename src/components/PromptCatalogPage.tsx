@@ -344,20 +344,8 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      // Get the hidden data from the card
-                      const card = e.currentTarget.closest('.prompt-card');
-                      const userSpan = card?.querySelector('[data-user]') as HTMLElement;
-                      const systemSpan = card?.querySelector('[data-system]') as HTMLElement;
-                      const ownerSpan = card?.querySelector('[data-owner]') as HTMLElement;
-                      
-                      const promptWithHiddenData = {
-                        ...prompt,
-                        user: userSpan?.getAttribute('data-user') || '',
-                        system: systemSpan?.getAttribute('data-system') || '',
-                        owner: ownerSpan?.getAttribute('data-owner') || ''
-                      };
-                      
-                      handleEditPrompt(promptWithHiddenData);
+                      console.log('Edit button clicked for prompt:', prompt);
+                      handleEditPrompt(prompt);
                     }}
                     className="absolute bottom-3 right-3 p-2 text-gray-400 hover:text-pink-600 hover:bg-pink-50 rounded-full transition-all duration-200 opacity-0 group-hover:opacity-100"
                   >
