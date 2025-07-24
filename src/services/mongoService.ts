@@ -321,10 +321,10 @@ class MongoService {
   private cacheExpiryMs = 5 * 60 * 1000; // 5 minutes
 
   constructor() {
-    // Read n8n webhook URL from environment variables
+    // Read n8n webhook URL from environment variables or use default
     this.n8nConfig = {
-      webhookUrl: import.meta.env.VITE_N8N_WEBHOOK_URL,
-      isConfigured: !!import.meta.env.VITE_N8N_WEBHOOK_URL
+      webhookUrl: import.meta.env.VITE_N8N_WEBHOOK_URL || 'https://n8n.agenticweaver.com/webhook-test/create-prompt',
+      isConfigured: !!(import.meta.env.VITE_N8N_WEBHOOK_URL || 'https://n8n.agenticweaver.com/webhook-test/create-prompt')
     };
   }
 
