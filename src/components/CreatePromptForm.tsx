@@ -110,8 +110,36 @@ const CreatePromptForm: React.FC<CreatePromptFormProps> = ({ isOpen, onClose, on
       owner: formData.owner
     };
 
-    onSubmit(promptData);
-    onClose();
+    // Submit to webhook
+    submitToWebhook(promptData);
+  };
+
+  const submitToWebhook = async (promptData: any) => {
+    try {
+      const response = await fetch('https://n8n.agenticweaver.com/webhook-test/05ac3bf5-0559-4319-9381-ec5584cc64eb', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(promptData)
+      });
+
+      if (response.ok) {
+        console.log('Prompt submitted successfully to webhook');
+        onSubmit(promptData);
+        onClose();
+      } else {
+        console.error('Failed to submit prompt to webhook:', response.status);
+        // Still call onSubmit for local handling
+        onSubmit(promptData);
+        onClose();
+      }
+    } catch (error) {
+      console.error('Error submitting prompt to webhook:', error);
+      // Still call onSubmit for local handling
+      onSubmit(promptData);
+      onClose();
+    }
   };
 
   const isFormValid = formData.title.trim() && formData.description.trim() && formData.assistant.trim();

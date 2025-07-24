@@ -311,8 +311,10 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
               </div>
               <h3 className="text-lg font-medium text-gray-900 mb-2">No personal prompts yet</h3>
               <p className="text-gray-500 mb-6">Create your first prompt to get started</p>
-              <button className="px-6 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors">
+              <button 
                 onClick={() => setShowCreateForm(true)}
+                className="px-6 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors"
+              >
                 Create New Prompt
               </button>
             </div>
