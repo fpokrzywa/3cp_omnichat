@@ -353,6 +353,9 @@ class MongoService {
             prompts = data.prompts;
           } else if (data.data && Array.isArray(data.data)) {
             prompts = data.data;
+          } else if (data && typeof data === 'object' && data.id && data.title && data.description && data.assistant && data.tags) {
+            // Handle single prompt object response
+            prompts = [data];
           } else {
             throw new Error('Invalid response format from n8n webhook');
           }
