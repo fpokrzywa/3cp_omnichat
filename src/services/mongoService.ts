@@ -8,6 +8,9 @@ export interface MongoPrompt {
   task?: string;
   functionalArea?: string;
   tags: string[];
+  user?: string;
+  system?: string;
+  owner?: string;
 }
 
 // n8n webhook configuration
@@ -397,7 +400,10 @@ class MongoService {
             assistant: prompt.assistant || 'OmniChat',
             task: prompt.task,
             functionalArea: prompt.functionalArea,
-            tags: Array.isArray(prompt.tags) ? prompt.tags : []
+            tags: Array.isArray(prompt.tags) ? prompt.tags : [],
+            user: prompt.user || '',
+            system: prompt.system || '',
+            owner: prompt.owner || ''
           }));
 
           console.log(`Successfully loaded ${validatedPrompts.length} prompts from n8n`);
