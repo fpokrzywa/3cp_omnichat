@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Search, Heart, ChevronDown, X, RefreshCw } from 'lucide-react';
 import { mongoService, type MongoPrompt } from '../services/mongoService';
+import CreatePromptForm from './CreatePromptForm';
 
 interface Prompt {
   id: string;
@@ -25,6 +26,7 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [showCreateForm, setShowCreateForm] = useState(false);
 
   // Load prompts from MongoDB when component mounts
   React.useEffect(() => {
@@ -62,6 +64,21 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
     }
   };
 
+  const handleCreatePrompt = async (promptData: any) => {
+    try {
+      // Add the new prompt to MongoDB via the service
+      const success = await mongoService.addPrompt(promptData);
+      if (success) {
+        // Refresh the prompts list to include the new prompt
+        await loadPrompts(true);
+        console.log('Prompt created successfully');
+      } else {
+        console.error('Failed to create prompt');
+      }
+    } catch (error) {
+      console.error('Error creating prompt:', error);
+    }
+  };
   const handleRefresh = () => {
     console.log('Refresh button clicked - forcing data refresh');
     loadPrompts(true);
@@ -295,6 +312,7 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
               <h3 className="text-lg font-medium text-gray-900 mb-2">No personal prompts yet</h3>
               <p className="text-gray-500 mb-6">Create your first prompt to get started</p>
               <button className="px-6 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors">
+                onClick={() => setShowCreateForm(true)}
                 Create New Prompt
               </button>
             </div>
@@ -309,6 +327,13 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
           )}
         </div>
       </div>
+
+      {/* Create Prompt Form Modal */}
+      <CreatePromptForm
+        isOpen={showCreateForm}
+        onClose={() => setShowCreateForm(false)}
+        onSubmit={handleCreatePrompt}
+      />
     </div>
   );
 };
