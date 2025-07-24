@@ -464,7 +464,7 @@ class MongoService {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ data: JSON.stringify(prompt) })
+        body: JSON.stringify({ data: prompt })
       });
 
       if (!response.ok) {
@@ -511,10 +511,10 @@ class MongoService {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ 
-          data: JSON.stringify({
+          data: {
             id: id,
             ...updates
-          })
+          }
         })
       });
 
@@ -545,9 +545,9 @@ class MongoService {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ 
-          data: JSON.stringify({
+          data: {
             id: id
-          })
+          }
         })
       });
 
