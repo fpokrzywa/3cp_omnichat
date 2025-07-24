@@ -56,7 +56,7 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
         tags: prompt.tags,
         user: (prompt as any).user,
         system: (prompt as any).system,
-        owner: prompt.owner
+        owner: (prompt as any).owner
       }));
       setPrompts(convertedPrompts);
       
