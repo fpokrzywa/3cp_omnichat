@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, User, Shield, CheckCircle, XCircle, Settings, Mail, Calendar } from 'lucide-react';
-import { getCompanyName } from '../utils/companyConfig';
+import { getCompanyName, getCompanyBotName } from '../utils/companyConfig';
 
 interface UserProfile {
   name: string;
@@ -28,7 +28,6 @@ const ProfileOverlay: React.FC<ProfileOverlayProps> = ({ isOpen, onClose }) => {
     joinDate: '2023-01-15',
     hasAcceptedGuidelines: false,
     isAdmin: false,
-    lastLogin: '2024-01-15 09:30 AM',
     preferredAssistant: getCompanyBotName()
   });
 
