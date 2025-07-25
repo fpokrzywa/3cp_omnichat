@@ -38,13 +38,21 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
     isOpen: boolean;
     prompt: Prompt | null;
   }>({ isOpen: false, prompt: null });
+  const [userProfile, setUserProfile] = useState<any>(null);
 
   // Load prompts from MongoDB when component mounts
   React.useEffect(() => {
     loadPrompts();
     loadOpenAIAssistants();
+    loadUserProfile();
   }, []);
 
+  const loadUserProfile = () => {
+    const savedProfile = localStorage.getItem('userProfile');
+    if (savedProfile) {
+      setUserProfile(JSON.parse(savedProfile));
+    }
+  };
   const loadOpenAIAssistants = async () => {
     try {
       const result = await openaiService.listAssistants();
@@ -176,16 +184,37 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
   const availableAssistants = openaiAssistants.length > 0 
     ? openaiAssistants.map(assistant => assistant.name)
     : defaultAssistants;
-  const filteredPrompts = prompts.filter(prompt => {
-    const matchesSearch = prompt.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         prompt.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesAssistant = selectedAssistant === 'All Assistants' || prompt.assistant === selectedAssistant;
-    const matchesTask = selectedTask === 'Select Task...' || prompt.task === selectedTask;
-    const matchesFunctionalArea = selectedFunctionalArea === 'Select Functional Area...' || 
-                                 prompt.functionalArea === selectedFunctionalArea;
+  // Filter prompts based on active tab
+  const getFilteredPrompts = () => {
+    let basePrompts = prompts;
     
-    return matchesSearch && matchesAssistant && matchesTask && matchesFunctionalArea;
-  });
+    // Filter by tab
+    if (activeTab === 'your') {
+      // Show only prompts owned by the current user
+      basePrompts = prompts.filter(prompt => 
+        prompt.owner && userProfile?.name && prompt.owner === userProfile.name
+      );
+    }
+    
+    // Apply search and filter criteria
+    return basePrompts.filter(prompt => {
+      const matchesSearch = prompt.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                           prompt.description.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesAssistant = selectedAssistant === 'All Assistants' || prompt.assistant === selectedAssistant;
+      const matchesTask = selectedTask === 'Select Task...' || prompt.task === selectedTask;
+      const matchesFunctionalArea = selectedFunctionalArea === 'Select Functional Area...' || 
+                                   prompt.functionalArea === selectedFunctionalArea;
+      
+      return matchesSearch && matchesAssistant && matchesTask && matchesFunctionalArea;
+    });
+  };
+
+  const filteredPrompts = getFilteredPrompts();
+
+  // Get user's prompts count for display
+  const userPromptsCount = prompts.filter(prompt => 
+    prompt.owner && userProfile?.name && prompt.owner === userProfile.name
+  ).length;
 
   const handlePromptClick = (prompt: Prompt) => {
     // Use the user field data if available, otherwise fall back to description
@@ -234,7 +263,7 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
-            Your Prompts
+            Your Prompts {userPromptsCount > 0 && `(${userPromptsCount})`}
           </button>
         </div>
           
@@ -341,14 +370,13 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
 
         {/* Content */}
         <div className="min-h-[400px]">
-          {activeTab === 'enterprise' ? (
+          {isLoading ? (
+            <div className="text-center py-16">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600 mx-auto mb-4"></div>
+              <p className="text-gray-500">Loading prompts...</p>
+            </div>
+          ) : activeTab === 'enterprise' ? (
             <>
-              {isLoading ? (
-                <div className="text-center py-16">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600 mx-auto mb-4"></div>
-                  <p className="text-gray-500">Loading prompts...</p>
-                </div>
-              ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredPrompts.map((prompt) => (
                 <div
@@ -421,22 +449,106 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
                 </div>
               ))}
             </div>
-              )}
             </>
           ) : (
-            <div className="text-center py-16">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Search className="w-8 h-8 text-gray-400" />
-              </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No personal prompts yet</h3>
-              <p className="text-gray-500 mb-6">Create your first prompt to get started</p>
-              <button 
-                onClick={() => setShowCreateForm(true)}
-                className="px-6 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors"
-              >
-                Create New Prompt
-              </button>
-            </div>
+            <>
+              {filteredPrompts.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredPrompts.map((prompt) => (
+                    <div
+                      key={prompt.id}
+                      className="prompt-card bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow duration-200 cursor-pointer group relative"
+                    >
+                      <div onClick={() => handlePromptClick(prompt)} className="h-full">
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-2 mb-2">
+                              <span className="text-xs font-medium text-gray-500">{prompt.assistant}</span>
+                              <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full">Your Prompt</span>
+                            </div>
+                            <h3 className="text-sm font-medium text-gray-900 leading-relaxed mb-2 group-hover:text-pink-600 transition-colors">
+                              {prompt.title}
+                            </h3>
+                          </div>
+                          <button className="text-gray-300 hover:text-pink-500 transition-colors flex-shrink-0 ml-2">
+                            <Heart className="w-4 h-4" />
+                          </button>
+                        </div>
+                        <p className="text-xs text-gray-600 leading-relaxed mb-4">
+                          {prompt.description}
+                        </p>
+
+                        {/* Hidden fields to store user and system data */}
+                        <div className="hidden">
+                          <span data-user={prompt.user || ''}></span>
+                          <span data-system={prompt.system || ''}></span>
+                          <span data-owner={prompt.owner || ''}></span>
+                        </div>
+
+                        {prompt.tags.length > 0 && (
+                          <div className="flex flex-wrap gap-2">
+                            {prompt.tags.map((tag, index) => (
+                              <span
+                                key={index}
+                                className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      
+                      {/* Edit button - positioned in bottom right corner */}
+                      <div className="absolute bottom-3 right-3 flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-all duration-200">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeletePrompt(prompt);
+                          }}
+                          className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-all duration-200"
+                          title="Delete prompt"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            console.log('Edit button clicked for prompt:', prompt);
+                            handleEditPrompt(prompt);
+                          }}
+                          className="p-2 text-gray-400 hover:text-pink-600 hover:bg-pink-50 rounded-full transition-all duration-200"
+                          title="Edit prompt"
+                        >
+                          <Edit3 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-16">
+                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Search className="w-8 h-8 text-gray-400" />
+                  </div>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    {userPromptsCount === 0 ? 'No personal prompts yet' : 'No prompts found'}
+                  </h3>
+                  <p className="text-gray-500 mb-6">
+                    {userPromptsCount === 0 
+                      ? 'Create your first prompt to get started' 
+                      : 'Try adjusting your search terms or filters'
+                    }
+                  </p>
+                  <button 
+                    onClick={() => setShowCreateForm(true)}
+                    className="px-6 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors"
+                  >
+                    Create New Prompt
+                  </button>
+                </div>
+              )}
+            </>
           )}
 
           {filteredPrompts.length === 0 && activeTab === 'enterprise' && !isLoading && (
@@ -448,6 +560,7 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
           )}
         </div>
       </div>
+
 
       {/* Create Prompt Form Modal */}
       <CreatePromptForm
