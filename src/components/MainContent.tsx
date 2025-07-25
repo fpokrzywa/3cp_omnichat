@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { MessageSquare, HelpCircle, ChevronDown, Mic, Send, Search, BarChart3, Image, Paperclip, Copy, Edit3, Bot, X } from 'lucide-react';
 import { chatService, type ChatMessage, type ChatThread } from '../services/chatService';
+import { getCompanyBotName } from '../utils/companyConfig';
 
 interface MainContentProps {
   selectedAssistant: string;
@@ -38,7 +39,7 @@ const MainContent: React.FC<MainContentProps> = ({
 
   // Available assistants list
   const availableAssistants = [
-    'OmniChat',
+    getCompanyBotName(),
     'IT Support', 
     'HR Support',
     'Advance Policies Assistant',

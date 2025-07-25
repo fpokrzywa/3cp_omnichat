@@ -30,6 +30,7 @@ const ProfileOverlay: React.FC<ProfileOverlayProps> = ({ isOpen, onClose }) => {
     isAdmin: false,
     lastLogin: '2024-01-15 09:30 AM',
     preferredAssistant: 'OmniChat'
+    preferredAssistant: getCompanyBotName()
   });
 
   const [isEditing, setIsEditing] = useState(false);
@@ -225,6 +226,7 @@ const ProfileOverlay: React.FC<ProfileOverlayProps> = ({ isOpen, onClose }) => {
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
               >
                 <option>OmniChat</option>
+                <option>{getCompanyBotName()}</option>
                 <option>IT Support</option>
                 <option>HR Support</option>
                 <option>Advance Policies Assitant</option>

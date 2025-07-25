@@ -3,6 +3,7 @@ import { Search, Heart, ChevronDown, X, RefreshCw, Edit3, Trash2 } from 'lucide-
 import { mongoService, type MongoPrompt } from '../services/mongoService';
 import CreatePromptForm from './CreatePromptForm';
 import { getCompanyName } from '../utils/companyConfig';
+import { getCompanyBotName } from '../utils/companyConfig';
 
 interface Prompt {
   id: string;
@@ -146,7 +147,7 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
 
   // All available assistants from the assistants page
   const availableAssistants = [
-    'OmniChat',
+    getCompanyBotName(),
     'IT Support',
     'HR Support',
     'Advance Policies Assitant',
