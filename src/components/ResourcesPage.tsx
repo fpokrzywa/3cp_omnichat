@@ -11,28 +11,28 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
     {
       category: 'Generative AI',
       items: [
-        { title: 'ASC AI Learning Academy', hasLink: true },
-        { title: 'ASC AI Store', hasLink: true },
+        { title: `${getCompanyName()} AI Learning Academy`, hasLink: true },
+        { title: `${getCompanyName()} AI Store`, hasLink: true },
         { title: 'Prompt Design Quick Reference Guide', hasLink: true },
-        { title: 'AI at Advance Solutions', hasLink: true },
-        { title: 'Advance Solutions OmniGPT', hasLink: true },
-        { title: 'Advance Solutions Responsible AI', hasLink: true }
+        { title: `AI at ${getCompanyName()}`, hasLink: true },
+        { title: `${getCompanyName()} OmniGPT`, hasLink: true },
+        { title: `${getCompanyName()} Responsible AI`, hasLink: true }
       ]
     },
     {
       category: 'Models',
       items: [
-        { title: 'What models is ASC using and what are the Differences Between the GenAI Models?', hasLink: true }
+        { title: `What models is ${getCompanyName()} using and what are the Differences Between the GenAI Models?`, hasLink: true }
       ]
     },
     {
       category: 'FAQs',
       items: [
-        { title: 'Who can access the ASC AI Store?', hasLink: true },
-        { title: 'How long are conversations stored in the ASC AI Store?', hasLink: true },
-        { title: 'Does the ASC AI Store converse in different languages?', hasLink: true },
-        { title: 'Can I use the ASC AI Store on my mobile device?', hasLink: true },
-        { title: 'Can I upload files into ASC OmniGPT?', hasLink: true },
+        { title: `Who can access the ${getCompanyName()} AI Store?`, hasLink: true },
+        { title: `How long are conversations stored in the ${getCompanyName()} AI Store?`, hasLink: true },
+        { title: `Does the ${getCompanyName()} AI Store converse in different languages?`, hasLink: true },
+        { title: `Can I use the ${getCompanyName()} AI Store on my mobile device?`, hasLink: true },
+        { title: `Can I upload files into ${getCompanyName()} OmniGPT?`, hasLink: true },
         { title: `Why is ${getCompanyName()} OmniGPT giving me incorrect information?`, hasLink: true, isHighlighted: true }
       ]
     }
@@ -49,7 +49,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
     {
       category: 'Adding Your Tool to the ${getCompanyName()} OmniGPT',
       items: [
-        { title: 'Does ${getCompanyName()} provide access to OpenAI API for employees?', hasLink: true }
+        { title: `Does ${getCompanyName()} provide access to OpenAI API for employees?`, hasLink: true }
       ]
     }
   ];
