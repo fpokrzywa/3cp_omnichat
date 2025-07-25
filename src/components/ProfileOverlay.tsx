@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, User, Shield, CheckCircle, XCircle, Settings, Mail, Calendar } from 'lucide-react';
+import { X, User, Shield, CheckCircle, XCircle, Settings, Mail, Calendar, RefreshCw } from 'lucide-react';
 import { getCompanyName } from '../utils/companyConfig';
 import { getCompanyBotName } from '../utils/companyConfig';
 import { openaiService, type Assistant } from '../services/openaiService';
@@ -37,6 +37,7 @@ const ProfileOverlay: React.FC<ProfileOverlayProps> = ({ isOpen, onClose }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedProfile, setEditedProfile] = useState<UserProfile>(profile);
   const [openaiAssistants, setOpenaiAssistants] = useState<Assistant[]>([]);
+  const [isRefreshingAssistants, setIsRefreshingAssistants] = useState(false);
 
   // Load profile from localStorage on component mount
   useEffect(() => {
@@ -50,22 +51,37 @@ const ProfileOverlay: React.FC<ProfileOverlayProps> = ({ isOpen, onClose }) => {
 
   // Load OpenAI assistants
   useEffect(() => {
-    const loadOpenAIAssistants = async () => {
-      try {
-        const result = await openaiService.listAssistants();
-        const convertedAssistants = result.assistants.map(assistant => 
-          openaiService.convertToInternalFormat(assistant)
-        );
-        setOpenaiAssistants(convertedAssistants);
-      } catch (error) {
-        console.error('Error loading OpenAI assistants:', error);
-        // Fallback to empty array if OpenAI assistants can't be loaded
-        setOpenaiAssistants([]);
-      }
-    };
-
     loadOpenAIAssistants();
   }, []);
+
+  const loadOpenAIAssistants = async () => {
+    try {
+      const result = await openaiService.listAssistants();
+      const convertedAssistants = result.assistants.map(assistant => 
+        openaiService.convertToInternalFormat(assistant)
+      );
+      setOpenaiAssistants(convertedAssistants);
+    } catch (error) {
+      console.error('Error loading OpenAI assistants:', error);
+      // Fallback to empty array if OpenAI assistants can't be loaded
+      setOpenaiAssistants([]);
+    }
+  };
+
+  const handleRefreshAssistants = async () => {
+    setIsRefreshingAssistants(true);
+    try {
+      const result = await openaiService.listAssistants(true); // Force refresh
+      const convertedAssistants = result.assistants.map(assistant => 
+        openaiService.convertToInternalFormat(assistant)
+      );
+      setOpenaiAssistants(convertedAssistants);
+    } catch (error) {
+      console.error('Error refreshing OpenAI assistants:', error);
+    } finally {
+      setIsRefreshingAssistants(false);
+    }
+  };
 
   // Save profile to localStorage whenever it changes
   useEffect(() => {
@@ -258,17 +274,27 @@ const ProfileOverlay: React.FC<ProfileOverlayProps> = ({ isOpen, onClose }) => {
             <h3 className="text-lg font-semibold text-gray-800 mb-4">Preferences</h3>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Preferred Assistant</label>
-              <select
-                value={profile.preferredAssistant}
-                onChange={(e) => setProfile({ ...profile, preferredAssistant: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-              >
-                {availableAssistants.map((assistant) => (
-                  <option key={assistant} value={assistant}>
-                    {assistant}
-                  </option>
-                ))}
-              </select>
+              <div className="flex items-center space-x-2">
+                <select
+                  value={profile.preferredAssistant}
+                  onChange={(e) => setProfile({ ...profile, preferredAssistant: e.target.value })}
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                >
+                  {availableAssistants.map((assistant) => (
+                    <option key={assistant} value={assistant}>
+                      {assistant}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  onClick={handleRefreshAssistants}
+                  disabled={isRefreshingAssistants}
+                  className="p-2 text-gray-400 hover:text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Refresh assistants from OpenAI"
+                >
+                  <RefreshCw className={`w-4 h-4 ${isRefreshingAssistants ? 'animate-spin' : ''}`} />
+                </button>
+              </div>
             </div>
           </div>
 
