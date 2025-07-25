@@ -233,7 +233,7 @@ class OpenAIService {
       name: openaiAssistant.name || 'Unnamed Assistant',
       description: openaiAssistant.description || openaiAssistant.instructions?.substring(0, 100) + '...' || 'No description available',
       icon: isOdin ? '/odin_icon_white.svg' : icon,
-      color: isOdin ? 'bg-orange-100 text-orange-600' : color,
+      color: isOdin ? 'bg-gray-800 text-white' : color,
       model: openaiAssistant.model,
       instructions: openaiAssistant.instructions,
       isFavorite: false
