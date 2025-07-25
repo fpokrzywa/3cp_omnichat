@@ -29,7 +29,6 @@ const ProfileOverlay: React.FC<ProfileOverlayProps> = ({ isOpen, onClose }) => {
     hasAcceptedGuidelines: false,
     isAdmin: false,
     lastLogin: '2024-01-15 09:30 AM',
-    preferredAssistant: 'OmniChat'
     preferredAssistant: getCompanyBotName()
   });
 

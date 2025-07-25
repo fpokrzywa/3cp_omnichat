@@ -16,7 +16,6 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose }) =>
   const [enableNewResponses, setEnableNewResponses] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('General Questions');
   const [instructions, setInstructions] = useState(`You are a helpful assistant named ${getCompanyName()} Gen AI Storefront. You can't receive files or be added to a tool or application. If you're not sure of an answer, you can say "Sorry, I lack information on that".`);
-  const [instructions, setInstructions] = useState(`You are a helpful assistant named ${getCompanyName()} Gen AI Storefront. You can't receive files or be added to a tool or application. If you're not sure of an answer, you can say "Sorry, I lack information on that".`);
 
   const traitOptions = [
     { label: 'Chatty', color: 'text-pink-600 border-pink-300 bg-pink-50' },
