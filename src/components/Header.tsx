@@ -101,7 +101,7 @@ const Header: React.FC<HeaderProps> = ({
                   : 'text-gray-600 hover:text-gray-800'
               }`}
             >
-              Advance AI Store
+              AI Storefront
             </button>
             <span className="text-gray-300">|</span>
             <button 
@@ -112,7 +112,7 @@ const Header: React.FC<HeaderProps> = ({
                   : 'text-gray-600 hover:text-gray-800'
               }`}
             >
-              Advance AI Chat
+              AI Chat
             </button>
           </div>
 
@@ -200,7 +200,7 @@ const Header: React.FC<HeaderProps> = ({
                         : 'text-gray-700 hover:bg-gray-50'
                     }`}
                   >
-                    Advance AI Store
+                    AI Storefront
                   </button>
                   <button 
                     onClick={() => handleNavigate('chat')}
@@ -210,7 +210,7 @@ const Header: React.FC<HeaderProps> = ({
                         : 'text-gray-700 hover:bg-gray-50'
                     }`}
                   >
-                    Advance AI Chat
+                    AI Chat
                   </button>
                 </div>
 
