@@ -87,9 +87,11 @@ const Header: React.FC<HeaderProps> = ({
       <div className="flex items-center justify-between">
         {/* Logo and main navigation - always visible */}
         <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-purple-600 rounded flex items-center justify-center">
-            <span className="text-white font-bold text-sm">ASC</span>
-          </div>
+          <img 
+            src="/aw_logo_v1_fav_icon.png" 
+            alt="Advance Solutions Logo" 
+            className="w-8 h-8 rounded-lg object-contain"
+          />
           
           {/* Desktop navigation */}
           <div className="hidden md:flex items-center space-x-3">
