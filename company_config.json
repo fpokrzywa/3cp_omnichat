@@ -1,6 +1,7 @@
 [
   {
     "COMPANY_NAME": "Agentic Weaver",
-    "COMPANY_BOT_NAME": "ODIN"
+    "COMPANY_BOT_NAME": "ODIN",
+    "COMPANY_LOGO": "/public/odin_icon_white.png"
   }
 ]
