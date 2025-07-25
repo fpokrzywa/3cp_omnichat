@@ -66,7 +66,12 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
       }
     } catch (err) {
       console.error('Error loading OpenAI assistants:', err);
-      setError(err instanceof Error ? err.message : 'Failed to load OpenAI assistants');
+      // Handle CORS errors gracefully - this is expected when calling OpenAI API directly from browser
+      if (err instanceof Error && err.message.includes('CORS')) {
+        setError('Cannot load custom assistants due to browser security limitations. This is normal when using OpenAI API directly from the browser.');
+      } else {
+        setError(err instanceof Error ? err.message : 'Failed to load OpenAI assistants');
+      }
     } finally {
       setIsLoading(false);
       setIsLoadingFresh(false);

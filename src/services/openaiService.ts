@@ -129,7 +129,12 @@ class OpenAIService {
     } catch (error) {
       // Handle CORS and network errors specifically
       if (error instanceof TypeError && error.message === 'Failed to fetch') {
-        throw new Error('Cannot connect to OpenAI API directly from browser. This is a CORS limitation. Please use a backend server or proxy to access OpenAI assistants.');
+        // Don't throw error for CORS - this is expected behavior
+        console.warn('OpenAI API not accessible from browser due to CORS policy. This is expected.');
+        return {
+          assistants: [],
+          fromCache: false
+        };
       }
       throw error;
     }
