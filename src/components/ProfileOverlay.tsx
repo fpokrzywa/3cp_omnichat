@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, User, Shield, CheckCircle, XCircle, Settings, Mail, Calendar } from 'lucide-react';
 import { getCompanyName } from '../utils/companyConfig';
 import { getCompanyBotName } from '../utils/companyConfig';
+import { openaiService, type Assistant } from '../services/openaiService';
 
 interface UserProfile {
   name: string;
@@ -35,6 +36,7 @@ const ProfileOverlay: React.FC<ProfileOverlayProps> = ({ isOpen, onClose }) => {
 
   const [isEditing, setIsEditing] = useState(false);
   const [editedProfile, setEditedProfile] = useState<UserProfile>(profile);
+  const [openaiAssistants, setOpenaiAssistants] = useState<Assistant[]>([]);
 
   // Load profile from localStorage on component mount
   useEffect(() => {
@@ -44,6 +46,25 @@ const ProfileOverlay: React.FC<ProfileOverlayProps> = ({ isOpen, onClose }) => {
       setProfile(parsedProfile);
       setEditedProfile(parsedProfile);
     }
+  }, []);
+
+  // Load OpenAI assistants
+  useEffect(() => {
+    const loadOpenAIAssistants = async () => {
+      try {
+        const result = await openaiService.listAssistants();
+        const convertedAssistants = result.assistants.map(assistant => 
+          openaiService.convertToInternalFormat(assistant)
+        );
+        setOpenaiAssistants(convertedAssistants);
+      } catch (error) {
+        console.error('Error loading OpenAI assistants:', error);
+        // Fallback to empty array if OpenAI assistants can't be loaded
+        setOpenaiAssistants([]);
+      }
+    };
+
+    loadOpenAIAssistants();
   }, []);
 
   // Save profile to localStorage whenever it changes
@@ -78,6 +99,23 @@ const ProfileOverlay: React.FC<ProfileOverlayProps> = ({ isOpen, onClose }) => {
     // Trigger a custom event to notify other components
     window.dispatchEvent(new Event('storage'));
   };
+
+  // Default assistants as fallback
+  const defaultAssistants = [
+    getCompanyBotName(),
+    'IT Support',
+    'HR Support',
+    'Advance Policies Assistant',
+    'Redact Assistant',
+    'ADEPT Assistant',
+    'RFP Assistant',
+    'Resume Assistant'
+  ];
+
+  // Use OpenAI assistants if available, otherwise use default list
+  const availableAssistants = openaiAssistants.length > 0 
+    ? openaiAssistants.map(assistant => assistant.name)
+    : defaultAssistants;
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -225,16 +263,11 @@ const ProfileOverlay: React.FC<ProfileOverlayProps> = ({ isOpen, onClose }) => {
                 onChange={(e) => setProfile({ ...profile, preferredAssistant: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
               >
-                <option>{getCompanyBotName()}</option>
-                <option>IT Support</option>
-                <option>HR Support</option>
-                <option>Advance Policies Assitant</option>
-                <option>Redact Assistant</option>
-                <option>DocRedact</option>
-                <option>ADEPT Assistant</option>
-                <option>RFP Assistant</option>
-                <option>RFP Assistantt</option>
-                <option>Resume Assistant</option>
+                {availableAssistants.map((assistant) => (
+                  <option key={assistant} value={assistant}>
+                    {assistant}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
