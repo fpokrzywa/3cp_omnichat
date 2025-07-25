@@ -33,7 +33,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
         { title: 'Does the ${getCompanyName()} AI Store converse in different languages?', hasLink: true },
         { title: 'Can I use the ${getCompanyName()} AI Store on my mobile device?', hasLink: true },
         { title: 'Can I upload files into ${getCompanyName()} OmniGPT?', hasLink: true },
-        { title: 'Why is ${getCompanyName()} OmniGPT giving me incorrect information?', hasLink: true, isHighlighted: true }
+        { title: 'Why is ' ${getCompanyName()} 'OmniGPT giving me incorrect information?', hasLink: true, isHighlighted: true }
       ]
     }
   ];
