@@ -19,7 +19,7 @@ interface ChatThread {
 
 class ChatService {
   private apiKey: string | null = null;
-  private baseURL = 'https://api.openai.com/v1';
+  private baseURL = '/api/openai';
   private threads: Map<string, ChatThread> = new Map();
   private currentThreadId: string | null = null;
   private abortController: AbortController | null = null;
@@ -77,18 +77,11 @@ class ChatService {
   }
 
   private async makeRequest(endpoint: string, options: RequestInit = {}) {
-    const currentApiKey = this.getApiKey();
-    if (!currentApiKey) {
-      throw new Error('OpenAI API key not configured');
-    }
-
     try {
       const response = await fetch(`${this.baseURL}${endpoint}`, {
         ...options,
         headers: {
-          'Authorization': `Bearer ${currentApiKey}`,
           'Content-Type': 'application/json',
-          'OpenAI-Beta': 'assistants=v2',
           ...options.headers,
         },
       });
@@ -100,9 +93,6 @@ class ChatService {
 
       return response.json();
     } catch (error) {
-      if (error instanceof TypeError && error.message === 'Failed to fetch') {
-        throw new Error('Cannot connect to OpenAI API directly from browser. This is a CORS limitation.');
-      }
       throw error;
     }
   }
