@@ -132,7 +132,7 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
           <div className="flex items-center justify-between mb-4">
             <div>
               <h1 className="text-2xl font-semibold text-gray-800 mb-2">
-                Welcome to the Advance AI Store
+                Welcome to the AI Storefront
               </h1>
               <p className="text-gray-600">
                 Each Assistant is created to help you do a specific set of tasks. Get answers to your questions, brainstorm ideas, create new content, and more!
