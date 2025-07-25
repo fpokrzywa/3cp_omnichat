@@ -188,7 +188,7 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
                   </p>
                   <button
                     onClick={() => setShowOpenAISetup(true)}
-                    className="inline-flex items-center space-x-1 text-sm text-blue-600 hover:text-blue-700 font-medium"
+                    className="inline-flex items-center space-x-1 text-sm text-orange-600 hover:text-orange-700 font-medium"
                   >
                     <span>Connect Now</span>
                     <ExternalLink className="w-3 h-3" />
@@ -207,7 +207,7 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
             <select 
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+              className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             >
               <option>Sort</option>
               <option>Name A-Z</option>
@@ -225,7 +225,7 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
               placeholder="Search using assistant name"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             />
           </div>
           
@@ -259,7 +259,7 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
                     <div className={`w-8 h-8 rounded flex items-center justify-center ${assistant.color} flex-shrink-0`}>
                       <span className="text-lg">{assistant.icon}</span>
                     </div>
-                    <h3 className="font-medium text-gray-900 group-hover:text-pink-600 transition-colors truncate">
+                    <h3 className="font-medium text-gray-900 group-hover:text-orange-600 transition-colors truncate">
                       {assistant.name}
                     </h3>
                   </div>
@@ -267,8 +267,8 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
                     onClick={(e) => toggleFavorite(assistant.id, e)}
                     className={`transition-colors flex-shrink-0 ml-2 ${
                       assistant.isFavorite 
-                        ? 'text-pink-500 hover:text-pink-600' 
-                        : 'text-gray-300 hover:text-pink-500'
+                        ? 'text-orange-500 hover:text-orange-600' 
+                        : 'text-gray-300 hover:text-orange-500'
                     }`}
                   >
                     <Heart 
@@ -301,7 +301,7 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
             <p className="text-gray-500 mb-6">Connect your OpenAI account to load your assistants</p>
             <button
               onClick={() => setShowOpenAISetup(true)}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
             >
               Connect OpenAI Account
             </button>
@@ -322,7 +322,7 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
               href="https://platform.openai.com/assistants"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center space-x-2 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              className="inline-flex items-center space-x-2 px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
             >
               <span>Create Assistant on OpenAI</span>
               <ExternalLink className="w-4 h-4" />

@@ -437,8 +437,8 @@ const MainContent: React.FC<MainContentProps> = ({
       <div className="bg-white border-b border-gray-200 px-3 sm:px-6 py-3 sm:py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2 sm:space-x-3 min-w-0 flex-1">
-            <div className="w-6 h-6 sm:w-8 sm:h-8 bg-pink-100 rounded flex items-center justify-center flex-shrink-0">
-              <MessageSquare className="w-3 h-3 sm:w-4 sm:h-4 text-pink-600" />
+            <div className="w-6 h-6 sm:w-8 sm:h-8 bg-orange-100 rounded flex items-center justify-center flex-shrink-0">
+              <MessageSquare className="w-3 h-3 sm:w-4 sm:h-4 text-orange-600" />
             </div>
             <span className="font-medium text-gray-900 text-sm sm:text-base truncate">{selectedAssistant}</span>
             <div className="relative group">
@@ -463,7 +463,7 @@ const MainContent: React.FC<MainContentProps> = ({
             )}
             <button 
               onClick={onOpenPromptCatalog}
-              className="px-2 py-1 sm:px-4 sm:py-1 bg-pink-600 text-white rounded text-xs sm:text-sm hover:bg-pink-700 transition-colors"
+              className="px-2 py-1 sm:px-4 sm:py-1 bg-orange-600 text-white rounded text-xs sm:text-sm hover:bg-orange-700 transition-colors"
             >
               Prompts
             </button>
@@ -501,7 +501,7 @@ const MainContent: React.FC<MainContentProps> = ({
                   <div
                     className={`px-4 py-3 rounded-lg ${
                       message.role === 'user'
-                        ? 'bg-white text-gray-900 border border-pink-500 rounded-xl'
+                        ? 'bg-white text-gray-900 border border-orange-500 rounded-xl'
                         : 'bg-white border border-gray-200 text-gray-800'
                     }`}
                   >
@@ -533,7 +533,7 @@ const MainContent: React.FC<MainContentProps> = ({
                           <button
                             onClick={handleSendEdit}
                             disabled={!editingText.trim()}
-                            className="px-4 py-2 text-sm bg-pink-600 text-white rounded-full hover:bg-pink-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-4 py-2 text-sm bg-orange-600 text-white rounded-full hover:bg-orange-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             Send
                           </button>
@@ -666,13 +666,13 @@ const MainContent: React.FC<MainContentProps> = ({
               {/* Pinned Assistant Indicator */}
               {pinnedAssistant && (
                 <div className="flex items-center space-x-2 bg-blue-50 border border-blue-200 rounded-full px-3 py-1 text-sm">
-                  <div className="w-4 h-4 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Bot className="w-2.5 h-2.5 text-blue-600" />
+                  <div className="w-4 h-4 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Bot className="w-2.5 h-2.5 text-orange-600" />
                   </div>
-                  <span className="text-blue-700 font-medium">{pinnedAssistant}</span>
+                  <span className="text-orange-700 font-medium">{pinnedAssistant}</span>
                   <button
                     onClick={() => setPinnedAssistant(null)}
-                    className="text-blue-400 hover:text-blue-600 transition-colors"
+                    className="text-orange-400 hover:text-orange-600 transition-colors"
                   >
                     <X className="w-3 h-3" />
                   </button>
@@ -690,10 +690,10 @@ const MainContent: React.FC<MainContentProps> = ({
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
                 disabled={isLoading}
-                className="flex-1 bg-transparent border-none outline-none text-gray-700 placeholder-gray-400 text-sm sm:text-base min-w-0 disabled:opacity-50"
+                className="flex-1 bg-transparent border-none outline-none text-gray-900 placeholder-gray-400 text-sm sm:text-base min-w-0 disabled:opacity-50"
               />
               <button 
-                className="p-1 sm:p-2 text-gray-400 hover:text-pink-600 transition-colors flex-shrink-0"
+                className="p-1 sm:p-2 text-gray-400 hover:text-orange-600 transition-colors flex-shrink-0"
                 disabled={isLoading}
               >
                 <Mic className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -704,7 +704,7 @@ const MainContent: React.FC<MainContentProps> = ({
                 className={`p-2 sm:p-3 transition-colors flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg ${
                   isStreaming 
                     ? 'text-gray-400 hover:text-gray-600' 
-                    : 'text-gray-400 hover:text-pink-600'
+                    : 'text-gray-400 hover:text-orange-600'
                 }`}
               >
                 {isStreaming ? (
