@@ -91,7 +91,7 @@ const Header: React.FC<HeaderProps> = ({
           <img 
             src={getCompanyLogo()}
             alt={`${getCompanyName()} Logo`}
-            className="w-12 h-12 rounded-lg object-contain"
+            className="w-10 h-10 rounded-lg object-contain"
           />
           
           {/* Desktop navigation */}
