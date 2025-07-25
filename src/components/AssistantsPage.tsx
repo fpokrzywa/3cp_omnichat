@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Search, Heart, ChevronDown, Settings, RefreshCw, AlertCircle, ExternalLink, Key } from 'lucide-react';
 import { openaiService, type Assistant } from '../services/openaiService';
 import OpenAISetup from './OpenAISetup';
+import { getCompanyBotName } from '../utils/companyConfig';
 
 interface AssistantsPageProps {
   onAssistantSelect: (assistant: { name: string; id: string }) => void;

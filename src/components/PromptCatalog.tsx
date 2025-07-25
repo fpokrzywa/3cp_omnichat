@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, Search, Heart, ExternalLink, ChevronDown } from 'lucide-react';
 import { mongoService, type MongoPrompt } from '../services/mongoService';
 import { getCompanyName } from '../utils/companyConfig';
+import { getCompanyBotName } from '../utils/companyConfig';
 
 interface Prompt {
   id: string;
@@ -75,7 +76,7 @@ const PromptCatalog: React.FC<PromptCatalogProps> = ({
 
    // All available assistants from the assistants page
   const availableAssistants = [
-    'OmniChat',
+    getCompanyBotName(),
     'IT Support',
     'HR Support',
     'Advance Policies Assitant',

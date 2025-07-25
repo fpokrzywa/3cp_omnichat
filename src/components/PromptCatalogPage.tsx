@@ -4,6 +4,7 @@ import { mongoService, type MongoPrompt } from '../services/mongoService';
 import { openaiService, type Assistant } from '../services/openaiService';
 import CreatePromptForm from './CreatePromptForm';
 import { getCompanyName } from '../utils/companyConfig';
+import { getCompanyBotName } from '../utils/companyConfig';
 
 interface Prompt {
   id: string;
@@ -170,7 +171,7 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
 
   // Default assistants as fallback
   const defaultAssistants = [
-    'OmniChat',
+    getCompanyBotName(),
     'IT Support',
     'HR Support',
     'Advance Policies Assistant',
