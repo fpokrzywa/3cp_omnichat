@@ -258,9 +258,6 @@ const PromptCatalog: React.FC<PromptCatalogProps> = ({
                       <div className="flex items-center space-x-2 mb-2">
                         <span className="text-xs font-medium text-gray-500">{prompt.assistant}</span>
                       </div>
-                      <h3 className="text-sm font-medium text-pink-600 leading-relaxed mb-2 group-hover:text-pink-700 transition-colors">
-                      <h3 className="text-sm font-medium text-orange-600 leading-relaxed mb-2 group-hover:text-orange-700 transition-colors">
-                      </h3>
                       <h3 className="text-sm font-medium text-gray-900 leading-relaxed mb-2 group-hover:text-orange-600 transition-colors">
                         {prompt.title}
                       </h3>
