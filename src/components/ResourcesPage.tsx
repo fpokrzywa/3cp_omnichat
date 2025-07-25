@@ -58,7 +58,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
   const contactInfo = [
     { title: 'AI Leads to Report New AI Use Cases –', contact: 'Support', hasLink: true },
     { title: 'AI Intake Team –', contact: 'AI_Team@agenticweaver.com', hasLink: true },
-    { title: `Report a Bug/Suggestion for the ${getCompanyName()} OmniGPT`, hasLink: true },
+    { title: `Report a Bug/Suggestion for the ${getCompanyName()} ${getCompanyBotName()}`, hasLink: true },
     { title: `Report a Bug/Suggestion for the ${getCompanyName()} ${getCompanyBotName()}`, hasLink: true },
     { title: `${getCompanyName()} AI Team`, contact: 'AI_Team@agenticweaver.com', hasLink: true }
   ];
