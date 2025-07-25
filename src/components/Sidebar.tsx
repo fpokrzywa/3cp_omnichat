@@ -203,8 +203,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onThreadSelect }) =
       <div className="flex items-center space-x-3 flex-1 min-w-0">
         <div className={`w-6 h-6 rounded flex items-center justify-center flex-shrink-0 ${
           chat.threadId ? 'bg-blue-100' : 'bg-pink-100'
+          chat.threadId ? 'bg-blue-100' : 'bg-orange-100'
         }`}>
-          <chat.icon className={`w-3 h-3 ${chat.threadId ? 'text-blue-600' : 'text-pink-600'}`} />
+          <chat.icon className={`w-3 h-3 ${chat.threadId ? 'text-blue-600' : 'text-orange-600'}`} />
         </div>
         <div className="flex-1 min-w-0">
         {editingChat === chat.id ? (
@@ -215,7 +216,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onThreadSelect }) =
             onChange={(e) => setEditTitle(e.target.value)}
             onBlur={() => handleSaveRename(chat.id)}
             onKeyDown={(e) => handleKeyPress(e, chat.id)}
-            className="flex-1 text-sm text-gray-700 bg-white border border-pink-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-pink-500"
+            className="flex-1 text-sm text-gray-700 bg-white border border-orange-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-orange-500"
           />
         ) : (
           <div>
@@ -306,7 +307,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onThreadSelect }) =
             placeholder="Search..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+            className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
           />
         </div>
       </div>

@@ -110,7 +110,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
             onClick={() => setActiveTab('learn')}
             className={`flex items-center space-x-2 px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
               activeTab === 'learn'
-                ? 'border-pink-500 text-pink-600'
+                ? 'border-orange-500 text-orange-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
@@ -121,7 +121,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
             onClick={() => setActiveTab('engagement')}
             className={`flex items-center space-x-2 px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
               activeTab === 'engagement'
-                ? 'border-pink-500 text-pink-600'
+                ? 'border-orange-500 text-orange-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
@@ -132,7 +132,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
             onClick={() => setActiveTab('contact')}
             className={`flex items-center space-x-2 px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
               activeTab === 'contact'
-                ? 'border-pink-500 text-pink-600'
+                ? 'border-orange-500 text-orange-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
@@ -148,9 +148,9 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
               {learnResources.map((section, sectionIndex) => (
                 <div key={sectionIndex}>
                   <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center space-x-2">
-                    {section.category === 'Generative AI' && <FileText className="w-5 h-5 text-pink-600" />}
-                    {section.category === 'Models' && <HelpCircle className="w-5 h-5 text-pink-600" />}
-                    {section.category === 'FAQs' && <HelpCircle className="w-5 h-5 text-pink-600" />}
+                    {section.category === 'Generative AI' && <FileText className="w-5 h-5 text-orange-600" />}
+                    {section.category === 'Models' && <HelpCircle className="w-5 h-5 text-orange-600" />}
+                    {section.category === 'FAQs' && <HelpCircle className="w-5 h-5 text-orange-600" />}
                     <span>{section.category}</span>
                   </h3>
                   <div className="space-y-1 pl-4">
@@ -162,7 +162,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
               <div className="pt-6 border-t border-gray-200">
                 <div className="flex items-center space-x-3">
                   <span className="text-sm font-medium text-gray-700">Have more questions about AI at {getCompanyName()}? Visit</span>
-                  <button className="text-sm text-gray-700 hover:text-pink-600 transition-colors flex items-center space-x-1">
+                  <button className="text-sm text-gray-700 hover:text-orange-600 transition-colors flex items-center space-x-1">
                     <span>AgenticWeaver.com</span>
                     <ExternalLink className="w-4 h-4" />
                   </button>
@@ -176,7 +176,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
               {engagementResources.map((section, sectionIndex) => (
                 <div key={sectionIndex}>
                   <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center space-x-2">
-                    <Users className="w-5 h-5 text-pink-600" />
+                    <Users className="w-5 h-5 text-orange-600" />
                     <span>{section.category}</span>
                   </h3>
                   <div className="space-y-1 pl-4">

@@ -250,7 +250,7 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
             onClick={() => setActiveTab('enterprise')}
             className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
               activeTab === 'enterprise'
-                ? 'border-pink-500 text-pink-600'
+                ? 'border-orange-500 text-orange-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
@@ -260,7 +260,7 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
             onClick={() => setActiveTab('your')}
             className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
               activeTab === 'your'
-                ? 'border-pink-500 text-pink-600'
+                ? 'border-orange-500 text-orange-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
@@ -289,7 +289,7 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
                 <select
                   value={selectedAssistant}
                   onChange={(e) => setSelectedAssistant(e.target.value)}
-                  className="w-full appearance-none bg-white border border-gray-300 rounded-lg px-3 py-2 pr-16 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full appearance-none bg-white border border-gray-300 rounded-lg px-3 py-2 pr-16 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 >
                   <option>All Assistants</option>
                   {availableAssistants.map((assistant) => (
@@ -321,7 +321,7 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
                 <select
                   value={selectedTask}
                   onChange={(e) => setSelectedTask(e.target.value)}
-                  className="w-full appearance-none bg-white border border-gray-300 rounded-lg px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full appearance-none bg-white border border-gray-300 rounded-lg px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 >
                   <option>Select Task...</option>
                   <option>Files</option>
@@ -342,7 +342,7 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
                 <select
                   value={selectedFunctionalArea}
                   onChange={(e) => setSelectedFunctionalArea(e.target.value)}
-                  className="w-full appearance-none bg-white border border-gray-300 rounded-lg px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full appearance-none bg-white border border-gray-300 rounded-lg px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 >
                   <option>Select Functional Area...</option>
                   <option>Research & Development</option>
@@ -364,7 +364,7 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
               placeholder="Search prompts..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             />
           </div>
         </div>
@@ -373,7 +373,7 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
         <div className="min-h-[400px]">
           {isLoading ? (
             <div className="text-center py-16">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600 mx-auto mb-4"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto mb-4"></div>
               <p className="text-gray-500">Loading prompts...</p>
             </div>
           ) : activeTab === 'enterprise' ? (
@@ -390,11 +390,11 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
                       <div className="flex items-center space-x-2 mb-2">
                         <span className="text-xs font-medium text-gray-500">{prompt.assistant}</span>
                       </div>
-                      <h3 className="text-sm font-medium text-gray-900 leading-relaxed mb-2 group-hover:text-pink-600 transition-colors">
+                      <h3 className="text-sm font-medium text-gray-900 leading-relaxed mb-2 group-hover:text-orange-600 transition-colors">
                         {prompt.title}
                       </h3>
                     </div>
-                    <button className="text-gray-300 hover:text-pink-500 transition-colors flex-shrink-0 ml-2">
+                    <button className="text-gray-300 hover:text-orange-500 transition-colors flex-shrink-0 ml-2">
                       <Heart className="w-4 h-4" />
                     </button>
                   </div>
@@ -441,7 +441,7 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
                         console.log('Edit button clicked for prompt:', prompt);
                         handleEditPrompt(prompt);
                       }}
-                      className="p-2 text-gray-400 hover:text-pink-600 hover:bg-pink-50 rounded-full transition-all duration-200"
+                      className="p-2 text-gray-400 hover:text-orange-600 hover:bg-orange-50 rounded-full transition-all duration-200"
                       title="Edit prompt"
                     >
                       <Edit3 className="w-4 h-4" />
@@ -465,13 +465,13 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
                           <div className="flex-1">
                             <div className="flex items-center space-x-2 mb-2">
                               <span className="text-xs font-medium text-gray-500">{prompt.assistant}</span>
-                              <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full">Your Prompt</span>
+                              <span className="text-xs text-orange-600 bg-orange-50 px-2 py-1 rounded-full">Your Prompt</span>
                             </div>
-                            <h3 className="text-sm font-medium text-gray-900 leading-relaxed mb-2 group-hover:text-pink-600 transition-colors">
+                            <h3 className="text-sm font-medium text-gray-900 leading-relaxed mb-2 group-hover:text-orange-600 transition-colors">
                               {prompt.title}
                             </h3>
                           </div>
-                          <button className="text-gray-300 hover:text-pink-500 transition-colors flex-shrink-0 ml-2">
+                          <button className="text-gray-300 hover:text-orange-500 transition-colors flex-shrink-0 ml-2">
                             <Heart className="w-4 h-4" />
                           </button>
                         </div>
@@ -518,7 +518,7 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
                             console.log('Edit button clicked for prompt:', prompt);
                             handleEditPrompt(prompt);
                           }}
-                          className="p-2 text-gray-400 hover:text-pink-600 hover:bg-pink-50 rounded-full transition-all duration-200"
+                          className="p-2 text-gray-400 hover:text-orange-600 hover:bg-orange-50 rounded-full transition-all duration-200"
                           title="Edit prompt"
                         >
                           <Edit3 className="w-4 h-4" />
@@ -543,7 +543,7 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
                   </p>
                   <button 
                     onClick={() => setShowCreateForm(true)}
-                    className="px-6 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors"
+                    className="px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
                   >
                     Create New Prompt
                   </button>
