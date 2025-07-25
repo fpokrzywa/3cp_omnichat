@@ -28,12 +28,12 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
     {
       category: 'FAQs',
       items: [
-        { title: 'Who can access the Advance AI Store?', hasLink: true },
-        { title: 'How long are conversations stored in the Advance AI Store?', hasLink: true },
-        { title: 'Does the Advance AI Store converse in different languages?', hasLink: true },
-        { title: 'Can I use the Advance AI Store on my mobile device?', hasLink: true },
-        { title: 'Can I upload files into Advance Solutions OmniGPT?', hasLink: true },
-        { title: 'Why is Advance Solutions OmniGPT giving me incorrect information?', hasLink: true, isHighlighted: true }
+        { title: 'Who can access the ${getCompanyName()} AI Store?', hasLink: true },
+        { title: 'How long are conversations stored in the ${getCompanyName()} AI Store?', hasLink: true },
+        { title: 'Does the ${getCompanyName()} AI Store converse in different languages?', hasLink: true },
+        { title: 'Can I use the ${getCompanyName()} AI Store on my mobile device?', hasLink: true },
+        { title: 'Can I upload files into ${getCompanyName()} OmniGPT?', hasLink: true },
+        { title: 'Why is ${getCompanyName()} OmniGPT giving me incorrect information?', hasLink: true, isHighlighted: true }
       ]
     }
   ];
@@ -47,16 +47,16 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
       ]
     },
     {
-      category: 'Adding Your Tool to the Advance Solutions OmniGPT',
+      category: 'Adding Your Tool to the ${getCompanyName()} OmniGPT',
       items: [
-        { title: 'Does Advance Solutions provide access to OpenAI API for employees?', hasLink: true }
+        { title: 'Does ${getCompanyName()} provide access to OpenAI API for employees?', hasLink: true }
       ]
     }
   ];
 
   const contactInfo = [
-    { title: 'AI Leads to Report New AI Use Cases –', contact: 'ASC', hasLink: true },
-    { title: 'AI Intake Team –', contact: 'aAI_Team@agenticweaver.com', hasLink: true },
+    { title: 'AI Leads to Report New AI Use Cases –', contact: 'Support', hasLink: true },
+    { title: 'AI Intake Team –', contact: 'AI_Team@agenticweaver.com', hasLink: true },
     { title: `Report a Bug/Suggestion for the ${getCompanyName()} OmniGPT`, hasLink: true },
     { title: `${getCompanyName()} AI Team`, contact: 'AI_Team@agenticweaver.com', hasLink: true }
   ];
