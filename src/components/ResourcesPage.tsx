@@ -16,7 +16,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
         { title: `${getCompanyName()} AI Store`, hasLink: true },
         { title: 'Prompt Design Quick Reference Guide', hasLink: true },
         { title: `AI at ${getCompanyName()}`, hasLink: true },
-        { title: `${getCompanyName()} OmniGPT`, hasLink: true },
+        { title: `${getCompanyName()} ${getCompanyBotName()}`, hasLink: true },
         { title: `${getCompanyName()} Responsible AI`, hasLink: true }
       ]
     },
