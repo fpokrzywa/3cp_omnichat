@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ExternalLink, Mail, Users, BookOpen, HelpCircle, FileText } from 'lucide-react';
+import { getCompanyName } from '../utils/companyConfig';
 
 interface ResourcesPageProps {}
 
@@ -55,9 +56,9 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
 
   const contactInfo = [
     { title: 'AI Leads to Report New AI Use Cases –', contact: 'ASC', hasLink: true },
-    { title: 'AI Intake Team –', contact: 'aAI_Team@advancesolutions.com', hasLink: true },
-    { title: 'Report a Bug/Suggestion for the Advance Solutions OmniGPT', hasLink: true },
-    { title: 'Advance Solutions AI Team', contact: 'AI_Team@advancesolutions.com', hasLink: true }
+    { title: 'AI Intake Team –', contact: 'aAI_Team@agenticweaver.com', hasLink: true },
+    { title: `Report a Bug/Suggestion for the ${getCompanyName()} OmniGPT`, hasLink: true },
+    { title: `${getCompanyName()} AI Team`, contact: 'AI_Team@agenticweaver.com', hasLink: true }
   ];
 
   const renderResourceItem = (item: any, index: number) => (
@@ -93,10 +94,10 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-4xl mx-auto px-6 py-8">
           <h1 className="text-2xl font-semibold text-gray-800 mb-4">
-            About the Advance Gen AI Storefront
+            About the {getCompanyName()} Gen AI Storefront
           </h1>
           <p className="text-gray-600 leading-relaxed">
-            The Advance AI Store is a versatile platform designed to enhance your productivity by leveraging advanced AI capabilities.
+            The {getCompanyName()} AI Store is a versatile platform designed to enhance your productivity by leveraging advanced AI capabilities.
           </p>
         </div>
       </div>
@@ -159,7 +160,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
               
               <div className="pt-6 border-t border-gray-200">
                 <div className="flex items-center space-x-3">
-                  <span className="text-sm font-medium text-gray-700">Have more questions about AI at Advance Solutions? Visit</span>
+                  <span className="text-sm font-medium text-gray-700">Have more questions about AI at {getCompanyName()}? Visit</span>
                   <button className="text-sm text-gray-700 hover:text-pink-600 transition-colors flex items-center space-x-1">
                     <span>ASC</span>
                     <ExternalLink className="w-4 h-4" />

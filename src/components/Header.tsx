@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, Settings, User, Menu, X } from 'lucide-react';
+import { getCompanyName } from '../utils/companyConfig';
 
 interface HeaderProps {
   onNavigate: (page: 'chat' | 'assistants' | 'prompt-catalog' | 'resources') => void;
@@ -89,7 +90,7 @@ const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center space-x-3">
           <img 
             src="/aw_logo_v1_fav_icon.png" 
-            alt="Advance Solutions Logo" 
+            alt={`${getCompanyName()} Logo`}
             className="w-8 h-8 rounded-lg object-contain"
           />
           

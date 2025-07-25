@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, User, Shield, CheckCircle, XCircle, Settings, Mail, Calendar } from 'lucide-react';
+import { getCompanyName } from '../utils/companyConfig';
 
 interface UserProfile {
   name: string;
@@ -21,7 +22,7 @@ interface ProfileOverlayProps {
 const ProfileOverlay: React.FC<ProfileOverlayProps> = ({ isOpen, onClose }) => {
   const [profile, setProfile] = useState<UserProfile>({
     name: 'John Smith',
-    email: 'john.smith@advancesolutions.com',
+    email: 'john.smith@agenticweaver.com',
     role: 'Senior Data Scientist',
     department: 'Research & Development',
     joinDate: '2023-01-15',

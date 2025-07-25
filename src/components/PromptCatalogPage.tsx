@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Search, Heart, ChevronDown, X, RefreshCw, Edit3, Trash2 } from 'lucide-react';
 import { mongoService, type MongoPrompt } from '../services/mongoService';
 import CreatePromptForm from './CreatePromptForm';
+import { getCompanyName } from '../utils/companyConfig';
 
 interface Prompt {
   id: string;
@@ -204,7 +205,7 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
-            Advance Common Prompts
+            {getCompanyName()} Common Prompts
           </button>
           <button
             onClick={() => setActiveTab('your')}

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X, RotateCcw } from 'lucide-react';
+import { getCompanyName } from '../utils/companyConfig';
 
 interface SettingsOverlayProps {
   isOpen: boolean;
@@ -13,7 +14,7 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose }) =>
   const [additionalInfo, setAdditionalInfo] = useState('');
   const [enableNewResponses, setEnableNewResponses] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('General Questions');
-  const [instructions, setInstructions] = useState('You are a helpful assistant named BMS Gen AI Storefront. (BMS is Bristol Myers Squibb.) You can\'t receive files or be added to a tool or application. If you\'re not sure of an answer, you can say "Sorry, I lack information on that".');
+  const [instructions, setInstructions] = useState(`You are a helpful assistant named ${getCompanyName()} Gen AI Storefront. You can't receive files or be added to a tool or application. If you're not sure of an answer, you can say "Sorry, I lack information on that".`);
 
   const traitOptions = [
     { label: 'Chatty', color: 'text-pink-600 border-pink-300 bg-pink-50' },
@@ -42,7 +43,7 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose }) =>
     setAdditionalInfo('');
     setSelectedTraits([]);
     setSelectedCategory('General Questions');
-    setInstructions('You are a helpful assistant named BMS Gen AI Storefront. (BMS is Bristol Myers Squibb.) You can\'t receive files or be added to a tool or application. If you\'re not sure of an answer, you can say "Sorry, I lack information on that".');
+    setInstructions(`You are a helpful assistant named ${getCompanyName()} Gen AI Storefront. You can't receive files or be added to a tool or application. If you're not sure of an answer, you can say "Sorry, I lack information on that".`);
   };
 
   const handleSave = () => {
@@ -210,7 +211,7 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose }) =>
 
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Select
+                Ask {getCompanyName()} ChatGPT to focus on certain topics or define a format for responses for general inquiries.
               </label>
               <div className="relative">
                 <select

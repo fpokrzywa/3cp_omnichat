@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
+import { getCompanyName } from '../utils/companyConfig';
 
 interface AcknowledgmentOverlayProps {
   isOpen: boolean;
@@ -33,7 +34,7 @@ const AcknowledgmentOverlay: React.FC<AcknowledgmentOverlayProps> = ({ isOpen, o
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
           <p className="text-gray-600 leading-relaxed">
-            Welcome to Advance AI Store! This outlines the guidelines and policies for using AI Store, a digital resource designed to enhance productivity and collaboration.
+            Welcome to {getCompanyName()} AI Store! This outlines the guidelines and policies for using AI Store, a digital resource designed to enhance productivity and collaboration.
           </p>
 
           {/* Monitoring and Compliance */}
@@ -47,9 +48,9 @@ const AcknowledgmentOverlay: React.FC<AcknowledgmentOverlayProps> = ({ isOpen, o
               <li className="flex items-start space-x-3">
                 <div className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
                 <div>
-                  <span>You must follow all Advance Company policies, and procedures including the </span>
+                  <span>You must follow all {getCompanyName()} policies, and procedures including the </span>
                   <button className="text-pink-600 hover:text-pink-700 underline">
-                    Advance Solutions Responsible AI SOP
+                    {getCompanyName()} Responsible AI SOP
                   </button>
                   <span>.</span>
                 </div>
@@ -63,7 +64,7 @@ const AcknowledgmentOverlay: React.FC<AcknowledgmentOverlayProps> = ({ isOpen, o
                   </button>
                   <span> and other relevant </span>
                   <button className="text-pink-600 hover:text-pink-700 underline">
-                    Advance Solutions policies
+                    {getCompanyName()} policies
                   </button>
                   <span>.</span>
                 </div>
@@ -78,6 +79,7 @@ const AcknowledgmentOverlay: React.FC<AcknowledgmentOverlayProps> = ({ isOpen, o
               <li className="flex items-start space-x-3">
                 <div className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
                 <span>Responses from Advance AI Store may be inaccurate. Always verify accuracy of responses.</span>
+                <span>Responses from {getCompanyName()} AI Store may be inaccurate. Always verify accuracy of responses.</span>
               </li>
             </ul>
           </div>
@@ -93,6 +95,7 @@ const AcknowledgmentOverlay: React.FC<AcknowledgmentOverlayProps> = ({ isOpen, o
               <li className="flex items-start space-x-3">
                 <div className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
                 <span>In some instances, Advance Solutions  has acquired a license to use certain data (including personal data). In such cases, there might be restrictions on the use of the data. You should verify that your intended use is compatible with such licenses.</span>
+                <span>In some instances, {getCompanyName()} has acquired a license to use certain data (including personal data). In such cases, there might be restrictions on the use of the data. You should verify that your intended use is compatible with such licenses.</span>
               </li>
             </ul>
           </div>
@@ -106,7 +109,7 @@ const AcknowledgmentOverlay: React.FC<AcknowledgmentOverlayProps> = ({ isOpen, o
                 <div>
                   <span>If you encounter an ethical concern, such as biased AI output, report it immediately to the </span>
                   <button className="text-pink-600 hover:text-pink-700 underline">
-                    Advance Solutions HR Team & AI Team
+                    {getCompanyName()} HR Team & AI Team
                   </button>
                   <span>.</span>
                 </div>
@@ -142,7 +145,7 @@ const AcknowledgmentOverlay: React.FC<AcknowledgmentOverlayProps> = ({ isOpen, o
                 <div>
                   <span>For questions or concerns, please reach out to the Data Risk Office (</span>
                   <button className="text-pink-600 hover:text-pink-700 underline">
-                    ai_admin@advancesolutions.com
+                    ai_admin@agenticweaver.com
                   </button>
                   <span>) or the </span>
                   <button className="text-pink-600 hover:text-pink-700 underline">
@@ -165,7 +168,7 @@ const AcknowledgmentOverlay: React.FC<AcknowledgmentOverlayProps> = ({ isOpen, o
               className="w-4 h-4 text-pink-600 border-gray-300 rounded focus:ring-pink-500 focus:ring-2"
             />
             <label htmlFor="acknowledge" className="text-sm text-gray-700 cursor-pointer">
-              I Acknowledge my Responsibility to use this AI based on Advance Solutions Guidelines Above
+              I Acknowledge my Responsibility to use this AI based on {getCompanyName()} Guidelines Above
             </label>
           </div>
           
