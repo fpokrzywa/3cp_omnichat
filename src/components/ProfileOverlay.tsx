@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, User, Shield, CheckCircle, XCircle, Settings, Mail, Calendar } from 'lucide-react';
-import { getCompanyName, getCompanyBotName } from '../utils/companyConfig';
+import { getCompanyName } from '../utils/companyConfig';
 
 interface UserProfile {
   name: string;
@@ -28,7 +28,8 @@ const ProfileOverlay: React.FC<ProfileOverlayProps> = ({ isOpen, onClose }) => {
     joinDate: '2023-01-15',
     hasAcceptedGuidelines: false,
     isAdmin: false,
-    preferredAssistant: getCompanyBotName()
+    lastLogin: '2024-01-15 09:30 AM',
+    preferredAssistant: 'OmniChat'
   });
 
   const [isEditing, setIsEditing] = useState(false);
@@ -224,7 +225,6 @@ const ProfileOverlay: React.FC<ProfileOverlayProps> = ({ isOpen, onClose }) => {
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
               >
                 <option>OmniChat</option>
-                <option>{getCompanyBotName()}</option>
                 <option>IT Support</option>
                 <option>HR Support</option>
                 <option>Advance Policies Assitant</option>

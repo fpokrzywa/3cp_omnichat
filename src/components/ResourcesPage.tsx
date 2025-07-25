@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { ExternalLink, Mail, Users, BookOpen, HelpCircle, FileText } from 'lucide-react';
 import { getCompanyName } from '../utils/companyConfig';
-import { getCompanyBotName } from '../utils/companyConfig';
 
 interface ResourcesPageProps {}
 
@@ -16,7 +15,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
         { title: `${getCompanyName()} AI Store`, hasLink: true },
         { title: 'Prompt Design Quick Reference Guide', hasLink: true },
         { title: `AI at ${getCompanyName()}`, hasLink: true },
-        { title: `${getCompanyName()} ${getCompanyBotName()}`, hasLink: true },
+        { title: `${getCompanyName()} OmniGPT`, hasLink: true },
         { title: `${getCompanyName()} Responsible AI`, hasLink: true }
       ]
     },
@@ -33,8 +32,8 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
         { title: `How long are conversations stored in the ${getCompanyName()} AI Store?`, hasLink: true },
         { title: `Does the ${getCompanyName()} AI Store converse in different languages?`, hasLink: true },
         { title: `Can I use the ${getCompanyName()} AI Store on my mobile device?`, hasLink: true },
-        { title: `Can I upload files into ${getCompanyName()} ${getCompanyBotName()}?`, hasLink: true },
-        { title: `Why is ${getCompanyName()} ${getCompanyBotName()} giving me incorrect information?`, hasLink: true}
+        { title: `Can I upload files into ${getCompanyName()} OmniGPT?`, hasLink: true },
+        { title: `Why is ${getCompanyName()} OmniGPT giving me incorrect information?`, hasLink: true}
       ]
     }
   ];
@@ -48,7 +47,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
       ]
     },
     {
-      category: `Adding Your Tool to the ${getCompanyName()} ${getCompanyBotName()}`,
+      category: 'Adding Your Tool to the ${getCompanyName()} OmniGPT',
       items: [
         { title: `Does ${getCompanyName()} provide access to OpenAI API for employees?`, hasLink: true }
       ]
@@ -58,8 +57,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
   const contactInfo = [
     { title: 'AI Leads to Report New AI Use Cases –', contact: 'Support', hasLink: true },
     { title: 'AI Intake Team –', contact: 'AI_Team@agenticweaver.com', hasLink: true },
-    { title: `Report a Bug/Suggestion for the ${getCompanyName()} ${getCompanyBotName()}`, hasLink: true },
-    { title: `Report a Bug/Suggestion for the ${getCompanyName()} ${getCompanyBotName()}`, hasLink: true },
+    { title: `Report a Bug/Suggestion for the ${getCompanyName()} OmniGPT`, hasLink: true },
     { title: `${getCompanyName()} AI Team`, contact: 'AI_Team@agenticweaver.com', hasLink: true }
   ];
 

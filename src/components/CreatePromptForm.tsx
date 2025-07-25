@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { X, Plus, Minus } from 'lucide-react';
-import { getCompanyBotName } from '../utils/companyConfig';
 
 interface CreatePromptFormProps {
   isOpen: boolean;
@@ -107,7 +106,7 @@ const CreatePromptForm: React.FC<CreatePromptFormProps> = ({ isOpen, onClose, on
   ];
 
   const availableAssistants = [
-    getCompanyBotName(),
+    'OmniChat',
     'IT Support',
     'HR Support',
     'Advance Policies Assistant',

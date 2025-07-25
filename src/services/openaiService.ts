@@ -23,7 +23,7 @@ interface Assistant {
 
 class OpenAIService {
   private apiKey: string | null = null;
-  private baseURL = '/api/openai';
+  private baseURL = 'https://api.openai.com/v1';
   private cacheKey = 'openai_assistants_cache';
   private cacheTimestampKey = 'openai_assistants_cache_timestamp';
   private cacheExpiryMs = 5 * 60 * 1000; // 5 minutes
@@ -104,11 +104,18 @@ class OpenAIService {
   }
 
   private async makeRequest(endpoint: string, options: RequestInit = {}) {
+    const currentApiKey = this.getApiKey();
+    if (!currentApiKey) {
+      throw new Error('OpenAI API key not configured');
+    }
+
     try {
       const response = await fetch(`${this.baseURL}${endpoint}`, {
         ...options,
         headers: {
+          'Authorization': `Bearer ${currentApiKey}`,
           'Content-Type': 'application/json',
+          'OpenAI-Beta': 'assistants=v2',
           ...options.headers,
         },
       });
@@ -120,6 +127,10 @@ class OpenAIService {
 
       return response.json();
     } catch (error) {
+      // Handle CORS and network errors specifically
+      if (error instanceof TypeError && error.message === 'Failed to fetch') {
+        throw new Error('Cannot connect to OpenAI API directly from browser. This is a CORS limitation. Please use a backend server or proxy to access OpenAI assistants.');
+      }
       throw error;
     }
   }

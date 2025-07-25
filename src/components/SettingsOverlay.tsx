@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { X, RotateCcw } from 'lucide-react';
 import { getCompanyName } from '../utils/companyConfig';
-import { getCompanyBotName } from '../utils/companyConfig';
 
 interface SettingsOverlayProps {
   isOpen: boolean;
@@ -44,7 +43,6 @@ const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose }) =>
     setAdditionalInfo('');
     setSelectedTraits([]);
     setSelectedCategory('General Questions');
-    setInstructions(`You are a helpful assistant named ${getCompanyName()} Gen AI Storefront. You can't receive files or be added to a tool or application. If you're not sure of an answer, you can say "Sorry, I lack information on that".`);
     setInstructions(`You are a helpful assistant named ${getCompanyName()} Gen AI Storefront. You can't receive files or be added to a tool or application. If you're not sure of an answer, you can say "Sorry, I lack information on that".`);
   };
 

@@ -10,12 +10,11 @@ import SettingsOverlay from './components/SettingsOverlay';
 import AcknowledgmentOverlay from './components/AcknowledgmentOverlay';
 import ProfileOverlay from './components/ProfileOverlay';
 import { chatService } from './services/chatService';
-import { getCompanyBotName } from './utils/companyConfig';
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [currentPage, setCurrentPage] = useState<'chat' | 'assistants' | 'prompt-catalog' | 'resources'>('assistants');
-  const [selectedAssistant, setSelectedAssistant] = useState<string>(getCompanyBotName());
+  const [selectedAssistant, setSelectedAssistant] = useState<string>('OmniChat');
   const [promptCatalogOpen, setPromptCatalogOpen] = useState(false);
   const [selectedPrompt, setSelectedPrompt] = useState<string>('');
   const [settingsOpen, setSettingsOpen] = useState(false);
