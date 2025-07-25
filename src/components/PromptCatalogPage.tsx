@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Search, Heart, ChevronDown, X, RefreshCw, Edit3, Trash2 } from 'lucide-react';
 import { mongoService, type MongoPrompt } from '../services/mongoService';
+import { openaiService, type Assistant } from '../services/openaiService';
 import CreatePromptForm from './CreatePromptForm';
 import { getCompanyName } from '../utils/companyConfig';
 
@@ -32,6 +33,7 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingPrompt, setEditingPrompt] = useState<Prompt | null>(null);
+  const [openaiAssistants, setOpenaiAssistants] = useState<Assistant[]>([]);
   const [deleteConfirmation, setDeleteConfirmation] = useState<{
     isOpen: boolean;
     prompt: Prompt | null;
@@ -40,8 +42,22 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
   // Load prompts from MongoDB when component mounts
   React.useEffect(() => {
     loadPrompts();
+    loadOpenAIAssistants();
   }, []);
 
+  const loadOpenAIAssistants = async () => {
+    try {
+      const result = await openaiService.listAssistants();
+      const convertedAssistants = result.assistants.map(assistant => 
+        openaiService.convertToInternalFormat(assistant)
+      );
+      setOpenaiAssistants(convertedAssistants);
+    } catch (error) {
+      console.error('Error loading OpenAI assistants:', error);
+      // Fallback to empty array if OpenAI assistants can't be loaded
+      setOpenaiAssistants([]);
+    }
+  };
   const loadPrompts = async (forceRefresh: boolean = false) => {
     if (forceRefresh) {
       setIsRefreshing(true);
@@ -144,19 +160,22 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
     loadPrompts(true);
   };
 
-  // All available assistants from the assistants page
-  const availableAssistants = [
+  // Default assistants as fallback
+  const defaultAssistants = [
     'OmniChat',
     'IT Support',
     'HR Support',
-    'Advance Policies Assitant',
+    'Advance Policies Assistant',
     'Redact Assistant',
     'ADEPT Assistant',
-    'RFP Assistant',
     'RFP Assistant',
     'Resume Assistant'
   ];
 
+  // Use OpenAI assistants if available, otherwise use default list
+  const availableAssistants = openaiAssistants.length > 0 
+    ? openaiAssistants.map(assistant => assistant.name)
+    : defaultAssistants;
   const filteredPrompts = prompts.filter(prompt => {
     const matchesSearch = prompt.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          prompt.description.toLowerCase().includes(searchQuery.toLowerCase());
