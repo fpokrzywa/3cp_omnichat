@@ -47,8 +47,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
         { title: 'How do I submit an idea for a new AI use case? AI Idea Capture Form', hasLink: true }
       ]
     },
-    {
-      category: 'Adding Your Tool to the ${getCompanyName()} OmniGPT',
+    {      
       category: `Adding Your Tool to the ${getCompanyName()} ${getCompanyBotName()}`,
       items: [
         { title: `Does ${getCompanyName()} provide access to OpenAI API for employees?`, hasLink: true }
