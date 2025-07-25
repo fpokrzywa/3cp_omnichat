@@ -107,17 +107,30 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
   };
 
   const getSortedAssistants = (assistantsList: Assistant[]) => {
+    // Always put ODIN first, regardless of sort order
+    const odinAssistant = assistantsList.find(assistant => 
+      assistant.name === getCompanyBotName()
+    );
+    const otherAssistants = assistantsList.filter(assistant => 
+      assistant.name !== getCompanyBotName()
+    );
+    
     switch (sortBy) {
       case 'Name A-Z':
-        return [...assistantsList].sort((a, b) => a.name.localeCompare(b.name));
+        const sortedAZ = [...otherAssistants].sort((a, b) => a.name.localeCompare(b.name));
+        return odinAssistant ? [odinAssistant, ...sortedAZ] : sortedAZ;
       case 'Name Z-A':
-        return [...assistantsList].sort((a, b) => b.name.localeCompare(a.name));
+        const sortedZA = [...otherAssistants].sort((a, b) => b.name.localeCompare(a.name));
+        return odinAssistant ? [odinAssistant, ...sortedZA] : sortedZA;
       case 'Recently Added':
-        return [...assistantsList].reverse();
+        const reversed = [...otherAssistants].reverse();
+        return odinAssistant ? [odinAssistant, ...reversed] : reversed;
       case 'Favorites':
-        return [...assistantsList].filter(assistant => assistant.isFavorite);
+        const favorites = [...otherAssistants].filter(assistant => assistant.isFavorite);
+        const odinIsFavorite = odinAssistant?.isFavorite;
+        return odinIsFavorite ? [odinAssistant, ...favorites] : favorites;
       default:
-        return assistantsList;
+        return odinAssistant ? [odinAssistant, ...otherAssistants] : otherAssistants;
     }
   };
 
@@ -262,7 +275,15 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center space-x-3 flex-1 min-w-0">
                     <div className={`w-8 h-8 rounded flex items-center justify-center ${assistant.color} flex-shrink-0`}>
-                      <span className="text-lg">{assistant.icon}</span>
+                      {assistant.icon.startsWith('/') ? (
+                        <img 
+                          src={assistant.icon} 
+                          alt={assistant.name} 
+                          className="w-6 h-6"
+                        />
+                      ) : (
+                        <span className="text-lg">{assistant.icon}</span>
+                      )}
                     </div>
                     <h3 className="font-medium text-gray-900 group-hover:text-orange-600 transition-colors truncate">
                       {assistant.name}

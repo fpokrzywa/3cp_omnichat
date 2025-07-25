@@ -212,15 +212,28 @@ class OpenAIService {
 
   // Convert OpenAI assistant to our internal format
   convertToInternalFormat(openaiAssistant: OpenAIAssistant): Assistant {
+    // Import getCompanyBotName for comparison
+    const getCompanyBotName = () => {
+      try {
+        const companyConfig = JSON.parse(localStorage.getItem('companyConfig') || '[]');
+        return companyConfig[0]?.COMPANY_BOT_NAME || 'ODIN';
+      } catch {
+        return 'ODIN';
+      }
+    };
+    
     // Generate icon and color based on assistant name or tools
     const { icon, color } = this.generateIconAndColor(openaiAssistant);
 
+    // Special handling for ODIN assistant
+    const isOdin = openaiAssistant.name === getCompanyBotName();
+    
     return {
       id: openaiAssistant.id,
       name: openaiAssistant.name || 'Unnamed Assistant',
       description: openaiAssistant.description || openaiAssistant.instructions?.substring(0, 100) + '...' || 'No description available',
-      icon,
-      color,
+      icon: isOdin ? '/odin_icon_white.svg' : icon,
+      color: isOdin ? 'bg-gray-800 text-white' : color,
       model: openaiAssistant.model,
       instructions: openaiAssistant.instructions,
       isFavorite: false
