@@ -8,7 +8,7 @@ interface CompanyConfig {
 
 export const getCompanyName = (): string => {
   const config = companyConfig[0] as CompanyConfig;
-  return config.COMPANY_NAME || 'AgenticWeaver';
+  return config.COMPANY_NAME || 'ADVANCE Solutions';
 };
 
 export const getCompanyBotName = (): string => {
@@ -18,5 +18,5 @@ export const getCompanyBotName = (): string => {
 
 export const getCompanyLogo = (): string => {
   const config = companyConfig[0] as CompanyConfig;
-  return config.COMPANY_LOGO || '/aw_logo_v1_fav_icon.png';
+  return config.COMPANY_LOGO || '/ADVANCE Logo_Vertical_Color.png';
 };
