@@ -518,7 +518,7 @@ const PromptCatalogPage: React.FC<PromptCatalogPageProps> = ({ onPromptSelect })
                             console.log('Edit button clicked for prompt:', prompt);
                             handleEditPrompt(prompt);
                           }}
-                         className="p-2 text-gray-400 hover:text-teal-600 hover:bg-teal-50 rounded-full transition-all duration-200"
+                          className="p-2 text-gray-400 hover:text-teal-600 hover:bg-teal-50 rounded-full transition-all duration-200"
                           title="Edit prompt"
                         >
                           <Edit3 className="w-4 h-4" />
