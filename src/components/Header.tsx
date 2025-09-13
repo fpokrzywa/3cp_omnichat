@@ -132,11 +132,6 @@ const Header: React.FC<HeaderProps> = ({
         
         {/* Desktop navigation */}
         <nav className="hidden md:flex items-center space-x-6">
-          <button className="flex items-center space-x-1 text-gray-700 hover:text-gray-900 transition-colors">
-            <span>Manage Content</span>
-            <ChevronDown className="w-4 h-4" />
-          </button>
-          
           <button 
             onClick={() => onNavigate('prompt-catalog')}
             className="text-gray-700 hover:text-gray-900 transition-colors"
@@ -238,13 +233,6 @@ const Header: React.FC<HeaderProps> = ({
                     }`}
                   >
                     Resources
-                  </button>
-
-                  <button className="block w-full text-left px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                    <div className="flex items-center space-x-2">
-                      <span>Manage Content</span>
-                      <ChevronDown className="w-4 h-4" />
-                    </div>
                   </button>
                 </div>
 

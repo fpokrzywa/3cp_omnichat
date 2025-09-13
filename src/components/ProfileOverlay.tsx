@@ -24,7 +24,7 @@ interface ProfileOverlayProps {
 const ProfileOverlay: React.FC<ProfileOverlayProps> = ({ isOpen, onClose }) => {
   const [profile, setProfile] = useState<UserProfile>({
     name: 'John Smith',
-    email: 'john.smith@agenticweaver.com',
+    email: 'john.smith@IA4IT.com',
     role: 'Senior Data Scientist',
     department: 'Research & Development',
     joinDate: '2023-01-15',
