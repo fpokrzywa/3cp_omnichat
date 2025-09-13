@@ -62,7 +62,7 @@ const ProfileOverlay: React.FC<ProfileOverlayProps> = ({ isOpen, onClose }) => {
       );
       setOpenaiAssistants(convertedAssistants);
     } catch (error) {
-      console.error('Error loading OpenAI assistants:', error);
+      console.warn('OpenAI assistants not available:', error instanceof Error ? error.message : 'Unknown error');
       // Fallback to empty array if OpenAI assistants can't be loaded
       setOpenaiAssistants([]);
     }
@@ -77,7 +77,8 @@ const ProfileOverlay: React.FC<ProfileOverlayProps> = ({ isOpen, onClose }) => {
       );
       setOpenaiAssistants(convertedAssistants);
     } catch (error) {
-      console.error('Error refreshing OpenAI assistants:', error);
+      console.warn('Failed to refresh OpenAI assistants:', error instanceof Error ? error.message : 'Unknown error');
+      // Keep existing assistants on refresh failure
     } finally {
       setIsRefreshingAssistants(false);
     }

@@ -122,7 +122,13 @@ class OpenAIService {
 
       if (!response.ok) {
         const error = await response.json().catch(() => ({ error: { message: 'Unknown error' } }));
-        throw new Error(error.error?.message || `HTTP ${response.status}: ${response.statusText}`);
+        const errorMessage = error.error?.message || `HTTP ${response.status}: ${response.statusText}`;
+        // Don't throw for authentication errors - let the app handle gracefully
+        if (response.status === 401) {
+          console.warn('OpenAI API authentication failed:', errorMessage);
+          return { data: [] }; // Return empty data instead of throwing
+        }
+        throw new Error(errorMessage);
       }
 
       return response.json();
@@ -132,7 +138,7 @@ class OpenAIService {
         // Don't throw error for CORS - this is expected behavior
         console.warn('OpenAI API not accessible from browser due to CORS policy. This is expected.');
         return {
-          assistants: [],
+          data: [],
           fromCache: false
         };
       }
