@@ -215,7 +215,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onThreadSelect }) =
             onChange={(e) => setEditTitle(e.target.value)}
             onBlur={() => handleSaveRename(chat.id)}
             onKeyDown={(e) => handleKeyPress(e, chat.id)}
-            className="flex-1 text-sm text-gray-700 bg-white border border-orange-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="flex-1 text-sm text-gray-700 bg-white border border-teal-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-teal-500"
           />
         ) : (
           <div>
@@ -306,7 +306,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onThreadSelect }) =
             placeholder="Search..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+            className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
           />
         </div>
       </div>
