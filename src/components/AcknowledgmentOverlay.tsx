@@ -170,7 +170,7 @@ const AcknowledgmentOverlay: React.FC<AcknowledgmentOverlayProps> = ({ isOpen, o
                 type="checkbox"
                 checked={acknowledged}
                 onChange={(e) => setAcknowledged(e.target.checked)}
-                className="mt-1 w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500 focus:ring-2"
+                className="mt-1 w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500 focus:ring-2"
               />
               <span className="text-sm text-gray-700">
                 I Acknowledge my Responsibility to use this AI based on IA4IT Guidelines Above
@@ -186,7 +186,7 @@ const AcknowledgmentOverlay: React.FC<AcknowledgmentOverlayProps> = ({ isOpen, o
             disabled={!acknowledged}
             className={`px-6 py-2 rounded-lg font-medium transition-colors ${
               acknowledged
-                ? 'bg-orange-600 text-white hover:bg-orange-700'
+                ? 'bg-teal-600 text-white hover:bg-teal-700'
                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
             }`}
           >

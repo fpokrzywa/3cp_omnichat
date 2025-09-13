@@ -150,8 +150,8 @@ const ProfileOverlay: React.FC<ProfileOverlayProps> = ({ isOpen, onClose }) => {
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
-              <User className="w-5 h-5 text-orange-600" />
+            <div className="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center">
+              <User className="w-5 h-5 text-teal-600" />
             </div>
             <div>
               <h2 className="text-xl font-semibold text-gray-800">User Profile</h2>
@@ -189,7 +189,7 @@ const ProfileOverlay: React.FC<ProfileOverlayProps> = ({ isOpen, onClose }) => {
                     type="text"
                     value={editedProfile.name}
                     onChange={(e) => setEditedProfile({ ...editedProfile, name: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                   />
                 ) : (
                   <p className="text-gray-900">{profile.name}</p>
@@ -211,7 +211,7 @@ const ProfileOverlay: React.FC<ProfileOverlayProps> = ({ isOpen, onClose }) => {
                     type="text"
                     value={editedProfile.role}
                     onChange={(e) => setEditedProfile({ ...editedProfile, role: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                   />
                 ) : (
                   <p className="text-gray-900">{profile.role}</p>
@@ -224,7 +224,7 @@ const ProfileOverlay: React.FC<ProfileOverlayProps> = ({ isOpen, onClose }) => {
                   <select
                     value={editedProfile.department}
                     onChange={(e) => setEditedProfile({ ...editedProfile, department: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                   >
                     <option>Research & Development</option>
                     <option>Commercial</option>
@@ -262,7 +262,7 @@ const ProfileOverlay: React.FC<ProfileOverlayProps> = ({ isOpen, onClose }) => {
                 </button>
                 <button
                   onClick={handleSave}
-                  className="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors"
+                  className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
                 >
                   Save Changes
                 </button>
@@ -279,7 +279,7 @@ const ProfileOverlay: React.FC<ProfileOverlayProps> = ({ isOpen, onClose }) => {
                 <select
                   value={profile.preferredAssistant}
                   onChange={(e) => setProfile({ ...profile, preferredAssistant: e.target.value })}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                 >
                   {availableAssistants.map((assistant) => (
                     <option key={assistant} value={assistant}>
@@ -328,8 +328,8 @@ const ProfileOverlay: React.FC<ProfileOverlayProps> = ({ isOpen, onClose }) => {
                 </div>
                 <button
                   onClick={handleGuidelinesToggle}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 ${
-                    profile.hasAcceptedGuidelines ? 'bg-orange-600' : 'bg-gray-200'
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 ${
+                    profile.hasAcceptedGuidelines ? 'bg-teal-600' : 'bg-gray-200'
                   }`}
                 >
                   <span
@@ -360,8 +360,8 @@ const ProfileOverlay: React.FC<ProfileOverlayProps> = ({ isOpen, onClose }) => {
                 </div>
                 <button
                   onClick={handleAdminToggle}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 ${
-                    profile.isAdmin ? 'bg-orange-600' : 'bg-gray-200'
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 ${
+                    profile.isAdmin ? 'bg-teal-600' : 'bg-gray-200'
                   }`}
                 >
                   <span
@@ -398,7 +398,7 @@ const ProfileOverlay: React.FC<ProfileOverlayProps> = ({ isOpen, onClose }) => {
         <div className="flex items-center justify-end p-6 border-t border-gray-200">
           <button
             onClick={onClose}
-            className="px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+            className="px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
           >
             Close
           </button>
