@@ -116,7 +116,7 @@ const AcknowledgmentOverlay: React.FC<AcknowledgmentOverlayProps> = ({ isOpen, o
                 <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                 <span>
                   If you encounter an ethical concern, such as biased AI output, report it immediately to the{' '}
-                  <a href="#" className="text-orange-600 hover:text-orange-700 underline">
+                  <a href="#" className="text-teal-600 hover:text-teal-700 underline">
                     IA4IT HR Team & AI Team
                   </a>.
                 </span>
