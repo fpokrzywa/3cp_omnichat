@@ -59,7 +59,7 @@ const AcknowledgmentOverlay: React.FC<AcknowledgmentOverlayProps> = ({ isOpen, o
                 <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                 <span>
                   You must follow all {getCompanyName()} Company policies, and procedures including the{' '}
-                  <a href="#" className="text-orange-600 hover:text-orange-700 underline">
+                  <a href="#" className="text-teal-600 hover:text-teal-700 underline">
                     {getCompanyName()} Responsible AI SOP
                   </a>.
                 </span>
@@ -68,11 +68,11 @@ const AcknowledgmentOverlay: React.FC<AcknowledgmentOverlayProps> = ({ isOpen, o
                 <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                 <span>
                   Your use of publicly available consumer versions of GenAI tools and similar products are subject to this{' '}
-                  <a href="#" className="text-orange-600 hover:text-orange-700 underline">
+                  <a href="#" className="text-teal-600 hover:text-teal-700 underline">
                     announcement
                   </a>{' '}
                   and other relevant{' '}
-                  <a href="#" className="text-orange-600 hover:text-orange-700 underline">
+                  <a href="#" className="text-teal-600 hover:text-teal-700 underline">
                     {getCompanyName()} policies
                   </a>.
                 </span>
