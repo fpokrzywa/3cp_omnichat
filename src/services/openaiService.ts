@@ -222,9 +222,9 @@ class OpenAIService {
     const getCompanyBotName = () => {
       try {
         const companyConfig = JSON.parse(localStorage.getItem('companyConfig') || '[]');
-        return companyConfig[0]?.COMPANY_BOT_NAME || 'ODIN';
+        return companyConfig[0]?.COMPANY_BOT_NAME || 'Helix';
       } catch {
-        return 'ODIN';
+        return 'Helix';
       }
     };
     
