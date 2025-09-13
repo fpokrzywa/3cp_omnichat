@@ -110,7 +110,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
             onClick={() => setActiveTab('learn')}
             className={`flex items-center space-x-2 px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
               activeTab === 'learn'
-                ? 'border-orange-500 text-orange-600'
+                ? 'border-teal-500 text-teal-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
@@ -121,7 +121,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
             onClick={() => setActiveTab('engagement')}
             className={`flex items-center space-x-2 px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
               activeTab === 'engagement'
-                ? 'border-orange-500 text-orange-600'
+                ? 'border-teal-500 text-teal-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
@@ -132,7 +132,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
             onClick={() => setActiveTab('contact')}
             className={`flex items-center space-x-2 px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
               activeTab === 'contact'
-                ? 'border-orange-500 text-orange-600'
+                ? 'border-teal-500 text-teal-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
@@ -151,6 +151,10 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
                     {section.category === 'Generative AI' && <FileText className="w-5 h-5 text-orange-600" />}
                     {section.category === 'Models' && <HelpCircle className="w-5 h-5 text-orange-600" />}
                     {section.category === 'FAQs' && <HelpCircle className="w-5 h-5 text-orange-600" />}
+                  <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center space-x-2">
+                    {section.category === 'Generative AI' && <FileText className="w-5 h-5 text-teal-600" />}
+                    {section.category === 'Models' && <HelpCircle className="w-5 h-5 text-teal-600" />}
+                    {section.category === 'FAQs' && <HelpCircle className="w-5 h-5 text-teal-600" />}
                     <span>{section.category}</span>
                   </h3>
                   <div className="space-y-1 pl-4">
@@ -163,6 +167,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
                 <div className="flex items-center space-x-3">
                   <span className="text-sm font-medium text-gray-700">Have more questions about AI at {getCompanyName()}? Visit</span>
                   <button className="text-sm text-gray-700 hover:text-orange-600 transition-colors flex items-center space-x-1">
+                  <button className="text-sm text-gray-700 hover:text-teal-600 transition-colors flex items-center space-x-1">
                     <span>IA4IT.com</span>
                     <ExternalLink className="w-4 h-4" />
                   </button>
@@ -177,6 +182,8 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
                 <div key={sectionIndex}>
                   <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center space-x-2">
                     <Users className="w-5 h-5 text-orange-600" />
+                  <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center space-x-2">
+                    <Users className="w-5 h-5 text-teal-600" />
                     <span>{section.category}</span>
                   </h3>
                   <div className="space-y-1 pl-4">

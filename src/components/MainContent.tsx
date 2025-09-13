@@ -454,7 +454,7 @@ const MainContent: React.FC<MainContentProps> = ({
           
           <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
             {userProfile?.isAdmin && (
-              <select className="px-2 py-1 border border-gray-200 rounded text-xs focus:outline-none focus:ring-2 focus:ring-pink-500 max-w-20 sm:max-w-none sm:px-3 sm:text-sm">
+              <select className="px-2 py-1 border border-gray-200 rounded text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 max-w-20 sm:max-w-none sm:px-3 sm:text-sm">
                 <option>GPT-4o</option>
                 <option>GPT-4</option>
                 <option>Claude-3.5</option>
@@ -463,7 +463,7 @@ const MainContent: React.FC<MainContentProps> = ({
             )}
             <button 
               onClick={onOpenPromptCatalog}
-              className="px-2 py-1 sm:px-4 sm:py-1 bg-orange-600 text-white rounded text-xs sm:text-sm hover:bg-orange-700 transition-colors"
+              className="px-2 py-1 sm:px-4 sm:py-1 bg-teal-600 text-white rounded text-xs sm:text-sm hover:bg-teal-700 transition-colors"
             >
               Prompts
             </button>
@@ -704,7 +704,7 @@ const MainContent: React.FC<MainContentProps> = ({
                 className={`p-2 sm:p-3 transition-colors flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg ${
                   isStreaming 
                     ? 'text-gray-400 hover:text-gray-600' 
-                    : 'text-gray-400 hover:text-orange-600'
+                    : 'text-gray-400 hover:text-teal-600'
                 }`}
               >
                 {isStreaming ? (

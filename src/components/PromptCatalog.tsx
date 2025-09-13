@@ -134,7 +134,7 @@ const PromptCatalog: React.FC<PromptCatalogProps> = ({
             onClick={() => setActiveTab('enterprise')}
             className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
               activeTab === 'enterprise'
-                ? 'border-orange-500 text-orange-600'
+                ? 'border-teal-500 text-teal-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
@@ -144,7 +144,7 @@ const PromptCatalog: React.FC<PromptCatalogProps> = ({
             onClick={() => setActiveTab('your')}
             className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
               activeTab === 'your'
-                ? 'border-orange-500 text-orange-600'
+                ? 'border-teal-500 text-teal-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
@@ -161,7 +161,7 @@ const PromptCatalog: React.FC<PromptCatalogProps> = ({
                 <select
                   value={filterAssistant}
                   onChange={(e) => setFilterAssistant(e.target.value)}
-                  className="w-full appearance-none bg-white border border-gray-300 rounded-lg px-3 py-2 pr-16 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="w-full appearance-none bg-white border border-gray-300 rounded-lg px-3 py-2 pr-16 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                 >
                   <option>All Assistants</option>
                   {availableAssistants.map((assistant) => (
@@ -193,7 +193,7 @@ const PromptCatalog: React.FC<PromptCatalogProps> = ({
                 <select
                   value={selectedTask}
                   onChange={(e) => setSelectedTask(e.target.value)}
-                  className="w-full appearance-none bg-white border border-gray-300 rounded-lg px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="w-full appearance-none bg-white border border-gray-300 rounded-lg px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                 >
                   <option>Select Task...</option>
                   <option>Files</option>
@@ -211,7 +211,7 @@ const PromptCatalog: React.FC<PromptCatalogProps> = ({
                 <select
                   value={selectedFunctionalArea}
                   onChange={(e) => setSelectedFunctionalArea(e.target.value)}
-                  className="w-full appearance-none bg-white border border-gray-300 rounded-lg px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="w-full appearance-none bg-white border border-gray-300 rounded-lg px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                 >
                   <option>Select Functional Area...</option>
                   <option>Research & Development</option>
@@ -231,7 +231,7 @@ const PromptCatalog: React.FC<PromptCatalogProps> = ({
               placeholder="Search prompt..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
             />
           </div>
         </div>
@@ -258,11 +258,11 @@ const PromptCatalog: React.FC<PromptCatalogProps> = ({
                       <div className="flex items-center space-x-2 mb-2">
                         <span className="text-xs font-medium text-gray-500">{prompt.assistant}</span>
                       </div>
-                      <h3 className="text-sm font-medium text-gray-900 leading-relaxed mb-2 group-hover:text-orange-600 transition-colors">
+                      <h3 className="text-sm font-medium text-gray-900 leading-relaxed mb-2 group-hover:text-teal-600 transition-colors">
                         {prompt.title}
                       </h3>
                     </div>
-                    <button className="text-gray-300 hover:text-orange-500 transition-colors flex-shrink-0 ml-2">
+                    <button className="text-gray-300 hover:text-teal-500 transition-colors flex-shrink-0 ml-2">
                       <Heart className="w-4 h-4" />
                     </button>
                   </div>

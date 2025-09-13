@@ -100,7 +100,7 @@ const Header: React.FC<HeaderProps> = ({
               onClick={() => onNavigate('assistants')}
               className={`text-sm font-medium transition-colors ${
                 currentPage === 'assistants' 
-                  ? 'text-orange-600' 
+                  ? 'text-teal-600' 
                   : 'text-gray-600 hover:text-gray-800'
               }`}
             >
@@ -111,7 +111,7 @@ const Header: React.FC<HeaderProps> = ({
               onClick={() => onNavigate('chat')}
               className={`text-sm font-medium transition-colors ${
                 currentPage === 'chat' 
-                  ? 'text-orange-600' 
+                  ? 'text-teal-600' 
                   : 'text-gray-600 hover:text-gray-800'
               }`}
             >
@@ -143,7 +143,7 @@ const Header: React.FC<HeaderProps> = ({
             onClick={() => onNavigate('resources')}
             className={`transition-colors ${
               currentPage === 'resources' 
-                ? 'text-orange-600' 
+                ? 'text-teal-600' 
                 : 'text-gray-700 hover:text-gray-900'
             }`}
           >
@@ -194,7 +194,7 @@ const Header: React.FC<HeaderProps> = ({
                     onClick={() => handleNavigate('assistants')}
                     className={`block w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                       currentPage === 'assistants' 
-                        ? 'text-orange-600 bg-orange-50' 
+                        ? 'text-teal-600 bg-teal-50' 
                         : 'text-gray-700 hover:bg-gray-50'
                     }`}
                   >
@@ -204,7 +204,7 @@ const Header: React.FC<HeaderProps> = ({
                     onClick={() => handleNavigate('chat')}
                     className={`block w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                       currentPage === 'chat' 
-                        ? 'text-orange-600 bg-orange-50' 
+                        ? 'text-teal-600 bg-teal-50' 
                         : 'text-gray-700 hover:bg-gray-50'
                     }`}
                   >
@@ -217,7 +217,7 @@ const Header: React.FC<HeaderProps> = ({
                     onClick={() => handleNavigate('prompt-catalog')}
                     className={`block w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
                       currentPage === 'prompt-catalog' 
-                        ? 'text-orange-600 bg-orange-50' 
+                        ? 'text-teal-600 bg-teal-50' 
                         : 'text-gray-700 hover:bg-gray-50'
                     }`}
                   >
@@ -228,7 +228,7 @@ const Header: React.FC<HeaderProps> = ({
                     onClick={() => handleNavigate('resources')}
                     className={`block w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
                       currentPage === 'resources' 
-                        ? 'text-orange-600 bg-orange-50' 
+                        ? 'text-teal-600 bg-teal-50' 
                         : 'text-gray-700 hover:bg-gray-50'
                     }`}
                   >
