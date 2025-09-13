@@ -202,9 +202,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onThreadSelect }) =
     >
       <div className="flex items-center space-x-3 flex-1 min-w-0">
         <div className={`w-6 h-6 rounded flex items-center justify-center flex-shrink-0 ${
-          chat.threadId ? 'bg-blue-100' : 'bg-orange-100'
+          chat.threadId ? 'bg-teal-100' : 'bg-teal-100'
         }`}>
-          <chat.icon className={`w-3 h-3 ${chat.threadId ? 'text-blue-600' : 'text-orange-600'}`} />
+          <chat.icon className={`w-3 h-3 ${chat.threadId ? 'text-teal-600' : 'text-teal-600'}`} />
         </div>
         <div className="flex-1 min-w-0">
         {editingChat === chat.id ? (
