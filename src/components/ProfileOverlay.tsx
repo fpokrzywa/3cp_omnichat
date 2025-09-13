@@ -174,7 +174,7 @@ const ProfileOverlay: React.FC<ProfileOverlayProps> = ({ isOpen, onClose }) => {
               <h3 className="text-lg font-semibold text-gray-800">Profile Information</h3>
               <button
                 onClick={() => setIsEditing(!isEditing)}
-                className="flex items-center space-x-2 px-3 py-1 text-sm text-pink-600 hover:text-pink-700 transition-colors"
+                className="flex items-center space-x-2 px-3 py-1 text-sm text-teal-600 hover:text-teal-700 transition-colors"
               >
                 <Settings className="w-4 h-4" />
                 <span>{isEditing ? 'Cancel' : 'Edit'}</span>
