@@ -117,7 +117,7 @@ const AcknowledgmentOverlay: React.FC<AcknowledgmentOverlayProps> = ({ isOpen, o
                 <span>
                   If you encounter an ethical concern, such as biased AI output, report it immediately to the{' '}
                   <a href="#" className="text-orange-600 hover:text-orange-700 underline">
-                    {getCompanyName()} HR Team & AI Team
+                    IA4IT HR Team & AI Team
                   </a>.
                 </span>
               </li>
@@ -173,7 +173,7 @@ const AcknowledgmentOverlay: React.FC<AcknowledgmentOverlayProps> = ({ isOpen, o
                 className="mt-1 w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500 focus:ring-2"
               />
               <span className="text-sm text-gray-700">
-                I Acknowledge my Responsibility to use this AI based on {getCompanyName()} Guidelines Above
+                I Acknowledge my Responsibility to use this AI based on IA4IT Guidelines Above
               </span>
             </label>
           </div>
