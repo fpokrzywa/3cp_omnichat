@@ -34,7 +34,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
         { title: `Does the ${getCompanyName()} AI Store converse in different languages?`, hasLink: true },
         { title: `Can I use the ${getCompanyName()} AI Store on my mobile device?`, hasLink: true },
         { title: `Can I upload files into ${getCompanyName()} ${getCompanyBotName()}?`, hasLink: true },
-        { title: `Why is ${getCompanyName()} ${getCompanyBotName()} giving me incorrect information?`, hasLink: true}
+        { title: `Why is ${getCompanyName()} ${getCompanyBotName()} giving me incorrect information?`, hasLink: true }
       ]
     }
   ];
@@ -148,10 +148,6 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
               {learnResources.map((section, sectionIndex) => (
                 <div key={sectionIndex}>
                   <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center space-x-2">
-                    {section.category === 'Generative AI' && <FileText className="w-5 h-5 text-orange-600" />}
-                    {section.category === 'Models' && <HelpCircle className="w-5 h-5 text-orange-600" />}
-                    {section.category === 'FAQs' && <HelpCircle className="w-5 h-5 text-orange-600" />}
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center space-x-2">
                     {section.category === 'Generative AI' && <FileText className="w-5 h-5 text-teal-600" />}
                     {section.category === 'Models' && <HelpCircle className="w-5 h-5 text-teal-600" />}
                     {section.category === 'FAQs' && <HelpCircle className="w-5 h-5 text-teal-600" />}
@@ -166,7 +162,6 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
               <div className="pt-6 border-t border-gray-200">
                 <div className="flex items-center space-x-3">
                   <span className="text-sm font-medium text-gray-700">Have more questions about AI at {getCompanyName()}? Visit</span>
-                  <button className="text-sm text-gray-700 hover:text-orange-600 transition-colors flex items-center space-x-1">
                   <button className="text-sm text-gray-700 hover:text-teal-600 transition-colors flex items-center space-x-1">
                     <span>IA4IT.com</span>
                     <ExternalLink className="w-4 h-4" />
@@ -180,8 +175,6 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
             <div className="space-y-8">
               {engagementResources.map((section, sectionIndex) => (
                 <div key={sectionIndex}>
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center space-x-2">
-                    <Users className="w-5 h-5 text-orange-600" />
                   <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center space-x-2">
                     <Users className="w-5 h-5 text-teal-600" />
                     <span>{section.category}</span>
