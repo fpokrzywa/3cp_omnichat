@@ -69,7 +69,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
         {item.title}
       </span>
       {item.hasLink && (
-        <ExternalLink className="w-4 h-4 text-gray-400 hover:text-pink-600 transition-colors cursor-pointer flex-shrink-0" />
+        <ExternalLink className="w-4 h-4 text-gray-400 hover:text-teal-600 transition-colors cursor-pointer flex-shrink-0" />
       )}
     </div>
   );
@@ -84,7 +84,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
         )}
       </div>
       {item.hasLink && (
-        <ExternalLink className="w-4 h-4 text-gray-400 hover:text-pink-600 transition-colors cursor-pointer flex-shrink-0" />
+        <ExternalLink className="w-4 h-4 text-gray-400 hover:text-teal-600 transition-colors cursor-pointer flex-shrink-0" />
       )}
     </div>
   );

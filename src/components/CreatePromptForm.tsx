@@ -150,13 +150,13 @@ const CreatePromptForm: React.FC<CreatePromptFormProps> = ({ isOpen, onClose, on
               {formData.tags.map((tag, index) => (
                 <span
                   key={index}
-                  className="inline-flex items-center gap-1 px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-sm"
+                  className="inline-flex items-center gap-1 px-3 py-1 bg-teal-100 text-teal-800 rounded-full text-sm"
                 >
                   {tag}
                   <button
                     type="button"
                     onClick={() => removeTag(tag)}
-                    className="text-orange-600 hover:text-orange-800"
+                    className="text-teal-600 hover:text-teal-800"
                   >
                     <Trash2 className="w-3 h-3" />
                   </button>
