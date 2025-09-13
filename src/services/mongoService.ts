@@ -29,28 +29,28 @@ const FALLBACK_PROMPTS: MongoPrompt[] = [
     "id": "1",
     "title": "Brainstorm ideas for a new marketing campaign.",
     "description": "Generate creative ideas and strategies for an upcoming marketing campaign.",
-    "assistant": getCompanyBotName(),
+    "assistant": "Helix",
     "tags": ["Marketing", "Brainstorming"]
   },
   {
     "id": "2",
     "title": "Write a short story about a futuristic city.",
     "description": "Create a captivating short story set in a technologically advanced, futuristic urban environment.",
-    "assistant": getCompanyBotName(),
+    "assistant": "Helix",
     "tags": ["Creative Writing", "Fiction"]
   },
   {
     "id": "3",
     "title": "Explain the concept of quantum entanglement simply.",
     "description": "Provide a clear and easy-to-understand explanation of quantum entanglement for a general audience.",
-    "assistant": getCompanyBotName(),
+    "assistant": "Helix",
     "tags": ["Science", "Education"]
   },
   {
     "id": "4",
     "title": "Summarize the key points of the attached research paper.",
     "description": "Condense the essential information and main findings from the provided research paper.",
-    "assistant": getCompanyBotName(),
+    "assistant": "Helix",
     "task": "Files",
     "tags": ["Summarization", "Research", "Files"]
   },
@@ -58,7 +58,7 @@ const FALLBACK_PROMPTS: MongoPrompt[] = [
     "id": "5",
     "title": "Generate a list of interview questions for a software engineer role.",
     "description": "Formulate relevant and insightful interview questions suitable for evaluating candidates for a software engineer position.",
-    "assistant": getCompanyBotName(),
+    "assistant": "Helix",
     "tags": ["Hiring", "HR"]
   },
   {

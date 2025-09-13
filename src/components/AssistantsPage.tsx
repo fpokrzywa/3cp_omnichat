@@ -107,8 +107,8 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
   };
 
   const getSortedAssistants = (assistantsList: Assistant[]) => {
-    // Always put ODIN first, regardless of sort order
-    const odinAssistant = assistantsList.find(assistant => 
+    // Always put Helix first, regardless of sort order
+    const helixAssistant = assistantsList.find(assistant => 
       assistant.name === getCompanyBotName()
     );
     const otherAssistants = assistantsList.filter(assistant => 
@@ -118,19 +118,19 @@ const AssistantsPage: React.FC<AssistantsPageProps> = ({ onAssistantSelect }) =>
     switch (sortBy) {
       case 'Name A-Z':
         const sortedAZ = [...otherAssistants].sort((a, b) => a.name.localeCompare(b.name));
-        return odinAssistant ? [odinAssistant, ...sortedAZ] : sortedAZ;
+        return helixAssistant ? [helixAssistant, ...sortedAZ] : sortedAZ;
       case 'Name Z-A':
         const sortedZA = [...otherAssistants].sort((a, b) => b.name.localeCompare(a.name));
-        return odinAssistant ? [odinAssistant, ...sortedZA] : sortedZA;
+        return helixAssistant ? [helixAssistant, ...sortedZA] : sortedZA;
       case 'Recently Added':
         const reversed = [...otherAssistants].reverse();
-        return odinAssistant ? [odinAssistant, ...reversed] : reversed;
+        return helixAssistant ? [helixAssistant, ...reversed] : reversed;
       case 'Favorites':
         const favorites = [...otherAssistants].filter(assistant => assistant.isFavorite);
-        const odinIsFavorite = odinAssistant?.isFavorite;
-        return odinIsFavorite ? [odinAssistant, ...favorites] : favorites;
+        const helixIsFavorite = helixAssistant?.isFavorite;
+        return helixIsFavorite ? [helixAssistant, ...favorites] : favorites;
       default:
-        return odinAssistant ? [odinAssistant, ...otherAssistants] : otherAssistants;
+        return helixAssistant ? [helixAssistant, ...otherAssistants] : otherAssistants;
     }
   };
 
