@@ -151,11 +151,11 @@ const AcknowledgmentOverlay: React.FC<AcknowledgmentOverlayProps> = ({ isOpen, o
                 <span className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                 <span>
                   For questions or concerns, please reach out to the Data Risk Office (
-                  <a href="mailto:ai_admin@IA4IT.com" className="text-orange-600 hover:text-orange-700 underline">
+                  <a href="mailto:ai_admin@IA4IT.com" className="text-teal-600 hover:text-teal-700 underline">
                     ai_admin@IA4IT.com
                   </a>
                   ) or the{' '}
-                  <a href="#" className="text-orange-600 hover:text-orange-700 underline">
+                  <a href="#" className="text-teal-600 hover:text-teal-700 underline">
                     Privacy Law Team
                   </a>.
                 </span>
