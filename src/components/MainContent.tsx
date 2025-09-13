@@ -437,8 +437,16 @@ const MainContent: React.FC<MainContentProps> = ({
       <div className="bg-white border-b border-gray-200 px-3 sm:px-6 py-3 sm:py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2 sm:space-x-3 min-w-0 flex-1">
-            <div className="w-6 h-6 sm:w-8 sm:h-8 bg-orange-100 rounded flex items-center justify-center flex-shrink-0">
-              <MessageSquare className="w-3 h-3 sm:w-4 sm:h-4 text-orange-600" />
+            <div className="w-6 h-6 sm:w-8 sm:h-8 bg-teal-100 rounded flex items-center justify-center flex-shrink-0">
+              {selectedAssistant === getCompanyBotName() ? (
+                <img 
+                  src="/helix_icon.png" 
+                  alt="Helix" 
+                  className="w-4 h-4 sm:w-5 sm:h-5 object-contain"
+                />
+              ) : (
+                <MessageSquare className="w-3 h-3 sm:w-4 sm:h-4 text-teal-600" />
+              )}
             </div>
             <span className="font-medium text-gray-900 text-sm sm:text-base truncate">{selectedAssistant}</span>
             <div className="relative group">
